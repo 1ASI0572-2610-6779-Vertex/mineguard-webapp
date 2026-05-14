@@ -32,8 +32,6 @@ interface MenuOption {
     MatSidenavModule,
     TranslateModule,
     CommonModule,
-    NgForOf,
-    NgIf,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -43,10 +41,15 @@ export class App {
 
   @ViewChild(MatSidenav) sidenav!: MatSidenav;
 
-  activeOption: string = 'homeTitle';
+  activeOption: string = 'Centro de Control';
   isSidenavOpen = true;
 
   allOptions: MenuOption[] = [
+    {
+      icon: 'dashboard',
+      path: '/dashboard',
+      title: 'Centro de Control',
+    },
     {
       icon: 'home',
       path: '/home',
@@ -54,7 +57,7 @@ export class App {
     },
   ];
 
-  otherOptions: MenuOption[] = [];
+  otherOptions: MenuOption[] = this.allOptions;
 
   constructor(
     private translate: TranslateService,
