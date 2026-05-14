@@ -1,0 +1,12 @@
+{
+  "toolbar": {
+    "subtitle": "Real-time monitoring of mining operations"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "logout": "Log out"
+  },
+  "Project": "Project",
+  "Centro de Control Operativo": "Control Operations Center"
+}
