@@ -1,0 +1,12 @@
+{
+  "toolbar": {
+    "subtitle": "Monitoreo en tiempo real de la operación minera"
+  },
+  "auth": {
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "logout": "Cerrar sesión"
+  },
+  "Project": "Proyecto",
+  "Centro de Control Operativo": "Centro de Control Operativo"
+}
