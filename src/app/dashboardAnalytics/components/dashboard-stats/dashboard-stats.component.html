@@ -1,0 +1,33 @@
+<div class="stats-grid">
+  <div class="stat-card">
+    <div>
+      <h3>{{ 'dashboard.stats.criticalAlerts' | translate }}</h3>
+      <p>{{ summary.criticalAlerts }}</p>
+    </div>
+    <div class="icon red">⚠</div>
+  </div>
+
+  <div class="stat-card">
+    <div>
+      <h3>{{ 'dashboard.stats.fatigueEvents' | translate }}</h3>
+      <p>{{ summary.fatigueEvents }}</p>
+    </div>
+    <div class="icon orange">⌁</div>
+  </div>
+
+  <div class="stat-card">
+    <div>
+      <h3>{{ 'dashboard.stats.activeVehicles' | translate }}</h3>
+      <p>{{ summary.activeVehicles }}</p>
+    </div>
+    <div class="icon blue">🚙</div>
+  </div>
+
+  <div class="stat-card">
+    <div>
+      <h3>{{ 'dashboard.stats.fieldDrivers' | translate }}</h3>
+      <p>{{ summary.totalDrivers }}</p>
+    </div>
+    <div class="icon violet">👥</div>
+  </div>
+</div>
