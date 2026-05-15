@@ -67,7 +67,7 @@ export class Layout implements OnInit {
   /**
    * Translation key of the currently active menu option.
    */
-  activeOption = signal<string>('option.home');
+  activeOption = signal<string>('option.dashboard');
   isSidenavOpen = true;
 
   /**
@@ -76,10 +76,52 @@ export class Layout implements OnInit {
    */
   readonly options: MenuOption[] = [
     {
+      icon: 'monitor_heart',
+      path: '/analytics/admin-summary',
+      title: 'option.adminSummary',
+      roles: ['Administrator'],
+    },
+    {
       icon: 'manage_accounts',
       path: '/iam/supervisors',
       title: 'option.userManagement',
       roles: ['Administrator'],
+    },
+    {
+      icon: 'verified_user',
+      path: '/monitoring/audit-and-assets',
+      title: 'option.auditAndAssets',
+      roles: ['Administrator'],
+    },
+    {
+      icon: 'dashboard',
+      path: '/analytics/dashboard',
+      title: 'option.dashboard',
+      roles: ['Supervisor'],
+    },
+    {
+      icon: 'map',
+      path: '/monitoring/live-map',
+      title: 'option.liveMap',
+      roles: ['Supervisor'],
+    },
+    {
+      icon: 'crisis_alert',
+      path: '/monitoring/alerts',
+      title: 'option.alerts',
+      roles: ['Supervisor'],
+    },
+    {
+      icon: 'directions_car',
+      path: '/assets/fleet-and-drivers',
+      title: 'option.fleetAndDrivers',
+      roles: ['Supervisor'],
+    },
+    {
+      icon: 'bar_chart',
+      path: '/analytics/reports',
+      title: 'option.reports',
+      roles: ['Supervisor'],
     },
     { icon: 'home', path: '/home', title: 'option.home' },
   ];
