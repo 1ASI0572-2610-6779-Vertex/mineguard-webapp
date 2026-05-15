@@ -1,6 +1,8 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import { AdminNotice } from '../domain/model/admin-notice.entity';
+import { AdminSummary } from '../domain/model/admin-summary.entity';
 import { AnalyticsFatigueBar } from '../domain/model/analytics-fatigue-bar.entity';
 import { AnalyticsHistoryRow } from '../domain/model/analytics-history-row.entity';
 import { AnalyticsIncidentDistribution } from '../domain/model/analytics-incident-distribution.entity';
@@ -31,6 +33,8 @@ export class AnalyticsStore {
   private readonly incidentDistributionSignal = signal<AnalyticsIncidentDistribution[]>([]);
   private readonly historyRowsSignal = signal<AnalyticsHistoryRow[]>([]);
   private readonly insightsSignal = signal<AnalyticsInsight[]>([]);
+  private readonly adminSummarySignal = signal<AdminSummary | null>(null);
+  private readonly adminNoticesSignal = signal<AdminNotice[]>([]);
 
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
@@ -45,6 +49,8 @@ export class AnalyticsStore {
   readonly incidentDistribution = this.incidentDistributionSignal.asReadonly();
   readonly historyRows = this.historyRowsSignal.asReadonly();
   readonly insights = this.insightsSignal.asReadonly();
+  readonly adminSummary = this.adminSummarySignal.asReadonly();
+  readonly adminNotices = this.adminNoticesSignal.asReadonly();
   readonly loading = this.loadingSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
 
@@ -91,44 +97,62 @@ export class AnalyticsStore {
   }
 
   loadPerformanceMetrics(): void {
-    this.analyticsApi.getPerformanceMetrics().pipe(takeUntilDestroyed()).subscribe({
+    this.analyticsApi.getPerformanceMetrics().subscribe({
       next: (metrics) => this.performanceMetricsSignal.set(metrics),
       error: (err) => this.handleFailure(err, 'Failed to load performance metrics'),
     });
   }
 
   loadReports(): void {
-    this.analyticsApi.getReports().pipe(takeUntilDestroyed()).subscribe({
+    this.analyticsApi.getReports().subscribe({
       next: (reports) => this.reportsSignal.set(reports),
       error: (err) => this.handleFailure(err, 'Failed to load reports'),
     });
   }
 
   loadFatigueBars(): void {
-    this.analyticsApi.getAnalyticsFatigueBars().pipe(takeUntilDestroyed()).subscribe({
+    this.analyticsApi.getAnalyticsFatigueBars().subscribe({
       next: (bars) => this.fatigueBarsSignal.set(bars),
       error: (err) => this.handleFailure(err, 'Failed to load fatigue bars'),
     });
   }
 
   loadIncidentDistribution(): void {
-    this.analyticsApi.getAnalyticsIncidentDistribution().pipe(takeUntilDestroyed()).subscribe({
+    this.analyticsApi.getAnalyticsIncidentDistribution().subscribe({
       next: (distribution) => this.incidentDistributionSignal.set(distribution),
       error: (err) => this.handleFailure(err, 'Failed to load incident distribution'),
     });
   }
 
   loadHistoryRows(): void {
-    this.analyticsApi.getAnalyticsHistoryRows().pipe(takeUntilDestroyed()).subscribe({
+    this.analyticsApi.getAnalyticsHistoryRows().subscribe({
       next: (rows) => this.historyRowsSignal.set(rows),
       error: (err) => this.handleFailure(err, 'Failed to load history rows'),
     });
   }
 
   loadInsights(): void {
-    this.analyticsApi.getAnalyticsInsights().pipe(takeUntilDestroyed()).subscribe({
+    this.analyticsApi.getAnalyticsInsights().subscribe({
       next: (insights) => this.insightsSignal.set(insights),
       error: (err) => this.handleFailure(err, 'Failed to load insights'),
+    });
+  }
+
+  loadAdminSummary(): void {
+    this.loadingSignal.set(true);
+    this.analyticsApi.getAdminSummary().subscribe({
+      next: (summaries) => {
+        this.adminSummarySignal.set(summaries[0] ?? null);
+        this.loadingSignal.set(false);
+      },
+      error: (err) => this.handleFailure(err, 'Failed to load admin summary'),
+    });
+  }
+
+  loadAdminNotices(): void {
+    this.analyticsApi.getAdminNotices().subscribe({
+      next: (notices) => this.adminNoticesSignal.set(notices),
+      error: (err) => this.handleFailure(err, 'Failed to load admin notices'),
     });
   }
 

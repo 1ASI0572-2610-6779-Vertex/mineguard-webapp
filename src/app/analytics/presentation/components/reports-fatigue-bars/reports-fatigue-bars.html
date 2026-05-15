@@ -1,0 +1,23 @@
+<section class="fatigue-card">
+  <header class="card-header">
+    <div class="title-block">
+      <h2>{{ 'reports.fatigueBars.title' | translate }}</h2>
+      <p class="subtitle">{{ 'reports.fatigueBars.subtitle' | translate }}</p>
+    </div>
+    <button mat-icon-button class="export-btn" [title]="'reports.export' | translate">
+      <mat-icon>download</mat-icon>
+    </button>
+  </header>
+
+  <ul class="bars-list">
+    @for (bar of visibleBars(); track bar.id) {
+      <li class="bar-row">
+        <span class="driver-name">{{ bar.driverName }}</span>
+        <div class="bar-track">
+          <div class="bar-fill" [style.width.%]="widthFor(bar.fatigueEvents)"></div>
+        </div>
+        <span class="bar-value">{{ bar.fatigueEvents }}</span>
+      </li>
+    }
+  </ul>
+</section>
