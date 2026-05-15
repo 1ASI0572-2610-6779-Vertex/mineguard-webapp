@@ -1,0 +1,49 @@
+<div class="fleet-page">
+  <header class="page-header">
+    <h1>{{ 'assets.fleet.title' | translate }}</h1>
+    <p>{{ 'assets.fleet.subtitle' | translate }}</p>
+  </header>
+
+  <section class="page-content">
+    <div class="tabs-bar">
+      <nav class="tabs">
+        <button
+          class="tab"
+          [class.tab-active]="activeTab() === 'vehicles'"
+          (click)="selectTab('vehicles')"
+        >
+          <mat-icon class="tab-icon">local_shipping</mat-icon>
+          <span>{{ 'assets.fleet.tabs.vehicles' | translate }}</span>
+        </button>
+        <button
+          class="tab"
+          [class.tab-active]="activeTab() === 'drivers'"
+          (click)="selectTab('drivers')"
+        >
+          <mat-icon class="tab-icon">groups</mat-icon>
+          <span>{{ 'assets.fleet.tabs.drivers' | translate }}</span>
+        </button>
+      </nav>
+
+      @if (activeTab() === 'vehicles') {
+        <button mat-flat-button class="primary-btn">
+          <mat-icon>add_circle</mat-icon>
+          <span>{{ 'assets.fleet.action.newVehicle' | translate }}</span>
+        </button>
+      } @else {
+        <button mat-flat-button class="primary-btn">
+          <mat-icon>person_add</mat-icon>
+          <span>{{ 'assets.fleet.action.newDriver' | translate }}</span>
+        </button>
+      }
+    </div>
+
+    <div class="tab-panel">
+      @if (activeTab() === 'vehicles') {
+        <app-vehicles-inventory [vehicles]="vehicles()"></app-vehicles-inventory>
+      } @else {
+        <app-drivers-directory [drivers]="drivers()"></app-drivers-directory>
+      }
+    </div>
+  </section>
+</div>

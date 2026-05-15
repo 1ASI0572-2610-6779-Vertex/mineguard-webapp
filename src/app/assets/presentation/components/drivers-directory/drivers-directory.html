@@ -1,0 +1,87 @@
+<div class="drivers-directory">
+  <div class="column-labels">
+    <span>{{ 'assets.fleet.drivers.column.personalData' | translate }}</span>
+    <span>{{ 'assets.fleet.drivers.column.shiftStatus' | translate }}</span>
+    <span>{{ 'assets.fleet.drivers.column.lastAccess' | translate }}</span>
+    <span class="actions-col">{{ 'assets.fleet.drivers.column.adminActions' | translate }}</span>
+  </div>
+
+  <ul class="drivers-list">
+    @for (driver of drivers; track driver.id) {
+      <li
+        class="driver-row"
+        [class.driver-row-inactive]="driver.shiftStatus === 'inactive'"
+      >
+        <div class="driver-identity">
+          <div class="avatar">{{ initialsOf(driver.fullName) }}</div>
+          <div class="identity-text">
+            <strong>
+              {{ driver.fullName }}
+              <span class="operator-id">({{ driver.operatorId }})</span>
+            </strong>
+            @if (driver.shiftStatus === 'inactive') {
+              <span class="status-text-inactive">
+                {{ 'assets.fleet.drivers.offBoarded' | translate }}
+              </span>
+            } @else {
+              <span class="license-line">
+                {{ 'assets.fleet.drivers.license' | translate }}: {{ driver.license }}
+                •
+                {{ 'assets.fleet.drivers.specialty' | translate }}: {{ driver.specialty }}
+              </span>
+            }
+          </div>
+        </div>
+
+        <div class="status-cell">
+          @switch (driver.shiftStatus) {
+            @case ('on_shift') {
+              <span class="badge badge-on-shift">
+                {{ 'assets.fleet.drivers.status.onShift' | translate }}
+              </span>
+            }
+            @case ('off_shift') {
+              <span class="badge badge-off-shift">
+                {{ 'assets.fleet.drivers.status.offShift' | translate }}
+              </span>
+            }
+            @case ('inactive') {
+              <span class="badge badge-inactive">
+                {{ 'assets.fleet.drivers.status.inactive' | translate }}
+              </span>
+            }
+          }
+        </div>
+
+        <div class="access-cell">
+          @if (driver.shiftStatus === 'inactive') {
+            <span class="access-muted">{{ driver.lastAccess }}</span>
+          } @else {
+            <span>{{ driver.lastAccess }}</span>
+          }
+        </div>
+
+        <div class="actions-cell">
+          @if (driver.shiftStatus === 'inactive') {
+            <span class="readonly-label">
+              {{ 'assets.fleet.drivers.action.historyPreserved' | translate }}
+            </span>
+          } @else {
+            <button
+              mat-icon-button
+              [title]="'assets.fleet.drivers.action.edit' | translate"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              [title]="'assets.fleet.drivers.action.revoke' | translate"
+            >
+              <mat-icon>person_remove</mat-icon>
+            </button>
+          }
+        </div>
+      </li>
+    }
+  </ul>
+</div>
