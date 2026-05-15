@@ -1,0 +1,47 @@
+<section class="catalog-summary">
+  <header class="catalog-header">
+    <mat-icon class="header-icon">inventory_2</mat-icon>
+    <h2>{{ 'assets.catalog.title' | translate }}</h2>
+  </header>
+
+  <ul class="metric-list">
+    <li class="metric-item">
+      <div class="metric-icon icon-drivers">
+        <mat-icon>groups</mat-icon>
+      </div>
+      <div class="metric-text">
+        <h3>{{ 'assets.catalog.drivers.label' | translate }}</h3>
+        <p class="sub">
+          {{ 'assets.catalog.drivers.sub' | translate: { count: summary.driversInactive } }}
+        </p>
+      </div>
+      <span class="metric-count">{{ summary.driversTotal }}</span>
+    </li>
+
+    <li class="metric-item">
+      <div class="metric-icon icon-vehicles">
+        <mat-icon>local_shipping</mat-icon>
+      </div>
+      <div class="metric-text">
+        <h3>{{ 'assets.catalog.vehicles.label' | translate }}</h3>
+        <p class="sub">
+          {{ 'assets.catalog.vehicles.sub' | translate: { count: summary.vehiclesMaintenance } }}
+        </p>
+      </div>
+      <span class="metric-count">{{ summary.vehiclesTotal }}</span>
+    </li>
+
+    <li class="metric-item">
+      <div class="metric-icon icon-supervisors">
+        <mat-icon>shield_person</mat-icon>
+      </div>
+      <div class="metric-text">
+        <h3>{{ 'assets.catalog.supervisors.label' | translate }}</h3>
+        <p class="sub">
+          {{ 'assets.catalog.supervisors.sub' | translate: { count: summary.supervisorsLocked } }}
+        </p>
+      </div>
+      <span class="metric-count">{{ summary.supervisorsTotal }}</span>
+    </li>
+  </ul>
+</section>
