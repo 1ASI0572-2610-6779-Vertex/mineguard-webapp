@@ -1,5 +1,5 @@
 <div class="control-page">
-  <ng-container *ngIf="summary() as s">
+  @if (summary(); as s) {
     <app-dashboard-stats [summary]="s"></app-dashboard-stats>
 
     <div class="middle-grid">
@@ -17,5 +17,5 @@
     <app-dashboard-recent-alerts
       [recentAlerts]="recentAlerts()"
     ></app-dashboard-recent-alerts>
-  </ng-container>
+  }
 </div>

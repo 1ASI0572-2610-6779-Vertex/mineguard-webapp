@@ -7,10 +7,10 @@ const pageNotFound = () =>
   import('./shared/presentation/views/page-not-found/page-not-found').then((m) => m.PageNotFound);
 const analyticsRoutes = () =>
   import('./analytics/presentation/analytics.routes').then((m) => m.analyticsRoutes);
-/*const assetsRoutes = () =>
+const assetsRoutes = () =>
   import('./assets/presentation/assets.routes').then((m) => m.assetsRoutes);
 const iamRoutes = () => import('./iam/presentation/iam.routes').then((m) => m.iamRoutes);
-*/
+
 
 const monitoringRoutes = () =>
   import('./monitoring/presentation/monitoring.routes').then((m) => m.monitoringRoutes);
@@ -28,10 +28,10 @@ const baseTitle = 'MineGuard';
 export const routes: Routes = [
   { path: 'home', component: Home, title: `${baseTitle} - Home`, canActivate: [iamGuard] },
   { path: 'about', loadComponent: about, title: `${baseTitle} - About`, canActivate: [iamGuard] },
-//  { path: 'iam', loadChildren: iamRoutes },
+  { path: 'iam', loadChildren: iamRoutes },
   { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [iamGuard] },
   { path: 'monitoring', loadChildren: monitoringRoutes, canActivate: [iamGuard] },
-//  { path: 'assets', loadChildren: assetsRoutes, canActivate: [iamGuard] },
+  { path: 'assets', loadChildren: assetsRoutes, canActivate: [iamGuard] },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   {
     path: '**',

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 
 import { AnalyticsStore } from '../../../application/analytics.store';
@@ -15,13 +14,7 @@ import { DashboardTrend as DashboardTrendComponent } from '../../components/dash
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [
-    CommonModule,
-    DashboardStats,
-    DashboardTrendComponent,
-    DashboardRiskDrivers,
-    DashboardRecentAlerts,
-  ],
+  imports: [DashboardStats, DashboardTrendComponent, DashboardRiskDrivers, DashboardRecentAlerts],
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.css',
 })
@@ -42,7 +35,7 @@ export class DashboardPage {
     const maxValue = Math.max(
       ...trend.map((item) => item.alerts),
       ...trend.map((item) => item.incidents),
-      1
+      1,
     );
 
     const width = 700;

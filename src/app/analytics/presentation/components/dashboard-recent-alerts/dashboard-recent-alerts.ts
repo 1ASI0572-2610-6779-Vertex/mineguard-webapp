@@ -1,19 +1,24 @@
-import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { DashboardRecentAlert } from '../../../domain/model/dashboard-recent-alert.entity';
 
+/**
+ * Live alert log table for the control-center dashboard.
+ */
 @Component({
   selector: 'app-dashboard-recent-alerts',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [TranslatePipe],
   templateUrl: './dashboard-recent-alerts.html',
   styleUrl: './dashboard-recent-alerts.css',
 })
 export class DashboardRecentAlerts {
   @Input({ required: true }) recentAlerts: DashboardRecentAlert[] = [];
 
+  /**
+   * Maps a severity value coming from the API to its translation key.
+   */
   getSeverityKey(severity: string): string {
     const value = severity?.toLowerCase();
     if (value === 'high') return 'dashboard.severity.high';
