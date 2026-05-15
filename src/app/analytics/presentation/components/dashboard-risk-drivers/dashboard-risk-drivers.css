@@ -1,0 +1,94 @@
+.risk-card {
+  background: white;
+  border-radius: 14px;
+  padding: 22px;
+}
+
+.risk-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.risk-title h2 {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 800;
+}
+
+.risk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.risk-item {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.rank {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: white;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.rank-red {
+  background: #dc2626;
+  color: white;
+}
+
+.rank-orange {
+  background: #f59e0b;
+  color: white;
+}
+
+.driver-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.driver-info strong {
+  font-size: 12px;
+}
+
+.driver-info span {
+  font-size: 10px;
+  color: #555;
+  font-weight: 700;
+}
+
+.points {
+  font-size: 12px;
+}
+
+.points.high {
+  color: #dc2626;
+}
+
+.points.medium {
+  color: #f59e0b;
+}
+
+.report-btn {
+  margin-top: 20px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 800;
+  padding: 12px;
+  cursor: pointer;
+}

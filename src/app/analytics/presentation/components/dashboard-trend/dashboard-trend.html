@@ -1,0 +1,38 @@
+<div class="chart-card">
+  <div class="card-header">
+    <h2>{{ 'dashboard.trend.title' | translate }}</h2>
+
+    <select>
+      <option>{{ 'dashboard.trend.today' | translate }}</option>
+    </select>
+  </div>
+
+  <div class="fake-chart">
+    <div class="chart-lines">
+      <svg viewBox="0 0 700 170" preserveAspectRatio="none">
+        <path
+          [attr.d]="alertTrendPath"
+          fill="none"
+          stroke="#3b82f6"
+          stroke-width="4"
+        ></path>
+
+        <path
+          [attr.d]="incidentTrendPath"
+          fill="none"
+          stroke="#f59e0b"
+          stroke-width="4"
+        ></path>
+      </svg>
+    </div>
+
+    <div class="chart-labels">
+      <span *ngFor="let item of trend">{{ item.hour }}</span>
+    </div>
+
+    <div class="chart-legend">
+      <span><b class="blue-dot"></b> {{ 'dashboard.trend.alerts' | translate }}</span>
+      <span><b class="orange-dot"></b> {{ 'dashboard.trend.incidents' | translate }}</span>
+    </div>
+  </div>
+</div>
