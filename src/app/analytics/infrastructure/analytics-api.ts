@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseApi } from '../../shared/infrastructure/base-api';
+import { AdminNotice } from '../domain/model/admin-notice.entity';
+import { AdminSummary } from '../domain/model/admin-summary.entity';
 import { AnalyticsFatigueBar } from '../domain/model/analytics-fatigue-bar.entity';
 import { AnalyticsHistoryRow } from '../domain/model/analytics-history-row.entity';
 import { AnalyticsIncidentDistribution } from '../domain/model/analytics-incident-distribution.entity';
@@ -13,6 +15,8 @@ import { DashboardSummary } from '../domain/model/dashboard-summary.entity';
 import { DashboardTrend } from '../domain/model/dashboard-trend.entity';
 import { PerformanceMetric } from '../domain/model/performance-metric.entity';
 import { Report } from '../domain/model/report.entity';
+import { AdminNoticesApiEndpoint } from './admin-notices-api-endpoint';
+import { AdminSummaryApiEndpoint } from './admin-summary-api-endpoint';
 import { AnalyticsFatigueBarsApiEndpoint } from './analytics-fatigue-bars-api-endpoint';
 import { AnalyticsHistoryRowsApiEndpoint } from './analytics-history-rows-api-endpoint';
 import { AnalyticsIncidentDistributionApiEndpoint } from './analytics-incident-distribution-api-endpoint';
@@ -41,6 +45,8 @@ export class AnalyticsApi extends BaseApi {
   private readonly analyticsIncidentDistributionEndpoint: AnalyticsIncidentDistributionApiEndpoint;
   private readonly analyticsHistoryRowsEndpoint: AnalyticsHistoryRowsApiEndpoint;
   private readonly analyticsInsightsEndpoint: AnalyticsInsightsApiEndpoint;
+  private readonly adminSummaryEndpoint: AdminSummaryApiEndpoint;
+  private readonly adminNoticesEndpoint: AdminNoticesApiEndpoint;
 
   constructor(http: HttpClient) {
     super();
@@ -54,6 +60,8 @@ export class AnalyticsApi extends BaseApi {
     this.analyticsIncidentDistributionEndpoint = new AnalyticsIncidentDistributionApiEndpoint(http);
     this.analyticsHistoryRowsEndpoint = new AnalyticsHistoryRowsApiEndpoint(http);
     this.analyticsInsightsEndpoint = new AnalyticsInsightsApiEndpoint(http);
+    this.adminSummaryEndpoint = new AdminSummaryApiEndpoint(http);
+    this.adminNoticesEndpoint = new AdminNoticesApiEndpoint(http);
   }
 
   getDashboardSummary(): Observable<DashboardSummary[]> {
@@ -94,5 +102,13 @@ export class AnalyticsApi extends BaseApi {
 
   getAnalyticsInsights(): Observable<AnalyticsInsight[]> {
     return this.analyticsInsightsEndpoint.getAll();
+  }
+
+  getAdminSummary(): Observable<AdminSummary[]> {
+    return this.adminSummaryEndpoint.getAll();
+  }
+
+  getAdminNotices(): Observable<AdminNotice[]> {
+    return this.adminNoticesEndpoint.getAll();
   }
 }
