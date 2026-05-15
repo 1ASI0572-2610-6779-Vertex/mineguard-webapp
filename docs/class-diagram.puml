@@ -1,0 +1,375 @@
+@startuml
+' MineGuard Web Application - Domain-Driven Design Class Diagram
+
+package "app" {
+
+  package "iam" {
+    package "domain.model" {
+      class User <<Entity>> {
+        +id: number
+        +username: string
+        +getUsername(): string
+
+        +setUsername(value: string): void
+      }
+      class Supervisor <<Entity>> {
+        +id: number
+        +fullName: string
+        +corporateId: string
+        +email: string
+        +accessStatus: AccessStatus
+      }
+      class SignInCommand <<Command>> {
+        +username: string
+        +password: string
+      }
+      class SignUpCommand <<Command>> {
+        +username: string
+        +password: string
+      }
+      class CreateSupervisorCommand <<Command>> {
+        +fullName: string
+        +corporateId: string
+        +email: string
+      }
+    }
+    package "infrastructure" {
+      class SignInApiEndpoint {
+        +signIn(command: SignInCommand): Observable<SignInResource>
+      }
+      class SignUpApiEndpoint {
+        +signUp(command: SignUpCommand): Observable<SignUpResource>
+      }
+      class SupervisorsApiEndpoint {
+        +createFromCommand(command: CreateSupervisorCommand): Observable<Supervisor>
+      }
+      class IamApi {
+        +signIn(command: SignInCommand): Observable<SignInResource>
+        +signUp(command: SignUpCommand): Observable<SignUpResource>
+        +getSupervisors(): Observable<Supervisor[]>
+        +createSupervisor(command: CreateSupervisorCommand): Observable<Supervisor>
+        +updateSupervisor(supervisor: Supervisor): Observable<Supervisor>
+      }
+      class SignInAssembler <<Assembler>>
+      class SignUpAssembler <<Assembler>>
+      class SupervisorAssembler <<Assembler>>
+      class iamGuard <<Guard>>
+      class roleGuard <<Guard>>
+      class iamInterceptor <<Interceptor>>
+      SignInApiEndpoint --> SignInAssembler : uses
+      SignUpApiEndpoint --> SignUpAssembler : uses
+      SupervisorsApiEndpoint --> SupervisorAssembler : uses
+      IamApi --> SignInApiEndpoint : delegates to
+      IamApi --> SignUpApiEndpoint : delegates to
+      IamApi --> SupervisorsApiEndpoint : delegates to
+      SupervisorsApiEndpoint --|> app.shared.infrastructure.BaseApiEndpoint : extends
+      IamApi --|> app.shared.infrastructure.BaseApi : extends
+    }
+    package "application" {
+      class IamStore <<Store>> {
+        +isSignedIn: boolean
+        +currentUsername: string
+        +currentRole: string
+        +currentToken: string
+        +supervisors: Supervisor[]
+        +signIn(command: SignInCommand, router: Router): void
+        +signOut(router: Router): void
+        +loadSupervisors(): void
+        +createSupervisor(command: CreateSupervisorCommand): void
+        +updateSupervisorAccess(id: number, status: AccessStatus): void
+      }
+      IamStore --> IamApi : uses
+      IamStore --> User : manages
+      IamStore --> Supervisor : manages
+    }
+    package "presentation.views" {
+      class SignInForm <<Component>> {
+        +store: IamStore
+        +form: FormGroup
+        +performSignIn(): void
+      }
+      class SupervisorsPage <<Component>> {
+        +store: IamStore
+        +supervisors: Supervisor[]
+      }
+    }
+    package "presentation.components" {
+      class SupervisorForm <<Component>>
+      class SupervisorDirectory <<Component>>
+      SignInForm ..> IamStore : uses
+      SupervisorsPage ..> IamStore : uses
+      SupervisorForm ..> IamStore : uses
+      SupervisorDirectory ..> IamStore : uses
+    }
+  }
+
+  package "analytics" {
+    package "domain.model" {
+      class DashboardSummary <<Entity>>
+      class DashboardTrend <<Entity>>
+      class DashboardRiskDriver <<Entity>>
+      class DashboardRecentAlert <<Entity>>
+      class PerformanceMetric <<Entity>>
+      class Report <<Entity>>
+      class AnalyticsFatigueBar <<Entity>>
+      class AnalyticsIncidentDistribution <<Entity>>
+      class AnalyticsHistoryRow <<Entity>>
+      class AnalyticsInsight <<Entity>>
+      class AdminSummary <<Entity>>
+      class AdminNotice <<Entity>>
+    }
+    package "infrastructure" {
+      class AnalyticsApi {
+        +getDashboardSummary(): Observable<DashboardSummary[]>
+        +getDashboardTrend(): Observable<DashboardTrend[]>
+        +getDashboardRiskDrivers(): Observable<DashboardRiskDriver[]>
+        +getDashboardRecentAlerts(): Observable<DashboardRecentAlert[]>
+        +getReports(): Observable<Report[]>
+        +getAnalyticsFatigueBars(): Observable<AnalyticsFatigueBar[]>
+        +getAnalyticsIncidentDistribution(): Observable<AnalyticsIncidentDistribution[]>
+        +getAnalyticsHistoryRows(): Observable<AnalyticsHistoryRow[]>
+        +getAdminSummary(): Observable<AdminSummary[]>
+        +getAdminNotices(): Observable<AdminNotice[]>
+      }
+      AnalyticsApi --|> app.shared.infrastructure.BaseApi : extends
+    }
+    package "application" {
+      class AnalyticsStore <<Store>> {
+        +dashboardSummary: DashboardSummary
+        +dashboardTrend: DashboardTrend[]
+        +riskDrivers: DashboardRiskDriver[]
+        +recentAlerts: DashboardRecentAlert[]
+        +fatigueBars: AnalyticsFatigueBar[]
+        +incidentDistribution: AnalyticsIncidentDistribution[]
+        +historyRows: AnalyticsHistoryRow[]
+        +adminSummary: AdminSummary
+        +adminNotices: AdminNotice[]
+        +loadDashboardSummary(): void
+        +loadFatigueBars(): void
+        +loadAdminSummary(): void
+      }
+      AnalyticsStore --> AnalyticsApi : uses
+    }
+    package "presentation.views" {
+      class DashboardPage <<Component>>
+      class ReportsPage <<Component>>
+      class AdminSummaryPage <<Component>>
+      DashboardPage ..> AnalyticsStore : uses
+      ReportsPage ..> AnalyticsStore : uses
+      AdminSummaryPage ..> AnalyticsStore : uses
+    }
+    package "presentation.components" {
+      class DashboardStats <<Component>>
+      class DashboardTrend <<Component>>
+      class DashboardRiskDrivers <<Component>>
+      class DashboardRecentAlerts <<Component>>
+      class ReportsFatigueBars <<Component>>
+      class ReportsIncidentDistribution <<Component>>
+      class ReportsHistoryTable <<Component>>
+      class AdminStats <<Component>>
+      class AdminNotices <<Component>>
+    }
+  }
+
+  package "monitoring" {
+    package "domain.model" {
+      class AuditLogEntry <<Entity>>
+      class Alert <<Entity>> {
+        +id: number
+        +code: string
+        +type: AlertType
+        +priority: AlertPriority
+        +status: AlertStatus
+        +occurredAt: string
+        +vehicleCode: string
+        +driverName: string
+        +resolutionNotes: string
+      }
+      class ClassifyAlertCommand <<Command>>
+      class LiveMapVehicle <<Entity>> {
+        +id: number
+        +code: string
+        +latitude: number
+        +longitude: number
+        +status: VehicleOperationalStatus
+        +driverName: string
+      }
+      class FleetSummary <<Entity>>
+      class CardiacReading <<Entity>>
+    }
+    package "infrastructure" {
+      class AuditLogApiEndpoint
+      class AlertsApiEndpoint
+      class LiveMapVehiclesApiEndpoint
+      class FleetSummaryApiEndpoint
+      class CardiacReadingsApiEndpoint
+      class MonitoringApi {
+        +getAuditLog(): Observable<AuditLogEntry[]>
+        +getAlerts(): Observable<Alert[]>
+        +updateAlert(alert: Alert): Observable<Alert>
+        +getLiveMapVehicles(): Observable<LiveMapVehicle[]>
+        +getFleetSummary(): Observable<FleetSummary[]>
+        +getCardiacReadings(): Observable<CardiacReading[]>
+      }
+      MonitoringApi --|> app.shared.infrastructure.BaseApi : extends
+    }
+    package "application" {
+      class MonitoringStore <<Store>> {
+        +auditLog: AuditLogEntry[]
+        +alerts: Alert[]
+        +liveMapVehicles: LiveMapVehicle[]
+        +fleetSummary: FleetSummary
+        +cardiacReadings: CardiacReading[]
+        +criticalActiveAlerts: Alert[]
+        +loadAuditLog(): void
+        +loadAlerts(): void
+        +classifyAlert(command: ClassifyAlertCommand): void
+        +loadLiveMapVehicles(): void
+      }
+      MonitoringStore --> MonitoringApi : uses
+    }
+    package "presentation.views" {
+      class AuditAndAssetsPage <<Component>>
+      class AlertsPage <<Component>>
+      class LiveMapPage <<Component>>
+      AuditAndAssetsPage ..> MonitoringStore : uses
+      AlertsPage ..> MonitoringStore : uses
+      LiveMapPage ..> MonitoringStore : uses
+    }
+    package "presentation.components" {
+      class AuditLog <<Component>>
+      class AlertsInbox <<Component>>
+      class AlertDetail <<Component>>
+      class LiveMap <<Component>>
+      class FleetSummaryCard <<Component>>
+      class AlertsSummaryCard <<Component>>
+      class CardiacMonitorCard <<Component>>
+    }
+  }
+
+  package "assets" {
+    package "domain.model" {
+      class CatalogSummary <<Entity>>
+      class Vehicle <<Entity>> {
+        +id: number
+        +code: string
+        +model: string
+        +category: string
+        +status: VehicleStatus
+        +assignedDriverName: string
+        +shiftLabel: string
+      }
+      class Driver <<Entity>> {
+        +id: number
+        +fullName: string
+        +operatorId: string
+        +license: string
+        +specialty: string
+        +shiftStatus: DriverShiftStatus
+        +lastAccess: string
+      }
+    }
+    package "infrastructure" {
+      class CatalogSummaryApiEndpoint
+      class VehiclesApiEndpoint
+      class DriversApiEndpoint
+      class AssetsApi {
+        +getCatalogSummary(): Observable<CatalogSummary[]>
+        +getVehicles(): Observable<Vehicle[]>
+        +updateVehicle(vehicle: Vehicle): Observable<Vehicle>
+        +getDrivers(): Observable<Driver[]>
+      }
+      AssetsApi --|> app.shared.infrastructure.BaseApi : extends
+    }
+    package "application" {
+      class AssetsStore <<Store>> {
+        +catalogSummary: CatalogSummary
+        +vehicles: Vehicle[]
+        +drivers: Driver[]
+        +loadCatalogSummary(): void
+        +loadVehicles(): void
+        +loadDrivers(): void
+        +updateVehicleStatus(id: number, status: VehicleStatus): void
+      }
+      AssetsStore --> AssetsApi : uses
+    }
+    package "presentation.views" {
+      class FleetAndDriversPage <<Component>>
+      FleetAndDriversPage ..> AssetsStore : uses
+    }
+    package "presentation.components" {
+      class CatalogSummaryWidget <<Component>>
+      class VehiclesInventory <<Component>>
+      class DriversDirectory <<Component>>
+    }
+  }
+
+  package "subscriptions" {
+    note "Pending: no views in this iteration" as N1
+  }
+
+  package "profile" {
+    note "Pending: no views in this iteration" as N2
+  }
+
+  package "planning" {
+    note "Pending: no views in this iteration" as N3
+  }
+
+  package "shared" {
+    package "domain.model" {
+      class BaseEntity <<Entity>> {
+        +id: number
+      }
+    }
+    package "infrastructure" {
+      abstract class BaseApiEndpoint {
+        -http: HttpClient
+        -endpointUrl: string
+        -assembler: BaseAssembler
+        +getAll(): Observable<BaseEntity[]>
+        +getById(id: number): Observable<BaseEntity>
+        +create(entity: BaseEntity): Observable<BaseEntity>
+        +update(entity: BaseEntity, id: number): Observable<BaseEntity>
+        +delete(id: number): Observable<void>
+        #handleError(operation: string): (error: HttpErrorResponse) => Observable<never>
+      }
+      abstract class BaseApi
+      interface BaseAssembler <<Assembler>> {
+        +toEntitiesFromResponse(response: BaseResponse): BaseEntity[]
+        +toEntityFromResource(resource: BaseResource): BaseEntity
+        +toResourceFromEntity(entity: BaseEntity): BaseResource
+      }
+      interface BaseResource
+      interface BaseResponse
+      abstract class ErrorHandlingEnabledBaseType
+      BaseApiEndpoint --> BaseAssembler : uses
+      BaseAssembler --> BaseEntity : converts to/from
+    }
+    package "presentation.components" {
+      class BaseForm
+      class FooterContent <<Component>>
+      class LanguageSwitcher <<Component>>
+      class Layout <<Component>> {
+        +options: MenuOption[]
+        +visibleOptions: MenuOption[]
+        +showShell: boolean
+        +performSignOut(): void
+      }
+    }
+    package "presentation.views" {
+      class About <<Component>>
+      class Home <<Component>>
+      class PageNotFound <<Component>>
+    }
+    Layout --> FooterContent : includes
+    Layout --> LanguageSwitcher : includes
+    Layout --> About : includes
+    Layout --> Home : includes
+    Layout --> PageNotFound : includes
+  }
+
+  class AppComponent <<Component>>
+  AppComponent --> app.shared.presentation.components.Layout : uses
+}
+@enduml
