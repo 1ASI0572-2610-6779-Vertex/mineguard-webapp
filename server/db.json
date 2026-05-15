@@ -1,14 +1,35 @@
 {
   "userRoles": [
-    { "id": 1, "role": "Administrator" },
-    { "id": 2, "role": "Supervisor" },
-    { "id": 3, "role": "Driver" },
-    { "id": 4, "role": "Maintenance" }
+    {
+      "id": 1,
+      "role": "Administrator"
+    },
+    {
+      "id": 2,
+      "role": "Supervisor"
+    },
+    {
+      "id": 3,
+      "role": "Driver"
+    },
+    {
+      "id": 4,
+      "role": "Maintenance"
+    }
   ],
   "companies": [
-    { "id": 1, "name": "Andes Mining Corp" },
-    { "id": 2, "name": "Southern Copper Operations" },
-    { "id": 3, "name": "Altiplano Minerals" }
+    {
+      "id": 1,
+      "name": "Andes Mining Corp"
+    },
+    {
+      "id": 2,
+      "name": "Southern Copper Operations"
+    },
+    {
+      "id": 3,
+      "name": "Altiplano Minerals"
+    }
   ],
   "users": [
     {
@@ -255,19 +276,84 @@
     }
   ],
   "sensors": [
-    { "id": 1, "id_vehicle": 1, "sensor_type": "GPS", "status": "active" },
-    { "id": 2, "id_vehicle": 1, "sensor_type": "Heart Rate", "status": "active" },
-    { "id": 3, "id_vehicle": 1, "sensor_type": "Proximity", "status": "active" },
-    { "id": 4, "id_vehicle": 2, "sensor_type": "GPS", "status": "active" },
-    { "id": 5, "id_vehicle": 2, "sensor_type": "Heart Rate", "status": "active" },
-    { "id": 6, "id_vehicle": 2, "sensor_type": "Fatigue Camera", "status": "active" },
-    { "id": 7, "id_vehicle": 3, "sensor_type": "GPS", "status": "active" },
-    { "id": 8, "id_vehicle": 3, "sensor_type": "Proximity", "status": "active" },
-    { "id": 9, "id_vehicle": 3, "sensor_type": "Heart Rate", "status": "active" },
-    { "id": 10, "id_vehicle": 4, "sensor_type": "GPS", "status": "maintenance" },
-    { "id": 11, "id_vehicle": 5, "sensor_type": "Watchdog", "status": "inactive" },
-    { "id": 12, "id_vehicle": 6, "sensor_type": "Autonomous Route Beacon", "status": "active" },
-    { "id": 13, "id_vehicle": 7, "sensor_type": "Autonomous Route Beacon", "status": "active" }
+    {
+      "id": 1,
+      "id_vehicle": 1,
+      "sensor_type": "GPS",
+      "status": "active"
+    },
+    {
+      "id": 2,
+      "id_vehicle": 1,
+      "sensor_type": "Heart Rate",
+      "status": "active"
+    },
+    {
+      "id": 3,
+      "id_vehicle": 1,
+      "sensor_type": "Proximity",
+      "status": "active"
+    },
+    {
+      "id": 4,
+      "id_vehicle": 2,
+      "sensor_type": "GPS",
+      "status": "active"
+    },
+    {
+      "id": 5,
+      "id_vehicle": 2,
+      "sensor_type": "Heart Rate",
+      "status": "active"
+    },
+    {
+      "id": 6,
+      "id_vehicle": 2,
+      "sensor_type": "Fatigue Camera",
+      "status": "active"
+    },
+    {
+      "id": 7,
+      "id_vehicle": 3,
+      "sensor_type": "GPS",
+      "status": "active"
+    },
+    {
+      "id": 8,
+      "id_vehicle": 3,
+      "sensor_type": "Proximity",
+      "status": "active"
+    },
+    {
+      "id": 9,
+      "id_vehicle": 3,
+      "sensor_type": "Heart Rate",
+      "status": "active"
+    },
+    {
+      "id": 10,
+      "id_vehicle": 4,
+      "sensor_type": "GPS",
+      "status": "maintenance"
+    },
+    {
+      "id": 11,
+      "id_vehicle": 5,
+      "sensor_type": "Watchdog",
+      "status": "inactive"
+    },
+    {
+      "id": 12,
+      "id_vehicle": 6,
+      "sensor_type": "Autonomous Route Beacon",
+      "status": "active"
+    },
+    {
+      "id": 13,
+      "id_vehicle": 7,
+      "sensor_type": "Autonomous Route Beacon",
+      "status": "active"
+    }
   ],
   "sensorReadings": [
     {
@@ -564,14 +650,62 @@
     }
   ],
   "zoneBoundaries": [
-    { "id": 1, "id_zone": 1, "latitude": -16.409047, "longitude": -71.537451, "point_order": 1 },
-    { "id": 2, "id_zone": 1, "latitude": -16.4095, "longitude": -71.5381, "point_order": 2 },
-    { "id": 3, "id_zone": 1, "latitude": -16.41, "longitude": -71.5377, "point_order": 3 },
-    { "id": 4, "id_zone": 1, "latitude": -16.4097, "longitude": -71.5369, "point_order": 4 },
-    { "id": 5, "id_zone": 4, "latitude": -16.4087, "longitude": -71.5368, "point_order": 1 },
-    { "id": 6, "id_zone": 4, "latitude": -16.4084, "longitude": -71.5372, "point_order": 2 },
-    { "id": 7, "id_zone": 4, "latitude": -16.4089, "longitude": -71.5374, "point_order": 3 },
-    { "id": 8, "id_zone": 5, "latitude": -16.411, "longitude": -71.539, "point_order": 1 }
+    {
+      "id": 1,
+      "id_zone": 1,
+      "latitude": -16.409047,
+      "longitude": -71.537451,
+      "point_order": 1
+    },
+    {
+      "id": 2,
+      "id_zone": 1,
+      "latitude": -16.4095,
+      "longitude": -71.5381,
+      "point_order": 2
+    },
+    {
+      "id": 3,
+      "id_zone": 1,
+      "latitude": -16.41,
+      "longitude": -71.5377,
+      "point_order": 3
+    },
+    {
+      "id": 4,
+      "id_zone": 1,
+      "latitude": -16.4097,
+      "longitude": -71.5369,
+      "point_order": 4
+    },
+    {
+      "id": 5,
+      "id_zone": 4,
+      "latitude": -16.4087,
+      "longitude": -71.5368,
+      "point_order": 1
+    },
+    {
+      "id": 6,
+      "id_zone": 4,
+      "latitude": -16.4084,
+      "longitude": -71.5372,
+      "point_order": 2
+    },
+    {
+      "id": 7,
+      "id_zone": 4,
+      "latitude": -16.4089,
+      "longitude": -71.5374,
+      "point_order": 3
+    },
+    {
+      "id": 8,
+      "id_zone": 5,
+      "latitude": -16.411,
+      "longitude": -71.539,
+      "point_order": 1
+    }
   ],
   "zonePermissions": [
     {
@@ -979,7 +1113,344 @@
       "description": "El riesgo más frecuente corresponde a Proximidad / Colisión e Incursión en Zona Restringida. Se recomienda reforzar el monitoreo en rutas autónomas.",
       "className": "zone-insight"
     }
+  ],
+  "adminSummary": [
+    {
+      "id": 1,
+      "activeSensors": 142,
+      "totalSensors": 142,
+      "lockedAccounts": 2,
+      "registeredAssets": 346
+    }
+  ],
+  "adminNotices": {
+    "notices": [
+      {
+        "id": 1,
+        "level": "warning",
+        "i18nKey": "admin.notices.passwordChangePending",
+        "i18nParams": {
+          "count": 2
+        },
+        "actionKey": "admin.notices.action.resendInvite"
+      },
+      {
+        "id": 2,
+        "level": "info",
+        "i18nKey": "admin.notices.consolidatedReportReady",
+        "i18nParams": {},
+        "actionKey": "admin.notices.action.downloadPdf"
+      }
+    ]
+  },
+  "supervisors": [
+    {
+      "id": 1,
+      "fullName": "Roberto Carlos",
+      "corporateId": "SUP-014",
+      "email": "roberto.c@mineguard.com",
+      "accessStatus": "locked"
+    },
+    {
+      "id": 2,
+      "fullName": "Juan Perez",
+      "corporateId": "SUP-001",
+      "email": "juan.perez@mineguard.com",
+      "accessStatus": "active"
+    },
+    {
+      "id": 3,
+      "fullName": "Luis Mendoza",
+      "corporateId": "SUP-008",
+      "email": "luis.m@mineguard.com",
+      "accessStatus": "inactive"
+    },
+    {
+      "id": 4,
+      "fullName": "Maria Garcia",
+      "corporateId": "SUP-022",
+      "email": "maria.garcia@mineguard.com",
+      "accessStatus": "active"
+    },
+    {
+      "id": 5,
+      "fullName": "Carlos Rios",
+      "corporateId": "SUP-031",
+      "email": "carlos.rios@mineguard.com",
+      "accessStatus": "active"
+    },
+    {
+      "fullName": "Renato Tapio",
+      "corporateId": "SUP-029",
+      "email": "u202316057@upc.edu.pe",
+      "id": 6
+    }
+  ],
+  "catalogSummary": [
+    {
+      "id": 1,
+      "driversTotal": 259,
+      "driversInactive": 8,
+      "vehiclesTotal": 87,
+      "vehiclesMaintenance": 4,
+      "supervisorsTotal": 24,
+      "supervisorsLocked": 1
+    }
+  ],
+  "auditLog": {
+    "entries": [
+      {
+        "id": 1,
+        "category": "security",
+        "occurredAt": "2026-05-14T10:45:00",
+        "titleKey": "monitoring.audit.entries.accountLocked.title",
+        "descriptionKey": "monitoring.audit.entries.accountLocked.description",
+        "descriptionParams": {
+          "fullName": "Roberto Carlos",
+          "corporateId": "SUP-014"
+        },
+        "actorKey": "monitoring.audit.actors.systemAutomatic"
+      },
+      {
+        "id": 2,
+        "category": "administrative",
+        "occurredAt": "2026-05-13T16:20:00",
+        "titleKey": "monitoring.audit.entries.personOffboarded.title",
+        "descriptionKey": "monitoring.audit.entries.personOffboarded.description",
+        "descriptionParams": {
+          "fullName": "Luis Mendoza",
+          "corporateId": "SUP-008"
+        },
+        "actorKey": "monitoring.audit.actors.adminGlobal"
+      },
+      {
+        "id": 3,
+        "category": "administrative",
+        "occurredAt": "2026-05-11T09:15:00",
+        "titleKey": "monitoring.audit.entries.supervisorCreated.title",
+        "descriptionKey": "monitoring.audit.entries.supervisorCreated.description",
+        "descriptionParams": {
+          "fullName": "Ana Torres",
+          "corporateId": "SUP-025"
+        },
+        "actorKey": "monitoring.audit.actors.adminGlobal"
+      }
+    ]
+  },
+  "vehiclesInventory": [
+    {
+      "id": 1,
+      "code": "V-04",
+      "model": "Volquete-04",
+      "category": "Maquinaria Pesada",
+      "status": "maintenance",
+      "assignedDriverName": null,
+      "shiftLabel": null
+    },
+    {
+      "id": 2,
+      "code": "V-07",
+      "model": "Volquete-07",
+      "category": "Maquinaria Pesada",
+      "status": "maintenance",
+      "assignedDriverName": null,
+      "shiftLabel": null
+    },
+    {
+      "id": 3,
+      "code": "V-12",
+      "model": "Camión Cisterna",
+      "category": "Servicios Operativos",
+      "status": "operational",
+      "assignedDriverName": "Carlos Ruiz",
+      "shiftLabel": "TURNO TARDE"
+    }
+  ],
+  "driversDirectory": [
+    {
+      "id": 1,
+      "fullName": "Carlos Ruiz",
+      "operatorId": "OP-8841",
+      "license": "A3-C",
+      "specialty": "Livianos",
+      "shiftStatus": "on_shift",
+      "lastAccess": "Hoy, 06:15 AM"
+    },
+    {
+      "id": 2,
+      "fullName": "Luis Mendoza",
+      "operatorId": "OP-1142",
+      "license": "A2-B",
+      "specialty": "Maquinaria Pesada",
+      "shiftStatus": "inactive",
+      "lastAccess": "Hace 3 meses"
+    },
+    {
+      "id": 3,
+      "fullName": "Ana Gomez",
+      "operatorId": "OP-7721",
+      "license": "A3-C",
+      "specialty": "Livianos",
+      "shiftStatus": "off_shift",
+      "lastAccess": "Hoy, 14:02 PM"
+    }
+  ],
+  "operationalAlerts": [
+    {
+      "id": 1,
+      "code": "AL-8942",
+      "type": "collision",
+      "priority": "critical",
+      "status": "resolved",
+      "occurredAt": "2026-05-10T14:32:05",
+      "title": "Cruce Camioneta - Ruta A",
+      "description": "Colisi�n entre Camioneta-54 y Cami�n de carga pesada",
+      "vehicleClassKey": "monitoring.alerts.vehicleClass.light",
+      "vehicleCode": "Camioneta - 54",
+      "driverName": "Luis Perez",
+      "resolutionNotes": "Verified, contact made, drivers notified"
+    },
+    {
+      "id": 2,
+      "code": "AL-8941",
+      "type": "fatigue",
+      "priority": "warning",
+      "status": "active",
+      "occurredAt": "2026-05-10T14:17:00",
+      "title": "Cruce Camioneta - Ruta A",
+      "description": "Fatiga detectada por cámara en Camioneta-12",
+      "vehicleClassKey": "monitoring.alerts.vehicleClass.light",
+      "vehicleCode": "Camioneta - 12",
+      "driverName": "Carlos Ruiz",
+      "resolutionNotes": ""
+    },
+    {
+      "id": 3,
+      "code": "AL-8940",
+      "type": "imminent_collision",
+      "priority": "critical",
+      "status": "active",
+      "occurredAt": "2026-05-10T14:12:00",
+      "title": "Cruce Camioneta - Ruta A",
+      "description": "Proximidad crítica detectada entre Camioneta-54 y Camión de carga pesada",
+      "vehicleClassKey": "monitoring.alerts.vehicleClass.light",
+      "vehicleCode": "Camioneta - 54",
+      "driverName": "Luis Perez",
+      "resolutionNotes": ""
+    },
+    {
+      "id": 4,
+      "code": "AL-8939",
+      "type": "imminent_collision",
+      "priority": "critical",
+      "status": "active",
+      "occurredAt": "2026-05-10T14:02:00",
+      "title": "Cruce Camioneta - Ruta A",
+      "description": "Segunda alerta de proximidad en el mismo tramo durante operación de tarde",
+      "vehicleClassKey": "monitoring.alerts.vehicleClass.heavy",
+      "vehicleCode": "Volquete - 04",
+      "driverName": "Juan Pérez",
+      "resolutionNotes": ""
+    }
+  ],
+  "liveMapVehicles": [
+    {
+      "id": 1,
+      "code": "V-04",
+      "vehicleType": "Volquete",
+      "latitude": -16.4087,
+      "longitude": -71.5368,
+      "status": "operational",
+      "driverName": "Juan Pérez"
+    },
+    {
+      "id": 2,
+      "code": "V-07",
+      "vehicleType": "Volquete",
+      "latitude": -16.4101,
+      "longitude": -71.5381,
+      "status": "maintenance",
+      "driverName": "Sin asignar"
+    },
+    {
+      "id": 3,
+      "code": "V-12",
+      "vehicleType": "Camión Cisterna",
+      "latitude": -16.4072,
+      "longitude": -71.5395,
+      "status": "operational",
+      "driverName": "Carlos Ruiz"
+    },
+    {
+      "id": 4,
+      "code": "V-05",
+      "vehicleType": "Camioneta",
+      "latitude": -16.4108,
+      "longitude": -71.5402,
+      "status": "alert",
+      "driverName": "Luis Perez"
+    },
+    {
+      "id": 5,
+      "code": "AH-9001",
+      "vehicleType": "Autonomous Haul Truck",
+      "latitude": -16.4063,
+      "longitude": -71.5358,
+      "status": "alert",
+      "driverName": "Sin asignar"
+    },
+    {
+      "id": 6,
+      "code": "AH-9002",
+      "vehicleType": "Autonomous Haul Truck",
+      "latitude": -16.4128,
+      "longitude": -71.5345,
+      "status": "operational",
+      "driverName": "Sin asignar"
+    },
+    {
+      "id": 7,
+      "code": "T-092",
+      "vehicleType": "Service Truck",
+      "latitude": -16.4095,
+      "longitude": -71.5412,
+      "status": "maintenance",
+      "driverName": "Pedro Sanchez"
+    },
+    {
+      "id": 8,
+      "code": "C-15",
+      "vehicleType": "Camioneta",
+      "latitude": -16.4118,
+      "longitude": -71.5331,
+      "status": "operational",
+      "driverName": "Ana Gomez"
+    }
+  ],
+  "fleetSummary": [
+    {
+      "id": 1,
+      "operational": 10,
+      "maintenance": 6,
+      "alert": 6,
+      "total": 22,
+      "operationalPercent": 61
+    }
+  ],
+  "cardiacReadings": [
+    {
+      "id": 1,
+      "driverName": "Emilio",
+      "vehicleCode": "V-05",
+      "heartRate": 110,
+      "status": "warning"
+    },
+    {
+      "id": 2,
+      "driverName": "Carlos",
+      "vehicleCode": "V-04",
+      "heartRate": 148,
+      "status": "critical"
+    }
   ]
-
-
 }

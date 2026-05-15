@@ -1,0 +1,11 @@
+<div class="supervisors-page">
+  <header class="page-header">
+    <h1>{{ 'iam.supervisors.title' | translate }}</h1>
+    <p>{{ 'iam.supervisors.subtitle' | translate }}</p>
+  </header>
+
+  <div class="page-grid">
+    <app-supervisor-form></app-supervisor-form>
+    <app-supervisor-directory [supervisors]="supervisors()"></app-supervisor-directory>
+  </div>
+</div>
