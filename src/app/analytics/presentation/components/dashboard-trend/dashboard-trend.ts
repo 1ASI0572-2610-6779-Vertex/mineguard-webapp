@@ -1,13 +1,15 @@
-import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { DashboardTrend as DashboardTrendEntity } from '../../../domain/model/dashboard-trend.entity';
 
+/**
+ * Incident-trend mini chart for the control-center dashboard.
+ */
 @Component({
   selector: 'app-dashboard-trend',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [TranslatePipe],
   templateUrl: './dashboard-trend.html',
   styleUrl: './dashboard-trend.css',
 })

@@ -5,32 +5,31 @@
   </div>
 
   <div class="risk-list">
-    <div
-      class="risk-item"
-      *ngFor="let metric of riskDrivers; let i = index"
-    >
-      <div
-        class="rank"
-        [class.rank-red]="i === 0"
-        [class.rank-orange]="i === 1"
-      >
-        {{ i + 1 }}
-      </div>
+    @for (metric of riskDrivers; track metric.id; let i = $index) {
+      <div class="risk-item">
+        <div
+          class="rank"
+          [class.rank-red]="i === 0"
+          [class.rank-orange]="i === 1"
+        >
+          {{ i + 1 }}
+        </div>
 
-      <div class="driver-info">
-        <strong>{{ metric.driverName }}</strong>
-        <span>{{ metric.vehicleType }}</span>
-      </div>
+        <div class="driver-info">
+          <strong>{{ metric.driverName }}</strong>
+          <span>{{ metric.vehicleType }}</span>
+        </div>
 
-      <strong
-        class="points"
-        [class.high]="metric.riskScore >= 70"
-        [class.medium]="metric.riskScore >= 50 && metric.riskScore < 70"
-      >
-        {{ metric.riskScore | number: '1.0-0' }}
-        {{ 'dashboard.riskDrivers.points' | translate }}
-      </strong>
-    </div>
+        <strong
+          class="points"
+          [class.high]="metric.riskScore >= 70"
+          [class.medium]="metric.riskScore >= 50 && metric.riskScore < 70"
+        >
+          {{ metric.riskScore | number: '1.0-0' }}
+          {{ 'dashboard.riskDrivers.points' | translate }}
+        </strong>
+      </div>
+    }
   </div>
 
   <button class="report-btn">

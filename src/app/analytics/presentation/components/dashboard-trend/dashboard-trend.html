@@ -27,7 +27,9 @@
     </div>
 
     <div class="chart-labels">
-      <span *ngFor="let item of trend">{{ item.hour }}</span>
+      @for (item of trend; track item.id) {
+        <span>{{ item.hour }}</span>
+      }
     </div>
 
     <div class="chart-legend">
