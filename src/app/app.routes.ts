@@ -10,9 +10,11 @@ const analyticsRoutes = () =>
 /*const assetsRoutes = () =>
   import('./assets/presentation/assets.routes').then((m) => m.assetsRoutes);
 const iamRoutes = () => import('./iam/presentation/iam.routes').then((m) => m.iamRoutes);
+*/
+
 const monitoringRoutes = () =>
   import('./monitoring/presentation/monitoring.routes').then((m) => m.monitoringRoutes);
-*/
+
 const baseTitle = 'MineGuard';
 
 /**
@@ -28,7 +30,7 @@ export const routes: Routes = [
   { path: 'about', loadComponent: about, title: `${baseTitle} - About`, canActivate: [iamGuard] },
 //  { path: 'iam', loadChildren: iamRoutes },
   { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [iamGuard] },
- // { path: 'monitoring', loadChildren: monitoringRoutes, canActivate: [iamGuard] },
+  { path: 'monitoring', loadChildren: monitoringRoutes, canActivate: [iamGuard] },
 //  { path: 'assets', loadChildren: assetsRoutes, canActivate: [iamGuard] },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   {

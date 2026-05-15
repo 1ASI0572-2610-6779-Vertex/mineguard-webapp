@@ -1,0 +1,28 @@
+<section class="fleet-card">
+  <h2 class="card-title">{{ 'monitoring.liveMap.fleet.title' | translate }}</h2>
+
+  <div class="counters">
+    <div class="counter">
+      <span class="counter-value counter-operational">{{ summary.operational }}</span>
+      <span class="counter-label">{{ 'monitoring.liveMap.fleet.operational' | translate }}</span>
+    </div>
+    <div class="counter">
+      <span class="counter-value counter-maintenance">{{ summary.maintenance }}</span>
+      <span class="counter-label">{{ 'monitoring.liveMap.fleet.maintenance' | translate }}</span>
+    </div>
+    <div class="counter">
+      <span class="counter-value counter-alert">{{ summary.alert }}</span>
+      <span class="counter-label">{{ 'monitoring.liveMap.fleet.alert' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="bar-track">
+      <div class="bar-fill" [style.width.%]="summary.operationalPercent"></div>
+    </div>
+    <div class="bar-meta">
+      <span>{{ 'monitoring.liveMap.fleet.percentOperational' | translate: { percent: summary.operationalPercent } }}</span>
+      <span>{{ 'monitoring.liveMap.fleet.vehiclesCount' | translate: { count: summary.total } }}</span>
+    </div>
+  </div>
+</section>

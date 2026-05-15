@@ -1,0 +1,22 @@
+<section class="cardiac-card">
+  <h2 class="card-title">{{ 'monitoring.liveMap.cardiac.title' | translate }}</h2>
+
+  <ul class="readings-list">
+    @for (reading of readings; track reading.id) {
+      <li
+        class="reading-row"
+        [class.reading-warning]="reading.status === 'warning'"
+        [class.reading-critical]="reading.status === 'critical'"
+      >
+        <span class="reading-dot"></span>
+        <span class="reading-name">{{ reading.driverName }}</span>
+        <span class="reading-rate">
+          {{ 'monitoring.liveMap.cardiac.bpm' | translate: { rate: reading.heartRate } }}
+        </span>
+      </li>
+    }
+    @if (readings.length === 0) {
+      <li class="empty">{{ 'monitoring.liveMap.cardiac.empty' | translate }}</li>
+    }
+  </ul>
+</section>

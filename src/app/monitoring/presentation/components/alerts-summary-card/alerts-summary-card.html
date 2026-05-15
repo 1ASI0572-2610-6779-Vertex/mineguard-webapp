@@ -1,0 +1,30 @@
+<section class="alerts-summary-card">
+  <header class="card-header">
+    <h2>{{ 'monitoring.liveMap.alertsSummary.title' | translate }}</h2>
+    <span class="critical-badge">
+      {{ 'monitoring.liveMap.alertsSummary.criticalsCount' | translate: { count: alerts.length } }}
+    </span>
+  </header>
+
+  <ul class="alerts-list">
+    @for (alert of alerts; track alert.id) {
+      <li class="alert-row">
+        <span class="alert-dot"></span>
+        <div class="alert-info">
+          <strong>{{ 'monitoring.alerts.typeFull.' + alert.type | translate }}</strong>
+          <span class="meta">
+            {{ alert.vehicleCode }}
+            ·
+            {{ 'monitoring.alerts.elapsed.' + elapsedFor(alert.occurredAt).unit | translate: { count: elapsedFor(alert.occurredAt).value } }}
+          </span>
+        </div>
+        <span class="severity-pill">
+          {{ 'monitoring.alerts.priorityLabel.critical' | translate }}
+        </span>
+      </li>
+    }
+    @if (alerts.length === 0) {
+      <li class="empty">{{ 'monitoring.liveMap.alertsSummary.empty' | translate }}</li>
+    }
+  </ul>
+</section>
