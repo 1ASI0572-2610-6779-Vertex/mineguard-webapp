@@ -1,0 +1,13 @@
+<div class="audit-and-assets-page">
+  <header class="page-header">
+    <h1>{{ 'monitoring.auditAndAssets.title' | translate }}</h1>
+    <p>{{ 'monitoring.auditAndAssets.subtitle' | translate }}</p>
+  </header>
+
+  <div class="page-grid">
+    @if (catalogSummary(); as s) {
+      <app-catalog-summary [summary]="s"></app-catalog-summary>
+    }
+    <app-audit-log [entries]="auditLog()"></app-audit-log>
+  </div>
+</div>
