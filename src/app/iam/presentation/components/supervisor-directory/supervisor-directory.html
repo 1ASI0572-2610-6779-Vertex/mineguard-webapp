@@ -1,0 +1,82 @@
+<section class="directory">
+  <header class="directory-header">
+    <h2>{{ 'iam.supervisors.directory.title' | translate }}</h2>
+    <input
+      class="search"
+      type="search"
+      [value]="query()"
+      (input)="onSearch($any($event.target).value)"
+      [placeholder]="'iam.supervisors.directory.searchPlaceholder' | translate"
+    />
+  </header>
+
+  <div class="column-labels">
+    <span>{{ 'iam.supervisors.directory.column.userContact' | translate }}</span>
+    <span>{{ 'iam.supervisors.directory.column.accessStatus' | translate }}</span>
+    <span class="action-col">{{ 'iam.supervisors.directory.column.actionRequired' | translate }}</span>
+  </div>
+
+  <ul class="directory-list">
+    @for (supervisor of filteredSupervisors(); track supervisor.id) {
+      <li
+        class="directory-row"
+        [class.row-inactive]="supervisor.accessStatus === 'inactive'"
+      >
+        <div class="user-cell">
+          <div class="avatar">{{ initialsOf(supervisor.fullName) }}</div>
+          <div class="user-info">
+            <span class="name">
+              <strong>{{ supervisor.fullName }}</strong>
+              <span class="corporate-id">({{ supervisor.corporateId }})</span>
+            </span>
+            <span class="email">{{ supervisor.email }}</span>
+          </div>
+        </div>
+
+        <div class="status-cell">
+          @switch (supervisor.accessStatus) {
+            @case ('active') {
+              <span class="badge badge-active">
+                {{ 'iam.supervisors.directory.status.active' | translate }}
+              </span>
+            }
+            @case ('locked') {
+              <span class="badge badge-locked">
+                {{ 'iam.supervisors.directory.status.locked' | translate }}
+              </span>
+            }
+            @case ('inactive') {
+              <span class="badge badge-inactive">
+                {{ 'iam.supervisors.directory.status.inactive' | translate }}
+              </span>
+            }
+          }
+        </div>
+
+        <div class="action-cell">
+          @switch (supervisor.accessStatus) {
+            @case ('active') {
+              <button class="action-link action-suspend" (click)="suspend(supervisor)">
+                {{ 'iam.supervisors.directory.action.suspend' | translate }}
+              </button>
+            }
+            @case ('locked') {
+              <button
+                mat-stroked-button
+                class="action-restore"
+                (click)="restoreAccess(supervisor)"
+              >
+                {{ 'iam.supervisors.directory.action.restore' | translate }}
+              </button>
+            }
+            @case ('inactive') {
+              <span class="action-readonly">
+                {{ 'iam.supervisors.directory.action.historyPreserved' | translate }}
+              </span>
+            }
+          }
+        </div>
+      </li>
+    }
+  </ul>
+</section>

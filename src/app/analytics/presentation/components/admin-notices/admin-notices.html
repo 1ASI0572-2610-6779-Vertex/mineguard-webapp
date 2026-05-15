@@ -1,0 +1,16 @@
+<section class="admin-notices">
+  <header class="notices-header">
+    <mat-icon class="header-icon">info</mat-icon>
+    <h2>{{ 'admin.notices.title' | translate }}</h2>
+  </header>
+
+  <ul class="notice-list">
+    @for (notice of notices; track notice.id) {
+      <li class="notice-item" [class.notice-warning]="notice.level === 'warning'" [class.notice-info]="notice.level === 'info'">
+        <span class="notice-dot"></span>
+        <span class="notice-message">{{ notice.i18nKey | translate: notice.i18nParams }}</span>
+        <a class="notice-action">{{ notice.actionKey | translate }}</a>
+      </li>
+    }
+  </ul>
+</section>

@@ -1,0 +1,47 @@
+<section class="audit-log">
+  <header class="audit-header">
+    <h2>{{ 'monitoring.audit.title' | translate }}</h2>
+
+    <div class="audit-controls">
+      <label class="filter">
+        <span>{{ 'monitoring.audit.filter.label' | translate }}</span>
+        <select>
+          <option value="all">{{ 'monitoring.audit.filter.all' | translate }}</option>
+        </select>
+      </label>
+
+      <button mat-stroked-button class="export-btn">
+        <mat-icon>download</mat-icon>
+        <span>{{ 'monitoring.audit.export' | translate }}</span>
+      </button>
+    </div>
+  </header>
+
+  <ol class="timeline">
+    @for (entry of entries; track entry.id) {
+      <li
+        class="event"
+        [class.event-security]="entry.category === 'security'"
+        [class.event-administrative]="entry.category === 'administrative'"
+        [class.event-operational]="entry.category === 'operational'"
+      >
+        <span class="event-dot"></span>
+        <span class="event-category">
+          {{ 'monitoring.audit.category.' + entry.category | translate }}
+        </span>
+        <time class="event-time">{{ formatTimestamp(entry.occurredAt) }}</time>
+        <h3 class="event-title">{{ entry.titleKey | translate }}</h3>
+        <p class="event-description">
+          {{ entry.descriptionKey | translate: entry.descriptionParams }}
+        </p>
+        <p class="event-actor">
+          <mat-icon class="actor-icon">person</mat-icon>
+          <span>
+            {{ 'monitoring.audit.actorLabel' | translate }}:
+            {{ entry.actorKey | translate }}
+          </span>
+        </p>
+      </li>
+    }
+  </ol>
+</section>

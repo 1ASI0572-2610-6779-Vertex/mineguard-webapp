@@ -1,0 +1,19 @@
+<div class="alerts-page">
+  <header class="page-header">
+    <h1>{{ 'monitoring.alerts.pageTitle' | translate }}</h1>
+    <p>{{ 'monitoring.alerts.pageSubtitle' | translate }}</p>
+  </header>
+
+  <div class="page-grid">
+    <app-alerts-inbox
+      [alerts]="alerts()"
+      [selectedAlertId]="selectedAlertId()"
+      (alertSelected)="onAlertSelected($event)"
+    ></app-alerts-inbox>
+
+    <app-alert-detail
+      [alert]="selectedAlert()"
+      (classify)="onClassify($event)"
+    ></app-alert-detail>
+  </div>
+</div>

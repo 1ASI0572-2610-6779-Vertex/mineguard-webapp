@@ -1,0 +1,30 @@
+<div class="live-map-page">
+  <header class="page-header">
+    <h1>{{ 'monitoring.liveMap.title' | translate }}</h1>
+    <p>{{ 'monitoring.liveMap.subtitle' | translate }}</p>
+  </header>
+
+  <div class="page-grid">
+    <app-live-map [vehicles]="vehicles()"></app-live-map>
+
+    <aside class="sidebar">
+      <input
+        class="sidebar-search"
+        type="search"
+        [placeholder]="'monitoring.liveMap.searchPlaceholder' | translate"
+      />
+
+      @if (fleetSummary(); as summary) {
+        <app-fleet-summary-card [summary]="summary"></app-fleet-summary-card>
+      }
+
+      <app-alerts-summary-card [alerts]="criticalAlerts()"></app-alerts-summary-card>
+
+      <app-cardiac-monitor-card [readings]="cardiacReadings()"></app-cardiac-monitor-card>
+
+      <button mat-stroked-button class="report-cta">
+        {{ 'monitoring.liveMap.reportCta' | translate }}
+      </button>
+    </aside>
+  </div>
+</div>

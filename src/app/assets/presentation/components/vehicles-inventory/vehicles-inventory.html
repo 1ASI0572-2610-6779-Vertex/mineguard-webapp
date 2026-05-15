@@ -1,0 +1,76 @@
+<div class="vehicles-inventory">
+  <div class="column-labels">
+    <span>{{ 'assets.fleet.vehicles.column.identifier' | translate }}</span>
+    <span>{{ 'assets.fleet.vehicles.column.status' | translate }}</span>
+    <span>{{ 'assets.fleet.vehicles.column.assignment' | translate }}</span>
+    <span class="actions-col">{{ 'assets.fleet.vehicles.column.actions' | translate }}</span>
+  </div>
+
+  <ul class="vehicles-list">
+    @for (vehicle of vehicles; track vehicle.id) {
+      <li class="vehicle-row">
+        <div class="vehicle-identity">
+          <div class="icon-wrap">
+            <mat-icon class="vehicle-icon">local_shipping</mat-icon>
+          </div>
+          <div class="identity-text">
+            <strong>{{ vehicle.code }} ({{ vehicle.model }})</strong>
+            <span>{{ vehicle.category }}</span>
+          </div>
+        </div>
+
+        <div class="status-cell">
+          @switch (vehicle.status) {
+            @case ('operational') {
+              <span class="badge badge-operational">
+                {{ 'assets.fleet.vehicles.status.operational' | translate }}
+              </span>
+            }
+            @case ('maintenance') {
+              <span class="badge badge-maintenance">
+                <mat-icon class="badge-icon">build_circle</mat-icon>
+                {{ 'assets.fleet.vehicles.status.maintenance' | translate }}
+              </span>
+            }
+          }
+        </div>
+
+        <div class="assignment-cell">
+          @if (vehicle.assignedDriverName) {
+            <strong>{{ vehicle.assignedDriverName }}</strong>
+            @if (vehicle.shiftLabel) {
+              <span class="shift-label">{{ vehicle.shiftLabel }}</span>
+            }
+          } @else {
+            <em class="blocked-for-use">
+              {{ 'assets.fleet.vehicles.blockedForUse' | translate }}
+            </em>
+          }
+        </div>
+
+        <div class="actions-cell">
+          <button
+            mat-icon-button
+            class="edit-btn"
+            [title]="'assets.fleet.vehicles.action.edit' | translate"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+
+          @switch (vehicle.status) {
+            @case ('operational') {
+              <button mat-stroked-button class="action-btn" (click)="sendToMaintenance(vehicle)">
+                {{ 'assets.fleet.vehicles.action.sendToWorkshop' | translate }}
+              </button>
+            }
+            @case ('maintenance') {
+              <button mat-stroked-button class="action-btn action-positive" (click)="markOperational(vehicle)">
+                {{ 'assets.fleet.vehicles.action.markOperational' | translate }}
+              </button>
+            }
+          }
+        </div>
+      </li>
+    }
+  </ul>
+</div>

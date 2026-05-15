@@ -1,0 +1,58 @@
+<div class="sign-in-page">
+  <form class="sign-in-card" [formGroup]="form" (ngSubmit)="performSignIn()">
+    <header class="sign-in-header">
+      <img class="brand-logo" src="/mineguard-brand-logo.png" alt="MineGuard logo" />
+      <h1>{{ 'iam.signIn.title' | translate }}</h1>
+      <p>{{ 'iam.signIn.subtitle' | translate }}</p>
+    </header>
+
+    <div class="field">
+      <label for="username">{{ 'iam.signIn.username.label' | translate }}</label>
+      <mat-form-field appearance="outline">
+        <input
+          matInput
+          id="username"
+          name="username"
+          autocomplete="username"
+          formControlName="username"
+          [placeholder]="'iam.signIn.username.placeholder' | translate"
+        />
+        @if (isInvalidControl(form, 'username')) {
+          <mat-error>{{ errorMessagesForControl(form, 'username') }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="field">
+      <div class="field-row">
+        <label for="password">{{ 'iam.signIn.password.label' | translate }}</label>
+        <a class="trouble-link">{{ 'iam.signIn.troubleLink' | translate }}</a>
+      </div>
+      <mat-form-field appearance="outline">
+        <input
+          matInput
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          formControlName="password"
+        />
+        @if (isInvalidControl(form, 'password')) {
+          <mat-error>{{ errorMessagesForControl(form, 'password') }}</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <button mat-flat-button color="primary" class="submit-btn" type="submit">
+      {{ 'iam.signIn.submit' | translate }}
+    </button>
+  </form>
+
+  <footer class="sign-in-footer">
+    <p class="security-note">
+      <span class="lock-icon">🔒</span>
+      {{ 'iam.signIn.securityNote' | translate }}
+    </p>
+    <p class="copyright">{{ 'iam.signIn.copyright' | translate }}</p>
+  </footer>
+</div>

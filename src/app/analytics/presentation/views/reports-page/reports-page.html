@@ -1,0 +1,15 @@
+<div class="reports-page">
+  <header class="page-header">
+    <h1>{{ 'reports.title' | translate }}</h1>
+    <p>{{ 'reports.subtitle' | translate }}</p>
+  </header>
+
+  <div class="top-row">
+    <app-reports-fatigue-bars [bars]="fatigueBars()"></app-reports-fatigue-bars>
+    <app-reports-incident-distribution
+      [distribution]="incidentDistribution()"
+    ></app-reports-incident-distribution>
+  </div>
+
+  <app-reports-history-table [rows]="historyRows()"></app-reports-history-table>
+</div>

@@ -1,0 +1,93 @@
+@if (currentAlert(); as alert) {
+  <section class="alert-detail">
+    <header class="detail-header">
+      <div class="title-block">
+        <div class="code-row">
+          <h2 class="code">{{ alert.code }}</h2>
+          <span
+            class="priority"
+            [class.priority-critical]="alert.priority === 'critical'"
+            [class.priority-warning]="alert.priority === 'warning'"
+          >
+            {{ 'monitoring.alerts.priorityLabel.' + alert.priority | translate }}
+          </span>
+        </div>
+        <p class="type-subtitle">
+          {{ 'monitoring.alerts.typeFull.' + alert.type | translate }}
+        </p>
+      </div>
+      <div class="time-block">
+        <strong>{{ formattedTime() }}</strong>
+        <span>{{ formattedDate() }}</span>
+      </div>
+    </header>
+
+    <section class="vehicle-block">
+      <span class="vehicle-class-label">{{ alert.vehicleClassKey | translate }}</span>
+      <div class="vehicle-row">
+        <div class="vehicle-icon">
+          <mat-icon>local_shipping</mat-icon>
+        </div>
+        <div class="vehicle-info">
+          <strong>{{ alert.vehicleCode }}</strong>
+          <span>
+            {{ 'monitoring.alerts.driverLabel' | translate }}: {{ alert.driverName }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    @if (alert.status === 'active') {
+      <section class="response-block">
+        <div class="response-header">
+          <mat-icon class="response-icon">video_camera_front</mat-icon>
+          <h3>{{ 'monitoring.alerts.responseAction.title' | translate }}</h3>
+        </div>
+        <p class="response-text">
+          {{ 'monitoring.alerts.responseAction.description' | translate }}
+        </p>
+        <button mat-flat-button class="contact-btn">
+          <mat-icon>call</mat-icon>
+          <span>{{ 'monitoring.alerts.responseAction.button' | translate }}</span>
+        </button>
+      </section>
+    }
+
+    <section class="classification-block">
+      <h3>{{ 'monitoring.alerts.classification.title' | translate }}</h3>
+      <textarea
+        class="notes-input"
+        [value]="notes()"
+        (input)="onNotesChange($any($event.target).value)"
+        [disabled]="!canClassify()"
+        [placeholder]="'monitoring.alerts.classification.placeholder' | translate"
+      ></textarea>
+    </section>
+
+    <footer class="detail-actions">
+      <button
+        mat-stroked-button
+        class="action-false-alarm"
+        [disabled]="!canClassify()"
+        (click)="markFalseAlarm()"
+      >
+        <mat-icon>cancel</mat-icon>
+        <span>{{ 'monitoring.alerts.action.falseAlarm' | translate }}</span>
+      </button>
+      <button
+        mat-flat-button
+        class="action-resolve"
+        [disabled]="!canClassify()"
+        (click)="markResolved()"
+      >
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ 'monitoring.alerts.action.resolve' | translate }}</span>
+      </button>
+    </footer>
+  </section>
+} @else {
+  <section class="empty-state">
+    <mat-icon class="empty-icon">notifications_paused</mat-icon>
+    <p>{{ 'monitoring.alerts.empty' | translate }}</p>
+  </section>
+}

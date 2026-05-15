@@ -1,0 +1,21 @@
+<div class="control-page">
+  @if (summary(); as s) {
+    <app-dashboard-stats [summary]="s"></app-dashboard-stats>
+
+    <div class="middle-grid">
+      <app-dashboard-trend
+        [trend]="trend()"
+        [alertTrendPath]="alertTrendPath()"
+        [incidentTrendPath]="incidentTrendPath()"
+      ></app-dashboard-trend>
+
+      <app-dashboard-risk-drivers
+        [riskDrivers]="riskDrivers()"
+      ></app-dashboard-risk-drivers>
+    </div>
+
+    <app-dashboard-recent-alerts
+      [recentAlerts]="recentAlerts()"
+    ></app-dashboard-recent-alerts>
+  }
+</div>

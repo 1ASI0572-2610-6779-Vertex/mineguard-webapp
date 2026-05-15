@@ -1,0 +1,15 @@
+<div class="admin-summary-page">
+  <header class="page-header">
+    <h1>{{ 'admin.summary.title' | translate }}</h1>
+    <p>{{ 'admin.summary.subtitle' | translate }}</p>
+  </header>
+
+  <section class="system-health">
+    <h2>{{ 'admin.summary.sectionHealth' | translate }}</h2>
+    @if (summary(); as s) {
+      <app-admin-stats [summary]="s"></app-admin-stats>
+    }
+  </section>
+
+  <app-admin-notices [notices]="notices()"></app-admin-notices>
+</div>

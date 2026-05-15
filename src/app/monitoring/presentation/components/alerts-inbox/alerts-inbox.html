@@ -1,0 +1,33 @@
+<section class="alerts-inbox">
+  <h2 class="inbox-title">{{ 'monitoring.alerts.inbox.title' | translate }}</h2>
+
+  <ul class="alert-list">
+    @for (alert of alerts; track alert.id) {
+      <li
+        class="alert-card"
+        [class.alert-selected]="selectedAlertId === alert.id"
+        [class.alert-resolved]="alert.status !== 'active'"
+        (click)="selectAlert(alert.id)"
+      >
+        <div class="alert-row-top">
+          <span
+            class="type-label"
+            [class.type-collision]="alert.type === 'collision'"
+            [class.type-imminent]="alert.type === 'imminent_collision'"
+            [class.type-fatigue]="alert.type === 'fatigue'"
+          >
+            {{ 'monitoring.alerts.type.' + alert.type | translate }}
+          </span>
+          <span class="elapsed">
+            {{ 'monitoring.alerts.elapsed.' + elapsedFor(alert.occurredAt).unit | translate: { count: elapsedFor(alert.occurredAt).value } }}
+          </span>
+        </div>
+
+        <h3 class="alert-title">{{ alert.title }}</h3>
+        <p class="alert-description">{{ alert.description }}</p>
+
+        <span class="alert-code">{{ alert.code }}</span>
+      </li>
+    }
+  </ul>
+</section>
