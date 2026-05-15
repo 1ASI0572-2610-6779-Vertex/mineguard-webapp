@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
   platformProviderApiBaseUrl: 'https://mineguard-api-wmr0.onrender.com',
-  platformProviderSignInEndpointPath: '/users',
-  platformProviderSignUpEndpointPath: '/users',
+  platformProviderSignInEndpointPath: '/authentication/sign-in',
+  platformProviderSignUpEndpointPath: '/authentication/sign-up',
   platformProviderDashboardSummaryEndpointPath: '/dashboardSummary',
   platformProviderDashboardTrendEndpointPath: '/dashboardTrend',
   platformProviderDashboardRiskDriversEndpointPath: '/dashboardRiskDrivers',
