@@ -1,0 +1,376 @@
+{
+  "option": {
+    "home": "Inicio",
+    "about": "Acerca de",
+    "dashboard": "Centro de Control",
+    "reports": "Reportes y Analítica",
+    "adminSummary": "Resumen del Sistema",
+    "userManagement": "Gestión de Usuarios",
+    "auditAndAssets": "Auditoría y Activos",
+    "fleetAndDrivers": "Flota y Conductores",
+    "alerts": "Gestión de Alertas",
+    "liveMap": "Mapa en Vivo"
+  },
+  "about": {
+    "title": "Acerca de nosotros",
+    "content": "MineGuard es una plataforma de seguridad para operaciones mineras."
+  },
+  "home": {
+    "title": "Bienvenido",
+    "content": "Bienvenido al portal de operaciones MineGuard."
+  },
+  "page-not-found": {
+    "title": "Página no encontrada",
+    "content": "La ruta <strong>{{ invalid_path }}</strong> es inválida.",
+    "go-home": "Ir a Inicio"
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados.",
+    "powered-by": "Desarrollado con",
+    "and": "y"
+  },
+  "toolbar": {
+    "subtitle": "Monitoreo en tiempo real de la operación minera"
+  },
+  "layout": {
+    "section": {
+      "operations": "OPERACIONES"
+    },
+    "sensors": "Sensores ({{ active }} / {{ total }})",
+    "user": {
+      "placeholder": {
+        "name": "Juan Perez",
+        "role": "Super User · Samy"
+      }
+    }
+  },
+  "auth": {
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "logout": "Cerrar sesión"
+  },
+  "iam": {
+    "signIn": {
+      "title": "Portal de Operaciones",
+      "subtitle": "Centro de Control MineGuard",
+      "username": {
+        "label": "ID Corporativo",
+        "placeholder": "Ej. SUP-001"
+      },
+      "password": {
+        "label": "Contraseña"
+      },
+      "troubleLink": "¿Problemas de acceso?",
+      "submit": "Iniciar Sesión",
+      "securityNote": "Acceso restringido. Toda actividad está siendo monitoreada.",
+      "copyright": "© 2026 MineGuard Systems v2.4.1"
+    },
+    "supervisors": {
+      "title": "Gestión de Usuarios",
+      "subtitle": "Control de altas, bloqueos de seguridad y bajas lógicas del personal directo",
+      "newSupervisor": {
+        "title": "Nuevo Supervisor",
+        "fullName": {
+          "label": "Nombre Completo",
+          "placeholder": "Ej. Ana Torres"
+        },
+        "corporateId": {
+          "label": "ID Corporativo (Único)",
+          "placeholder": "Ej. SUP-025"
+        },
+        "email": {
+          "label": "Correo Corporativo",
+          "placeholder": "ana.torres@mineguard.com"
+        },
+        "submit": "Crear y Enviar Accesos",
+        "hint": "El sistema generará una clave temporal y forzará su cambio en el primer ingreso"
+      },
+      "directory": {
+        "title": "Directorio de Supervisores",
+        "searchPlaceholder": "Buscar por nombre o ID...",
+        "column": {
+          "userContact": "Usuario y contacto",
+          "accessStatus": "Estado del acceso",
+          "actionRequired": "Acción requerida"
+        },
+        "status": {
+          "active": "Activo",
+          "locked": "Bloqueado",
+          "inactive": "Inactivo (Baja)"
+        },
+        "action": {
+          "suspend": "Suspender",
+          "restore": "Restablecer Acceso",
+          "historyPreserved": "Historial conservado"
+        }
+      }
+    }
+  },
+  "reports": {
+    "title": "Reportes y Analítica",
+    "subtitle": "Métricas operativas y de seguridad agregadas de toda la operación minera",
+    "export": "Exportar",
+    "fatigueBars": {
+      "title": "Análisis de Fatiga por Conductor",
+      "subtitle": "Acumulado mensual"
+    },
+    "incidentDistribution": {
+      "title": "Distribución de Incidentes",
+      "subtitle": "Alertas agrupadas por Zona Operativa",
+      "total": "Incidentes"
+    },
+    "history": {
+      "title": "Historial de Eventos Críticos",
+      "subtitle": "Registro inmutable para auditorías de seguridad",
+      "searchPlaceholder": "Filtrar por ID, Conductor o Zona",
+      "filtersButton": "Filtros",
+      "viewReport": "Ver Reporte",
+      "column": {
+        "dateTime": "Fecha y hora",
+        "criticality": "Criticidad",
+        "incidentType": "Tipo de incidente",
+        "involved": "Involucrados",
+        "location": "Ubicación",
+        "action": "Acción / Detalles"
+      }
+    }
+  },
+  "admin": {
+    "summary": {
+      "title": "Panel de Control de Recursos",
+      "subtitle": "Administración de accesos, infraestructura técnica y auditoría",
+      "sectionHealth": "Salud Operativa del Sistema"
+    },
+    "stats": {
+      "hardwareStatus": "Estado hardware",
+      "hardwareStatusFooter": "Todos los sensores en línea",
+      "lockedAccounts": "Cuentas bloqueadas",
+      "lockedAccountsFooter": "Requieren revisión manual →",
+      "registeredAssets": "Activos en base",
+      "registeredAssetsFooter": "Conductores y Vehículos registrados"
+    },
+    "notices": {
+      "title": "Avisos Administrativos Pendientes",
+      "passwordChangePending": "Existen {{count}} supervisores que no han completado el cambio de contraseña obligatorio",
+      "consolidatedReportReady": "El reporte consolidado está listo para auditoría",
+      "action": {
+        "resendInvite": "Reenviar aviso",
+        "downloadPdf": "Descargar PDF"
+      }
+    }
+  },
+  "monitoring": {
+    "auditAndAssets": {
+      "title": "Auditoría y Activos",
+      "subtitle": "Monitoreo de cambios en el sistema, gestión de recursos y eventos de seguridad"
+    },
+    "audit": {
+      "title": "Registro de Eventos (Logs)",
+      "actorLabel": "Actor",
+      "export": "Exportar Registro (PDF/Excel)",
+      "filter": {
+        "label": "Filtrar",
+        "all": "Todas las acciones"
+      },
+      "category": {
+        "security": "Seguridad",
+        "administrative": "Administrativo",
+        "operational": "Operacional"
+      },
+      "actors": {
+        "systemAutomatic": "Sistema (Automático)",
+        "adminGlobal": "Admin Global (Tú)"
+      },
+      "entries": {
+        "accountLocked": {
+          "title": "Bloqueo Automático de Cuenta",
+          "description": "El sistema bloqueó la cuenta de {{fullName}} ({{corporateId}}) tras superar el límite de 3 intentos fallidos de contraseña."
+        },
+        "personOffboarded": {
+          "title": "Baja Lógica de Personal",
+          "description": "Se aplicó la baja lógica al perfil de {{fullName}} ({{corporateId}}). Los accesos han sido revocados, manteniendo el historial intacto."
+        },
+        "supervisorCreated": {
+          "title": "Alta de Nuevo Supervisor",
+          "description": "Se creó el perfil para {{fullName}} ({{corporateId}}) y se enviaron credenciales temporales al correo corporativo."
+        }
+      }
+    },
+    "alerts": {
+      "pageTitle": "Gestión de Alertas",
+      "pageSubtitle": "Atención, comunicación y resolución de incidentes operativos",
+      "inbox": {
+        "title": "Bandeja de incidentes"
+      },
+      "type": {
+        "collision": "Alerta de Colisión",
+        "imminent_collision": "Colisión Inminente",
+        "fatigue": "Alerta de Fatiga"
+      },
+      "typeFull": {
+        "collision": "Alerta de Colisión",
+        "imminent_collision": "Alerta de Colisión Inminente",
+        "fatigue": "Alerta de Fatiga"
+      },
+      "priorityLabel": {
+        "critical": "Prioridad Crítica",
+        "warning": "Prioridad Advertencia"
+      },
+      "elapsed": {
+        "minutes": "Hace {{count}} min",
+        "hours": "Hace {{count}} h",
+        "days": "Hace {{count}} d"
+      },
+      "vehicleClass": {
+        "light": "Unidad Liviana",
+        "heavy": "Unidad Pesada"
+      },
+      "driverLabel": "Conductor",
+      "responseAction": {
+        "title": "Acción de Respuesta Rápida",
+        "description": "Iniciar contacto con el conductor para advertir el riesgo visualizado",
+        "button": "Contactar con el Operador"
+      },
+      "classification": {
+        "title": "Clasificación y Cierre",
+        "placeholder": "Añada notas operativas sobre la resolución del incidente"
+      },
+      "action": {
+        "falseAlarm": "Falsa Alarma",
+        "resolve": "Marcar como Resuelta"
+      },
+      "empty": "Selecciona una alerta de la bandeja para ver su detalle."
+    },
+    "liveMap": {
+      "title": "Mapa Operativo en Vivo",
+      "subtitle": "Monitoreo en tiempo real de la operación minera",
+      "searchPlaceholder": "Buscar",
+      "activeRoutes": "Rutas activas",
+      "reportCta": "Ver reporte sobre incidentes",
+      "fleet": {
+        "title": "Estado General de la Flota",
+        "operational": "Operativo",
+        "maintenance": "Mantenimiento",
+        "alert": "Alerta",
+        "percentOperational": "{{percent}}% operativo",
+        "vehiclesCount": "{{count}} vehículos"
+      },
+      "alertsSummary": {
+        "title": "Resumen de Alertas",
+        "criticalsCount": "{{count}} críticas",
+        "zone": {
+          "restrictedIntrusion": "Incursión en zona restringida"
+        },
+        "empty": "Sin alertas críticas activas"
+      },
+      "cardiac": {
+        "title": "Monitoreo Cardiaco",
+        "bpm": "{{rate}} lpm",
+        "empty": "Sin lecturas cardíacas disponibles"
+      }
+    }
+  },
+  "assets": {
+    "catalog": {
+      "title": "Resumen del Catálogo",
+      "drivers": {
+        "label": "Conductores",
+        "sub": "{{count}} inactivos"
+      },
+      "vehicles": {
+        "label": "Vehículos",
+        "sub": "{{count}} mantenimiento"
+      },
+      "supervisors": {
+        "label": "Supervisores",
+        "sub": "{{count}} bloqueado"
+      }
+    },
+    "fleet": {
+      "title": "Flota y Conductores",
+      "subtitle": "Gestión de recursos operativos, personal y Mantenimiento",
+      "tabs": {
+        "vehicles": "Inventario de Vehículos",
+        "drivers": "Directorio de Conductores"
+      },
+      "action": {
+        "newVehicle": "Nuevo Vehículo",
+        "newDriver": "Nuevo Conductor"
+      },
+      "vehicles": {
+        "blockedForUse": "Bloqueado para uso",
+        "column": {
+          "identifier": "Identificador y tipo",
+          "status": "Estado (US45)",
+          "assignment": "Asignación actual (US02)",
+          "actions": "Acciones"
+        },
+        "status": {
+          "operational": "Operativo",
+          "maintenance": "Mantenimiento"
+        },
+        "action": {
+          "edit": "Editar",
+          "sendToWorkshop": "Enviar a Taller",
+          "markOperational": "Marcar Operativo"
+        }
+      },
+      "drivers": {
+        "license": "Licencia",
+        "specialty": "Especialidad",
+        "offBoarded": "Desvinculado",
+        "column": {
+          "personalData": "Datos del personal",
+          "shiftStatus": "Estado de turno",
+          "lastAccess": "Último acceso",
+          "adminActions": "Acciones administrativas"
+        },
+        "status": {
+          "onShift": "En Turno",
+          "offShift": "Fuera de Turno",
+          "inactive": "Inactivo (US47)"
+        },
+        "action": {
+          "edit": "Editar",
+          "revoke": "Revocar acceso",
+          "historyPreserved": "Historial conservado en analytics"
+        }
+      }
+    }
+  },
+  "dashboard": {
+    "stats": {
+      "criticalAlerts": "Alertas críticas",
+      "fatigueEvents": "Eventos fatiga",
+      "activeVehicles": "Vehículos activos",
+      "fieldDrivers": "Conductores en campo"
+    },
+    "trend": {
+      "title": "Tendencia de incidentes",
+      "today": "Hoy",
+      "alerts": "Alertas",
+      "incidents": "Incidentes"
+    },
+    "riskDrivers": {
+      "title": "Conductores en Riesgo",
+      "points": "pts",
+      "fullReport": "Ver reporte completo"
+    },
+    "liveAlerts": {
+      "title": "Registro de alertas en vivo",
+      "alertId": "ID Alerta",
+      "level": "Nivel",
+      "category": "Categoría",
+      "involved": "Implicados",
+      "routeTime": "Ruta / Hora",
+      "action": "Acción",
+      "attend": "Atender",
+      "resolved": "Resuelto"
+    },
+    "severity": {
+      "high": "Crítica",
+      "medium": "Media",
+      "low": "Baja"
+    }
+  }
+}

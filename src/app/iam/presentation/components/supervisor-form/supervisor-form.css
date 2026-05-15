@@ -1,0 +1,86 @@
+.supervisor-form {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.header-icon {
+  color: #1a1a2e;
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+
+.form-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1a1a2e;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.field input {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  background: #f9fafb;
+  color: #1a1a2e;
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.field input:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+}
+
+.submit-btn {
+  margin-top: 8px;
+  height: 44px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13px;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.submit-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.form-hint {
+  margin: 0;
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  font-style: italic;
+}

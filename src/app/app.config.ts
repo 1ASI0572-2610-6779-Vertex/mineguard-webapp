@@ -1,34 +1,27 @@
 import {
-  ApplicationConfig, importProvidersFrom,
+  ApplicationConfig,
   provideBrowserGlobalErrorListeners,
-  provideZoneChangeDetection
+  provideZoneChangeDetection,
 } from '@angular/core';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { routes } from './app.routes';
-import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-
-export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http);
-}
+import { iamInterceptor } from './iam/infrastructure/iam.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([])),
+    provideHttpClient(withInterceptors([iamInterceptor])),
     provideAnimationsAsync(),
-    importProvidersFrom(
-      TranslateModule.forRoot({
-        loader: {
-          provide: TranslateLoader,
-          useFactory: HttpLoaderFactory,
-          deps: [HttpClient],
-        },
-      })
-    ),
+    provideTranslateService({
+      loader: provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json' }),
+      fallbackLang: 'en',
+    }),
   ],
 };
