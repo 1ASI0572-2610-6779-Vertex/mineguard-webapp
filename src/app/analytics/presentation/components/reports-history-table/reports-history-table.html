@@ -1,0 +1,63 @@
+<section class="history-card">
+  <header class="card-header">
+    <div class="title-block">
+      <h2>{{ 'reports.history.title' | translate }}</h2>
+      <p class="subtitle">{{ 'reports.history.subtitle' | translate }}</p>
+    </div>
+
+    <div class="header-controls">
+      <input
+        class="search"
+        type="search"
+        [value]="query()"
+        (input)="onSearch($any($event.target).value)"
+        [placeholder]="'reports.history.searchPlaceholder' | translate"
+      />
+      <button mat-stroked-button class="filter-btn">
+        <mat-icon>filter_list</mat-icon>
+        <span>{{ 'reports.history.filtersButton' | translate }}</span>
+      </button>
+    </div>
+  </header>
+
+  <table class="history-table">
+    <thead>
+      <tr>
+        <th>{{ 'reports.history.column.dateTime' | translate }}</th>
+        <th>{{ 'reports.history.column.criticality' | translate }}</th>
+        <th>{{ 'reports.history.column.incidentType' | translate }}</th>
+        <th>{{ 'reports.history.column.involved' | translate }}</th>
+        <th>{{ 'reports.history.column.location' | translate }}</th>
+        <th class="action-col">{{ 'reports.history.column.action' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of filteredRows(); track row.id) {
+        <tr>
+          <td>
+            <strong>{{ row.date }}</strong>
+            <span>{{ row.time }}</span>
+          </td>
+          <td>
+            <span
+              class="badge"
+              [class.badge-high]="row.criticality === 'high'"
+              [class.badge-medium]="row.criticality === 'medium'"
+              [class.badge-low]="row.criticality === 'low'"
+            >
+              {{ row.criticalityLabel }}
+            </span>
+          </td>
+          <td>{{ row.incidentType }}</td>
+          <td>{{ row.involved }}</td>
+          <td>
+            <span class="location-pill">{{ row.location }}</span>
+          </td>
+          <td class="action-cell">
+            <a class="action-link">{{ 'reports.history.viewReport' | translate }}</a>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>

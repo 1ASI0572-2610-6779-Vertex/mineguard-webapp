@@ -1,0 +1,144 @@
+.distribution-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title-block h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: #1a1a2e;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: #888;
+}
+
+.export-btn mat-icon {
+  color: #888;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.donut-container {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.donut {
+  width: 100%;
+  max-width: 180px;
+  transform: rotate(-90deg);
+}
+
+.donut-bg {
+  fill: none;
+  stroke: #f3f4f6;
+  stroke-width: 20;
+}
+
+.donut-segment {
+  fill: none;
+  stroke-width: 20;
+  transition: stroke-dasharray 0.4s ease;
+}
+
+.donut-total,
+.donut-total-label {
+  transform: rotate(90deg);
+  transform-origin: 80px 80px;
+}
+
+.donut-total {
+  font-size: 22px;
+  font-weight: 800;
+  fill: #1a1a2e;
+}
+
+.donut-total-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  fill: #777;
+}
+
+.color-1 {
+  stroke: #dc2626;
+  background: #dc2626;
+}
+
+.color-2 {
+  stroke: #f59e0b;
+  background: #f59e0b;
+}
+
+.color-3 {
+  stroke: #2563eb;
+  background: #2563eb;
+}
+
+.color-4 {
+  stroke: #6b7280;
+  background: #6b7280;
+}
+
+.color-5 {
+  stroke: #16a34a;
+  background: #16a34a;
+}
+
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.legend-item {
+  display: grid;
+  grid-template-columns: 12px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #1a1a2e;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-label {
+  font-weight: 600;
+}
+
+.legend-count {
+  font-weight: 800;
+  color: #555;
+}
+
+@media (max-width: 720px) {
+  .donut-container {
+    grid-template-columns: 1fr;
+  }
+}
