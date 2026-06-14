@@ -1,0 +1,85 @@
+<div class="sd-page">
+  <header class="page-header">
+    <h1>{{ 'serviceDesign.title' | translate }}</h1>
+    <p>{{ 'serviceDesign.subtitle' | translate }}</p>
+  </header>
+
+  <div class="sd-grid">
+    <section class="map-section">
+      <app-live-map
+        [vehicles]="vehicles()"
+        [routeOverlays]="store.routeOverlays()"
+      ></app-live-map>
+
+      <div class="map-legend">
+        <span class="legend-item planned">
+          <span class="legend-line"></span> {{ 'serviceDesign.map.planned' | translate }}
+        </span>
+        <span class="legend-item active">
+          <span class="legend-line"></span> {{ 'serviceDesign.map.active' | translate }}
+        </span>
+      </div>
+    </section>
+
+    <aside class="sd-sidebar">
+      <mat-tab-group animationDuration="200ms" class="sd-tabs">
+
+        <mat-tab label="{{ 'serviceDesign.tabs.routes' | translate }}">
+          <div class="tab-content">
+            <button
+              mat-flat-button
+              color="primary"
+              class="new-route-btn"
+              [routerLink]="['new']"
+            >
+              <mat-icon>add</mat-icon>
+              {{ 'serviceDesign.routes.newRoute' | translate }}
+            </button>
+
+            @if (store.activeRoutes().length) {
+              <p class="routes-section-label">{{ 'serviceDesign.routes.active' | translate }}</p>
+              @for (route of store.activeRoutes(); track route.id) {
+                <app-route-card
+                  [route]="route"
+                  (select)="store.selectRoute($event)"
+                  (statusChange)="store.updateStatus($event.id, $event.status)"
+                  (delete)="store.deleteRoute($event)"
+                ></app-route-card>
+              }
+            }
+
+            @if (store.plannedRoutes().length) {
+              <p class="routes-section-label">{{ 'serviceDesign.routes.planned' | translate }}</p>
+              @for (route of store.plannedRoutes(); track route.id) {
+                <app-route-card
+                  [route]="route"
+                  (select)="store.selectRoute($event)"
+                  (statusChange)="store.updateStatus($event.id, $event.status)"
+                  (delete)="store.deleteRoute($event)"
+                ></app-route-card>
+              }
+            }
+
+            @if (!store.routes().length && !store.loading()) {
+              <div class="empty-state">
+                <mat-icon>route</mat-icon>
+                <p>{{ 'serviceDesign.routes.empty' | translate }}</p>
+              </div>
+            }
+          </div>
+        </mat-tab>
+
+        <mat-tab label="{{ 'serviceDesign.tabs.shifts' | translate }}">
+          <div class="tab-content">
+            @for (shift of store.shifts(); track shift.id) {
+              <app-shift-card [shift]="shift"></app-shift-card>
+            }
+          </div>
+        </mat-tab>
+
+      </mat-tab-group>
+    </aside>
+  </div>
+
+  <router-outlet></router-outlet>
+</div>

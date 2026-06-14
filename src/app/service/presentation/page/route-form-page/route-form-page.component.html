@@ -1,0 +1,84 @@
+<div class="rf-overlay" (click)="close()">
+  <div class="rf-dialog" (click)="$event.stopPropagation()">
+
+    <div class="rf-header">
+      <h2>{{ 'routeForm.title' | translate }}</h2>
+      <button mat-icon-button (click)="close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="rf-body">
+
+      <!-- Panel izquierdo: campos + lista waypoints -->
+      <div class="rf-left-panel">
+        <div class="rf-fields">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'routeForm.nameLabel' | translate }}</mat-label>
+            <input matInput [(ngModel)]="form.name" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'routeForm.shiftLabel' | translate }}</mat-label>
+            <mat-select [(ngModel)]="form.shiftId">
+              @for (shift of store.shifts(); track shift.id) {
+                <mat-option [value]="shift.id">{{ shift.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="rf-wp-section">
+          <p class="section-label">{{ 'routeForm.waypointsTitle' | translate }}</p>
+          <p class="map-hint">
+            <mat-icon class="hint-icon">touch_app</mat-icon>
+            {{ 'routeForm.mapClickHint' | translate }}
+          </p>
+
+          <div class="wp-list">
+            @for (wp of form.waypoints; track $index) {
+              <div class="wp-item">
+                <span class="wp-num">{{ $index + 1 }}</span>
+                <mat-form-field appearance="outline" class="wp-label-field">
+                  <mat-label>{{ 'routeForm.wpLabel' | translate }}</mat-label>
+                  <input matInput [(ngModel)]="wp.label" />
+                </mat-form-field>
+                <button mat-icon-button class="wp-del" (click)="removeWaypoint($index)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel derecho: mapa -->
+      <div class="rf-map-area" #mapContainer></div>
+
+    </div>
+
+    <div class="rf-footer">
+      <span class="footer-info">
+        {{ form.waypoints.length }} {{ 'routeForm.wpCount' | translate }}
+      </span>
+      <div class="footer-actions">
+        <button mat-stroked-button (click)="close()">
+          {{ 'routeForm.cancel' | translate }}
+        </button>
+        <button
+          mat-flat-button
+          color="primary"
+          [disabled]="!isValid() || store.loading()"
+          (click)="save()"
+        >
+          @if (store.loading()) {
+            <mat-icon class="spin">sync</mat-icon>
+          } @else {
+            {{ 'routeForm.submit' | translate }}
+          }
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

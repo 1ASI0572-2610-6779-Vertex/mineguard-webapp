@@ -14,16 +14,13 @@ import * as L from 'leaflet';
 import { LiveMapVehicle } from '../../../domain/model/live-map-vehicle.entity';
 import { VehicleOperationalStatus } from '../../../domain/model/vehicle-operational-status';
 
-/**
- * Leaflet-backed live map showing every active vehicle as a colored circle
- * marker positioned by lat/lng. Used by the supervisor "Mapa Operativo en
- * Vivo" view.
- *
- * @remarks
- * Tiles come from OpenStreetMap. Marker color is driven by the vehicle's
- * operational status (green / orange / red). A small overlay shows the
- * count of active vehicle routes.
- */
+export interface RouteOverlay {
+  id: string;
+  name: string;
+  coords: [number, number][];
+  status: string;
+}
+
 @Component({
   selector: 'app-live-map',
   standalone: true,
@@ -34,13 +31,21 @@ import { VehicleOperationalStatus } from '../../../domain/model/vehicle-operatio
 export class LiveMap implements AfterViewInit, OnDestroy {
   @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef<HTMLDivElement>;
 
-  private readonly vehiclesSignal = signal<LiveMapVehicle[]>([]);
+  private readonly vehiclesSignal     = signal<LiveMapVehicle[]>([]);
+  private readonly routeOverlaysSignal = signal<RouteOverlay[]>([]);
+
   private map: L.Map | null = null;
   private markers: L.CircleMarker[] = [];
+  private routeLines: L.Polyline[]  = [];
   private resizeObserver: ResizeObserver | null = null;
+  private routePolygons: L.Polygon[] = [];
 
   @Input({ required: true }) set vehicles(value: LiveMapVehicle[]) {
     this.vehiclesSignal.set(value);
+  }
+
+  @Input() set routeOverlays(value: RouteOverlay[]) {
+    this.routeOverlaysSignal.set(value ?? []);
   }
 
   get activeRoutesCount(): number {
@@ -50,9 +55,12 @@ export class LiveMap implements AfterViewInit, OnDestroy {
   constructor() {
     effect(() => {
       const vehicles = this.vehiclesSignal();
-      if (this.map) {
-        this.renderMarkers(vehicles);
-      }
+      if (this.map) this.renderMarkers(vehicles);
+    });
+
+    effect(() => {
+      const overlays = this.routeOverlaysSignal();
+      if (this.map) this.renderRouteOverlays(overlays);
     });
   }
 
@@ -68,23 +76,13 @@ export class LiveMap implements AfterViewInit, OnDestroy {
       attribution: '&copy; OpenStreetMap contributors',
     }).addTo(this.map);
 
+    // Render inicial
+    this.renderRouteOverlays(this.routeOverlaysSignal());
     this.renderMarkers(this.vehiclesSignal());
 
-    /**
-     * Force a tile re-render once the container has settled into its final
-     * dimensions. Without this Leaflet stops short and only paints a subset
-     * of tiles (the well-known "white gaps" artifact).
-     */
     setTimeout(() => this.map?.invalidateSize(), 0);
 
-    /**
-     * React to any subsequent container resize — window resize, sidenav
-     * collapse, language toggle that shifts toolbar height, etc. — by
-     * invalidating size so tiles are repainted to fill the new viewport.
-     */
-    this.resizeObserver = new ResizeObserver(() => {
-      this.map?.invalidateSize();
-    });
+    this.resizeObserver = new ResizeObserver(() => this.map?.invalidateSize());
     this.resizeObserver.observe(this.mapContainer.nativeElement);
   }
 
@@ -95,16 +93,17 @@ export class LiveMap implements AfterViewInit, OnDestroy {
       this.map.remove();
       this.map = null;
     }
-    this.markers = [];
+    this.markers    = [];
+    this.routeLines = [];
   }
 
   private renderMarkers(vehicles: LiveMapVehicle[]): void {
     if (!this.map) return;
 
-    this.markers.forEach((marker) => marker.remove());
+    this.markers.forEach((m) => m.remove());
     this.markers = [];
 
-    if (vehicles.length === 0) return;
+    if (!vehicles.length) return;
 
     vehicles.forEach((vehicle) => {
       const marker = L.circleMarker([vehicle.latitude, vehicle.longitude], {
@@ -128,14 +127,70 @@ export class LiveMap implements AfterViewInit, OnDestroy {
     }
   }
 
+  private renderRouteOverlays(overlays: RouteOverlay[]): void {
+    if (!this.map) return;
+
+    // Limpiar anteriores
+    this.routeLines.forEach(l => l.remove());
+    this.routeLines = [];
+    this.routePolygons.forEach(p => p.remove());   // ← nuevo
+    this.routePolygons = [];                        // ← nuevo
+
+    overlays.forEach((route) => {
+      if (route.coords.length < 2) return;
+
+      const isActive  = route.status === 'active';
+      const color     = isActive ? '#00c2b2' : '#3b82f6';
+      const dashArray = isActive ? undefined : '8 5';
+
+      // ── Polígono relleno (mancha) ──────────────────────────────
+      if (route.coords.length >= 3) {
+        const polygon = L.polygon(route.coords, {
+          color,
+          weight: 2,
+          fillColor: color,
+          fillOpacity: 0.18,        // mancha translúcida
+          dashArray,
+        }).bindTooltip(route.name, { sticky: true });
+
+        polygon.addTo(this.map!);
+        this.routePolygons.push(polygon);
+      }
+
+      // ── Línea de ruta encima ───────────────────────────────────
+      const line = L.polyline(route.coords, {
+        color,
+        weight: 3,
+        dashArray,
+        opacity: 0.9,
+      }).bindTooltip(route.name, { sticky: true });
+
+      line.addTo(this.map!);
+      this.routeLines.push(line);
+
+      // ── Waypoint markers ──────────────────────────────────────
+      route.coords.forEach((coord, i) => {
+        const isFirst = i === 0;
+        const isLast  = i === route.coords.length - 1;
+
+        L.circleMarker(coord, {
+          radius: isFirst || isLast ? 7 : 5,
+          weight: 2,
+          color: '#ffffff',
+          fillColor: color,
+          fillOpacity: 1,
+        })
+          .bindTooltip(`${route.name} – punto ${i + 1}`, { direction: 'top' })
+          .addTo(this.map!);
+      });
+    });
+  }
+
   private colorFor(status: VehicleOperationalStatus): string {
     switch (status) {
-      case 'operational':
-        return '#16a34a';
-      case 'maintenance':
-        return '#f59e0b';
-      case 'alert':
-        return '#dc2626';
+      case 'operational': return '#16a34a';
+      case 'maintenance': return '#f59e0b';
+      case 'alert':       return '#dc2626';
     }
   }
 }

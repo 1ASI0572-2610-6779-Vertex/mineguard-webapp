@@ -1,0 +1,182 @@
+.rf-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.rf-dialog {
+  background: #fff;
+  border-radius: 12px;
+  width: 900px;
+  max-width: 96vw;
+  height: 600px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.rf-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.rf-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ── Left panel ── */
+.rf-left-panel {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #eee;
+  overflow: hidden;
+}
+
+.rf-fields {
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rf-fields .full-width {
+  width: 100%;
+}
+
+.rf-wp-section {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 0;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 16px 6px;
+}
+
+.map-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #aaa;
+  padding: 0 16px 10px;
+}
+
+.map-hint .hint-icon {
+  font-size: 16px;
+  color: #1D9E75;
+}
+
+.wp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 12px;
+}
+
+.wp-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wp-num {
+  width: 22px;
+  height: 22px;
+  background: #1D9E75;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.wp-label-field {
+  flex: 1;
+  font-size: 13px;
+}
+
+.wp-del mat-icon {
+  font-size: 18px;
+  color: #ccc;
+}
+
+.wp-del:hover mat-icon {
+  color: #e53935;
+}
+
+/* ── Map ── */
+.rf-map-area {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Marker personalizado */
+:host ::ng-deep .custom-marker {
+  width: 30px;
+  height: 30px;
+  background: #1D9E75;
+  border: 2px solid #fff;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:host ::ng-deep .marker-num {
+  transform: rotate(45deg);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ── Footer ── */
+.rf-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-top: 1px solid #eee;
+}
+
+.footer-info {
+  font-size: 12px;
+  color: #aaa;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

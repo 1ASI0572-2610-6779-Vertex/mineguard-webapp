@@ -8,6 +8,7 @@
     "userManagement": "Gestión de Usuarios",
     "auditAndAssets": "Auditoría y Activos",
     "fleetAndDrivers": "Flota y Conductores",
+    "routeDesign": "Diseño de ruta",
     "alerts": "Gestión de Alertas",
     "liveMap": "Mapa en Vivo"
   },
@@ -337,6 +338,43 @@
         }
       }
     }
+  },
+  "serviceDesign": {
+    "title": "Diseño de Servicio",
+    "subtitle": "Gestión de rutas y turnos",
+    "map": {
+      "planned": "Planificada",
+      "active": "Activa"
+    },
+    "tabs": {
+      "routes": "Rutas",
+      "shifts": "Turnos"
+    },
+    "routes": {
+      "newRoute": "Nueva Ruta",
+      "active": "ACTIVAS",
+      "planned": "PLANIFICADAS",
+      "empty": "No hay rutas creadas aún"
+    }
+  },
+  "routeForm": {
+    "title": "Nueva Ruta",
+    "nameLabel": "Nombre de la ruta",
+    "namePlaceholder": "Ej: Ruta Norte - Extracción",
+    "shiftLabel": "Turno",
+    "waypointsTitle": "WAYPOINTS",
+    "wpLabel": "Etiqueta",
+    "wpLat": "Lat",
+    "wpLng": "Lng",
+    "addWaypoint": "Agregar waypoint",
+    "cancel": "Cancelar",
+    "submit": "Crear Ruta"
+  },
+  "routeCard": {
+    "vehicles": "vehículo(s)",
+    "waypoints": "waypoints",
+    "activate": "Activar",
+    "suspend": "Suspender"
   },
   "dashboard": {
     "stats": {

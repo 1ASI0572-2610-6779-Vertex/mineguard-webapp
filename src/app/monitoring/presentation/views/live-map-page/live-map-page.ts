@@ -7,6 +7,7 @@ import { AlertsSummaryCard } from '../../components/alerts-summary-card/alerts-s
 import { CardiacMonitorCard } from '../../components/cardiac-monitor-card/cardiac-monitor-card';
 import { FleetSummaryCard } from '../../components/fleet-summary-card/fleet-summary-card';
 import { LiveMap } from '../../components/live-map/live-map';
+import { ServiceDesignStore } from '../../../../service/application/service-design.store';
 
 /**
  * Supervisor "Mapa Operativo en Vivo" view ({@link supervisor2.png} wireframe).
@@ -37,6 +38,7 @@ export class LiveMapPage implements OnInit {
   readonly fleetSummary = this.store.fleetSummary;
   readonly criticalAlerts = this.store.criticalActiveAlerts;
   readonly cardiacReadings = this.store.cardiacReadings;
+  readonly routeOverlays  = this.store.routeOverlays;
 
   readonly searchQuery = '';
 
@@ -45,5 +47,6 @@ export class LiveMapPage implements OnInit {
     this.store.loadFleetSummary();
     this.store.loadCardiacReadings();
     this.store.loadAlerts();
+    this.store.loadRoutes();
   }
 }

@@ -24,4 +24,6 @@ export const environment = {
   platformProviderLiveMapVehiclesEndpointPath: '/liveMapVehicles',
   platformProviderFleetSummaryEndpointPath: '/fleetSummary',
   platformProviderCardiacReadingsEndpointPath: '/cardiacReadings',
+  platformProviderRoutesEndpointPath:  '/routes',
+  platformProviderShiftsEndpointPath:  '/shifts',
 };

@@ -1,4 +1,4 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 
 import { Alert } from '../domain/model/alert.entity';
 import { AuditLogEntry } from '../domain/model/audit-log-entry.entity';
@@ -7,6 +7,9 @@ import { ClassifyAlertCommand } from '../domain/model/classify-alert.command';
 import { FleetSummary } from '../domain/model/fleet-summary.entity';
 import { LiveMapVehicle } from '../domain/model/live-map-vehicle.entity';
 import { MonitoringApi } from '../infrastructure/monitoring-api';
+import { RouteRepository } from '../../service/domain/route.repository';
+import { RouteOverlay } from '../presentation/components/live-map/live-map';
+import { Route } from '../../service/domain/model/route.entity';
 
 /**
  * Application service for the monitoring bounded context.
@@ -21,12 +24,15 @@ import { MonitoringApi } from '../infrastructure/monitoring-api';
  */
 @Injectable({ providedIn: 'root' })
 export class MonitoringStore {
+  private routeRepo = inject(RouteRepository);
+
   private readonly auditLogSignal = signal<AuditLogEntry[]>([]);
   private readonly alertsSignal = signal<Alert[]>([]);
   private readonly liveMapVehiclesSignal = signal<LiveMapVehicle[]>([]);
   private readonly fleetSummarySignal = signal<FleetSummary | null>(null);
   private readonly cardiacReadingsSignal = signal<CardiacReading[]>([]);
   private readonly errorSignal = signal<string | null>(null);
+  private readonly routesSignal = signal<Route[]>([]);
 
   readonly auditLog = this.auditLogSignal.asReadonly();
   readonly alerts = this.alertsSignal.asReadonly();
@@ -60,6 +66,22 @@ export class MonitoringStore {
         this.errorSignal.set('Failed to load audit log');
       },
     });
+  }
+
+  readonly routeOverlays = computed<RouteOverlay[]>(() =>
+    this.routesSignal().map(route => ({
+      id: route.id,
+      name: route.name,
+      status: route.status,   // 'active' | 'planned' — ya viene del dominio
+      coords: route.waypoints
+        .sort((a, b) => a.order - b.order)
+        .map(wp => [wp.latitude, wp.longitude] as [number, number]),
+    }))
+  );
+
+  async loadRoutes(): Promise<void> {
+    const routes = await this.routeRepo.getAll();
+    this.routesSignal.set(routes);
   }
 
   /**

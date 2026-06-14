@@ -10,7 +10,9 @@ const analyticsRoutes = () =>
 const assetsRoutes = () =>
   import('./assets/presentation/assets.routes').then((m) => m.assetsRoutes);
 const iamRoutes = () => import('./iam/presentation/iam.routes').then((m) => m.iamRoutes);
-
+const serviceDesignRoutes = () =>
+  import('./service/presentation/service-design.routes')
+    .then((m) => m.serviceDesignRoutes);
 
 const monitoringRoutes = () =>
   import('./monitoring/presentation/monitoring.routes').then((m) => m.monitoringRoutes);
@@ -32,6 +34,7 @@ export const routes: Routes = [
   { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [iamGuard] },
   { path: 'monitoring', loadChildren: monitoringRoutes, canActivate: [iamGuard] },
   { path: 'assets', loadChildren: assetsRoutes, canActivate: [iamGuard] },
+  { path: 'service', loadChildren: serviceDesignRoutes, canActivate: [iamGuard] },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   {
     path: '**',

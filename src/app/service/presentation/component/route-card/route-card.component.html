@@ -1,0 +1,57 @@
+<div
+  class="route-card"
+  [class.selected]="selected"
+  (click)="select.emit(route.id)"
+>
+  <div class="route-card-header">
+    <span class="route-id">{{ route.id }}</span>
+    <span class="route-status-badge" [class]="route.status">
+      {{ route.status | titlecase }}
+    </span>
+  </div>
+
+  <p class="route-name">{{ route.name }}</p>
+
+  <div class="route-meta">
+    <mat-icon class="meta-icon">schedule</mat-icon>
+    <span>{{ route.shift.name }} · {{ route.shift.startTime }}–{{ route.shift.endTime }}</span>
+  </div>
+
+  <div class="route-meta">
+    <mat-icon class="meta-icon">directions_car</mat-icon>
+    <span>{{ route.assignedVehicleIds.length }} {{ 'routeCard.vehicles' | translate }}</span>
+  </div>
+
+  <div class="route-meta">
+    <mat-icon class="meta-icon">place</mat-icon>
+    <span>{{ route.waypoints.length }} {{ 'routeCard.waypoints' | translate }}</span>
+  </div>
+
+  <div class="route-card-actions">
+    @if (route.status === 'planned') {
+      <button
+        mat-stroked-button
+        class="action-btn activate"
+        (click)="$event.stopPropagation(); statusChange.emit({ id: route.id, status: 'active' })"
+      >
+        {{ 'routeCard.activate' | translate }}
+      </button>
+    }
+    @if (route.status === 'active') {
+      <button
+        mat-stroked-button
+        class="action-btn suspend"
+        (click)="$event.stopPropagation(); statusChange.emit({ id: route.id, status: 'suspended' })"
+      >
+        {{ 'routeCard.suspend' | translate }}
+      </button>
+    }
+    <button
+      mat-icon-button
+      class="delete-btn"
+      (click)="$event.stopPropagation(); delete.emit(route.id)"
+    >
+      <mat-icon>delete_outline</mat-icon>
+    </button>
+  </div>
+</div>

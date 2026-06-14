@@ -1,0 +1,13 @@
+<div class="shift-card" [class]="shift.type">
+  <div class="shift-icon">
+    @switch (shift.type) {
+      @case ('morning')   { <mat-icon>wb_sunny</mat-icon> }
+      @case ('afternoon') { <mat-icon>wb_twilight</mat-icon> }
+      @case ('night')     { <mat-icon>nights_stay</mat-icon> }
+    }
+  </div>
+  <div class="shift-info">
+    <p class="shift-name">{{ shift.name }}</p>
+    <p class="shift-time">{{ shift.startTime }} – {{ shift.endTime }}</p>
+  </div>
+</div>

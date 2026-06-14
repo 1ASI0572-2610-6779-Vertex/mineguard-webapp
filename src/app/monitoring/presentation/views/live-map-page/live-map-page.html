@@ -5,7 +5,9 @@
   </header>
 
   <div class="page-grid">
-    <app-live-map [vehicles]="vehicles()"></app-live-map>
+    <app-live-map [vehicles]="vehicles()"
+                  [routeOverlays]="routeOverlays()">   <!-- ← sin store. -->
+    </app-live-map>
 
     <aside class="sidebar">
       <input
