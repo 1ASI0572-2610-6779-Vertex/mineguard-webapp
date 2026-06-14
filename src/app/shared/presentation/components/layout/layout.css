@@ -10,23 +10,36 @@
 }
 
 /* ──────────────── SIDENAV ──────────────── */
+/* ──────────────── SIDENAV ──────────────── */
 mat-sidenav {
   width: 220px !important;
   background-color: #1a1a2e !important;
   border-right: none !important;
   border-radius: 0 !important;
-  display: flex;
-  flex-direction: column;
+  display: flex !important;          /* forzar flex */
+  flex-direction: column !important;
+  height: 100% !important;          /* ocupar toda la altura */
+  overflow: hidden !important;
+}
+
+/* El contenedor interno que genera Angular Material */
+mat-sidenav .mat-drawer-inner-container {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  overflow: hidden !important;
 }
 
 .sidenav-header {
-  padding: 20px 16px 8px;
+  padding: 20px 16px 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 8px;
+  flex-shrink: 0;                   /* no colapsar el header */
 }
 
 .logo-mineguard {
-  height: 36px;
+  margin-left: 18%;
+  height: 70px;                     /* ← más grande (era 36px) */
 }
 
 .sidenav-section-label {
@@ -36,10 +49,12 @@ mat-sidenav {
   color: rgba(255, 255, 255, 0.35);
   padding: 8px 20px 4px;
   text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 mat-nav-list {
-  flex: 1;
+  flex: 1 1 auto !important;
+  overflow-y: auto;
 }
 
 mat-list-item {
@@ -50,13 +65,10 @@ mat-list-item {
   transition: background 0.15s ease;
 }
 
-mat-list-item img {
-  margin-right: 10px;
-}
-
 mat-list-item span {
   font-size: 14px;
   font-weight: 500;
+  color: rgba(255, 255, 255, 0.65) !important;   /* ← blanco explícito */
 }
 
 mat-list-item mat-icon {
@@ -67,6 +79,10 @@ mat-list-item mat-icon {
 
 mat-list-item:hover {
   background-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+mat-list-item:hover span {
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .active-option {
@@ -85,12 +101,17 @@ mat-list-item:hover {
 
 /* Sidenav footer */
 .sidenav-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  margin-top: auto;
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 14px 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
 }
 
 .user-avatar {
