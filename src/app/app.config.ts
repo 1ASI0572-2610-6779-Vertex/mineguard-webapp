@@ -11,6 +11,8 @@ import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { routes } from './app.routes';
 import { iamInterceptor } from './iam/infrastructure/iam.interceptor';
+import { RouteRepository } from './service/domain/route.repository';
+import { RouteHttpRepository } from './service/infrastructure/route-http.repository';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,5 +25,9 @@ export const appConfig: ApplicationConfig = {
       loader: provideTranslateHttpLoader({ prefix: './i18n/', suffix: '.json' }),
       fallbackLang: 'en',
     }),
+    {
+      provide: RouteRepository,
+      useClass: RouteHttpRepository,
+    },
   ],
 };

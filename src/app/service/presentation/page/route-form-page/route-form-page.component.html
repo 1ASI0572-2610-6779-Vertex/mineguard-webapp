@@ -1,0 +1,73 @@
+<div class="rf-overlay" (click)="close()">
+  <div class="rf-dialog" (click)="$event.stopPropagation()">
+
+    <div class="rf-header">
+      <h2>Nueva Ruta</h2>
+      <button mat-icon-button (click)="close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="rf-body">
+      <!-- Nombre -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nombre de la ruta</mat-label>
+        <input matInput [(ngModel)]="form.name" placeholder="Ej: Ruta Norte - Extracción" />
+      </mat-form-field>
+
+      <!-- Turno -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Turno</mat-label>
+        <mat-select [(ngModel)]="form.shiftId">
+          @for (shift of store.shifts(); track shift.id) {
+            <mat-option [value]="shift.id">{{ shift.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Waypoints -->
+      <p class="section-label">WAYPOINTS</p>
+      @for (wp of form.waypoints; track $index) {
+        <div class="waypoint-row">
+          <span class="wp-order">{{ $index + 1 }}</span>
+          <mat-form-field appearance="outline" class="wp-label-field">
+            <mat-label>Etiqueta</mat-label>
+            <input matInput [(ngModel)]="wp.label" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="wp-coord-field">
+            <mat-label>Lat</mat-label>
+            <input matInput type="number" [(ngModel)]="wp.latitude" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="wp-coord-field">
+            <mat-label>Lng</mat-label>
+            <input matInput type="number" [(ngModel)]="wp.longitude" />
+          </mat-form-field>
+          <button mat-icon-button (click)="removeWaypoint($index)">
+            <mat-icon>remove_circle_outline</mat-icon>
+          </button>
+        </div>
+      }
+      <button mat-stroked-button class="add-wp-btn" (click)="addWaypoint()">
+        <mat-icon>add_location_alt</mat-icon>
+        Agregar waypoint
+      </button>
+    </div>
+
+    <div class="rf-footer">
+      <button mat-stroked-button (click)="close()">Cancelar</button>
+      <button
+        mat-flat-button
+        class="save-btn"
+        [disabled]="!isValid() || store.loading()"
+        (click)="save()"
+      >
+        @if (store.loading()) {
+          <mat-icon class="spin">sync</mat-icon>
+        } @else {
+          Crear Ruta
+        }
+      </button>
+    </div>
+
+  </div>
+</div>

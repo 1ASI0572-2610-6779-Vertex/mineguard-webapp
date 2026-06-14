@@ -12,3 +12,14 @@ body {
 .container-with-spacing {
     margin: 10px; /* Applies margin to all sides */
 }
+
+/* Contener z-indexes de Leaflet dentro del map container */
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 400 !important;
+}
+
+.leaflet-control {
+  z-index: 800 !important;
+}

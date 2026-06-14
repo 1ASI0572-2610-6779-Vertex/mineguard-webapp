@@ -1452,5 +1452,38 @@
       "heartRate": 148,
       "status": "critical"
     }
+  ],
+  "routes": [
+    {
+      "id": "RT-01",
+      "name": "Ruta Norte - Extracción",
+      "status": "active",
+      "assignedVehicleIds": ["V-12", "V-04"],
+      "shiftId": "SH-01",
+      "createdAt": "2026-05-01T06:00:00Z",
+      "waypoints": [
+        { "latitude": -16.398, "longitude": -71.536, "label": "Base Central", "order": 1 },
+        { "latitude": -16.390, "longitude": -71.528, "label": "Zona Extracción A", "order": 2 },
+        { "latitude": -16.382, "longitude": -71.519, "label": "Punto de Descarga", "order": 3 }
+      ]
+    },
+    {
+      "id": "RT-02",
+      "name": "Ruta Sur - Transporte",
+      "status": "planned",
+      "assignedVehicleIds": ["V-07"],
+      "shiftId": "SH-02",
+      "createdAt": "2026-05-10T14:00:00Z",
+      "waypoints": [
+        { "latitude": -16.415, "longitude": -71.542, "label": "Base Sur", "order": 1 },
+        { "latitude": -16.422, "longitude": -71.550, "label": "Zona de Carga", "order": 2 },
+        { "latitude": -16.430, "longitude": -71.558, "label": "Almacén Final", "order": 3 }
+      ]
+    }
+  ],
+  "shifts": [
+    { "id": "SH-01", "name": "Turno Mañana", "startTime": "06:00", "endTime": "14:00", "type": "morning" },
+    { "id": "SH-02", "name": "Turno Tarde",  "startTime": "14:00", "endTime": "22:00", "type": "afternoon" },
+    { "id": "SH-03", "name": "Turno Noche",  "startTime": "22:00", "endTime": "06:00", "type": "night" }
   ]
 }

@@ -1,0 +1,32 @@
+.shift-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #e8e8e8;
+}
+
+.shift-icon mat-icon { font-size: 22px; }
+
+.shift-card.morning   { background: #fffbeb; }
+.shift-card.morning   .shift-icon mat-icon { color: #f59e0b; }
+
+.shift-card.afternoon { background: #f5f3ff; }
+.shift-card.afternoon .shift-icon mat-icon { color: #8b5cf6; }
+
+.shift-card.night     { background: #eff6ff; }
+.shift-card.night     .shift-icon mat-icon { color: #3b82f6; }
+
+.shift-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0 0 2px;
+}
+
+.shift-time {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+}

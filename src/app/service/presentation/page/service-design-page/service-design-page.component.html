@@ -1,0 +1,94 @@
+<div class="sd-page">
+  <header class="page-header">
+    <h1>{{ 'serviceDesign.title' | translate }}</h1>
+    <p>{{ 'serviceDesign.subtitle' | translate }}</p>
+  </header>
+
+  <div class="sd-grid">
+    <!-- Mapa con overlays de rutas -->
+    <section class="map-section">
+      <app-live-map
+        [vehicles]="vehicles()"
+        [routeOverlays]="store.routeOverlays()"
+      ></app-live-map>
+
+      <!-- Leyenda sobre el mapa -->
+      <div class="map-legend">
+        <span class="legend-item planned">
+          <span class="legend-line"></span> Planificada
+        </span>
+        <span class="legend-item active">
+          <span class="legend-line"></span> Activa
+        </span>
+      </div>
+    </section>
+
+    <!-- Panel derecho -->
+    <aside class="sd-sidebar">
+      <!-- Tabs: Rutas / Turnos -->
+      <mat-tab-group animationDuration="200ms" class="sd-tabs">
+
+        <!-- ── Tab Rutas ── -->
+        <mat-tab label="Rutas">
+          <div class="tab-content">
+            <button
+              mat-flat-button
+              color="primary"
+              class="new-route-btn"
+              [routerLink]="['new']"
+            >
+              <mat-icon>add</mat-icon>
+              Nueva Ruta
+            </button>
+
+            <!-- Activas -->
+            @if (store.activeRoutes().length) {
+              <p class="routes-section-label">ACTIVAS</p>
+              @for (route of store.activeRoutes(); track route.id) {
+                <app-route-card
+                  [route]="route"
+                  (select)="store.selectRoute($event)"
+                  (statusChange)="store.updateStatus($event.id, $event.status)"
+                  (delete)="store.deleteRoute($event)"
+                ></app-route-card>
+              }
+            }
+
+            <!-- Planificadas -->
+            @if (store.plannedRoutes().length) {
+              <p class="routes-section-label">PLANIFICADAS</p>
+              @for (route of store.plannedRoutes(); track route.id) {
+                <app-route-card
+                  [route]="route"
+                  (select)="store.selectRoute($event)"
+                  (statusChange)="store.updateStatus($event.id, $event.status)"
+                  (delete)="store.deleteRoute($event)"
+                ></app-route-card>
+              }
+            }
+
+            @if (!store.routes().length && !store.loading()) {
+              <div class="empty-state">
+                <mat-icon>route</mat-icon>
+                <p>No hay rutas creadas aún</p>
+              </div>
+            }
+          </div>
+        </mat-tab>
+
+        <!-- ── Tab Turnos ── -->
+        <mat-tab label="Turnos">
+          <div class="tab-content">
+            @for (shift of store.shifts(); track shift.id) {
+              <app-shift-card [shift]="shift"></app-shift-card>
+            }
+          </div>
+        </mat-tab>
+
+      </mat-tab-group>
+    </aside>
+  </div>
+
+  <!-- Sub-ruta: formulario nueva ruta -->
+  <router-outlet></router-outlet>
+</div>
