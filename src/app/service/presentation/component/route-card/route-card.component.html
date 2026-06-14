@@ -19,12 +19,12 @@
 
   <div class="route-meta">
     <mat-icon class="meta-icon">directions_car</mat-icon>
-    <span>{{ route.assignedVehicleIds.length }} vehículo(s)</span>
+    <span>{{ route.assignedVehicleIds.length }} {{ 'routeCard.vehicles' | translate }}</span>
   </div>
 
   <div class="route-meta">
     <mat-icon class="meta-icon">place</mat-icon>
-    <span>{{ route.waypoints.length }} waypoints</span>
+    <span>{{ route.waypoints.length }} {{ 'routeCard.waypoints' | translate }}</span>
   </div>
 
   <div class="route-card-actions">
@@ -34,7 +34,7 @@
         class="action-btn activate"
         (click)="$event.stopPropagation(); statusChange.emit({ id: route.id, status: 'active' })"
       >
-        Activar
+        {{ 'routeCard.activate' | translate }}
       </button>
     }
     @if (route.status === 'active') {
@@ -43,7 +43,7 @@
         class="action-btn suspend"
         (click)="$event.stopPropagation(); statusChange.emit({ id: route.id, status: 'suspended' })"
       >
-        Suspender
+        {{ 'routeCard.suspend' | translate }}
       </button>
     }
     <button

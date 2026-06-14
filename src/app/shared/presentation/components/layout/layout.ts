@@ -102,7 +102,7 @@ export class Layout implements OnInit {
     {
       icon: 'alt_route',
       path: '/service/planning',
-      title: 'option.serviceDesign',
+      title: 'option.routeDesign',
       roles: ['Supervisor'],
     },
     {

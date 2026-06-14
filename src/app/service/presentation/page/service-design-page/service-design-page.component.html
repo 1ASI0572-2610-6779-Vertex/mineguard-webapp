@@ -5,31 +5,26 @@
   </header>
 
   <div class="sd-grid">
-    <!-- Mapa con overlays de rutas -->
     <section class="map-section">
       <app-live-map
         [vehicles]="vehicles()"
         [routeOverlays]="store.routeOverlays()"
       ></app-live-map>
 
-      <!-- Leyenda sobre el mapa -->
       <div class="map-legend">
         <span class="legend-item planned">
-          <span class="legend-line"></span> Planificada
+          <span class="legend-line"></span> {{ 'serviceDesign.map.planned' | translate }}
         </span>
         <span class="legend-item active">
-          <span class="legend-line"></span> Activa
+          <span class="legend-line"></span> {{ 'serviceDesign.map.active' | translate }}
         </span>
       </div>
     </section>
 
-    <!-- Panel derecho -->
     <aside class="sd-sidebar">
-      <!-- Tabs: Rutas / Turnos -->
       <mat-tab-group animationDuration="200ms" class="sd-tabs">
 
-        <!-- ── Tab Rutas ── -->
-        <mat-tab label="Rutas">
+        <mat-tab label="{{ 'serviceDesign.tabs.routes' | translate }}">
           <div class="tab-content">
             <button
               mat-flat-button
@@ -38,12 +33,11 @@
               [routerLink]="['new']"
             >
               <mat-icon>add</mat-icon>
-              Nueva Ruta
+              {{ 'serviceDesign.routes.newRoute' | translate }}
             </button>
 
-            <!-- Activas -->
             @if (store.activeRoutes().length) {
-              <p class="routes-section-label">ACTIVAS</p>
+              <p class="routes-section-label">{{ 'serviceDesign.routes.active' | translate }}</p>
               @for (route of store.activeRoutes(); track route.id) {
                 <app-route-card
                   [route]="route"
@@ -54,9 +48,8 @@
               }
             }
 
-            <!-- Planificadas -->
             @if (store.plannedRoutes().length) {
-              <p class="routes-section-label">PLANIFICADAS</p>
+              <p class="routes-section-label">{{ 'serviceDesign.routes.planned' | translate }}</p>
               @for (route of store.plannedRoutes(); track route.id) {
                 <app-route-card
                   [route]="route"
@@ -70,14 +63,13 @@
             @if (!store.routes().length && !store.loading()) {
               <div class="empty-state">
                 <mat-icon>route</mat-icon>
-                <p>No hay rutas creadas aún</p>
+                <p>{{ 'serviceDesign.routes.empty' | translate }}</p>
               </div>
             }
           </div>
         </mat-tab>
 
-        <!-- ── Tab Turnos ── -->
-        <mat-tab label="Turnos">
+        <mat-tab label="{{ 'serviceDesign.tabs.shifts' | translate }}">
           <div class="tab-content">
             @for (shift of store.shifts(); track shift.id) {
               <app-shift-card [shift]="shift"></app-shift-card>
@@ -89,6 +81,5 @@
     </aside>
   </div>
 
-  <!-- Sub-ruta: formulario nueva ruta -->
   <router-outlet></router-outlet>
 </div>

@@ -1458,32 +1458,137 @@
       "id": "RT-01",
       "name": "Ruta Norte - Extracción",
       "status": "active",
-      "assignedVehicleIds": ["V-12", "V-04"],
+      "assignedVehicleIds": [
+        "V-12",
+        "V-04"
+      ],
       "shiftId": "SH-01",
       "createdAt": "2026-05-01T06:00:00Z",
       "waypoints": [
-        { "latitude": -16.398, "longitude": -71.536, "label": "Base Central", "order": 1 },
-        { "latitude": -16.390, "longitude": -71.528, "label": "Zona Extracción A", "order": 2 },
-        { "latitude": -16.382, "longitude": -71.519, "label": "Punto de Descarga", "order": 3 }
+        {
+          "latitude": -16.398,
+          "longitude": -71.536,
+          "label": "Base Central",
+          "order": 1
+        },
+        {
+          "latitude": -16.39,
+          "longitude": -71.528,
+          "label": "Zona Extracción A",
+          "order": 2
+        },
+        {
+          "latitude": -16.382,
+          "longitude": -71.519,
+          "label": "Punto de Descarga",
+          "order": 3
+        }
       ]
     },
     {
       "id": "RT-02",
       "name": "Ruta Sur - Transporte",
-      "status": "planned",
-      "assignedVehicleIds": ["V-07"],
+      "status": "suspended",
+      "assignedVehicleIds": [
+        "V-07"
+      ],
       "shiftId": "SH-02",
       "createdAt": "2026-05-10T14:00:00Z",
       "waypoints": [
-        { "latitude": -16.415, "longitude": -71.542, "label": "Base Sur", "order": 1 },
-        { "latitude": -16.422, "longitude": -71.550, "label": "Zona de Carga", "order": 2 },
-        { "latitude": -16.430, "longitude": -71.558, "label": "Almacén Final", "order": 3 }
+        {
+          "latitude": -16.415,
+          "longitude": -71.542,
+          "label": "Base Sur",
+          "order": 1
+        },
+        {
+          "latitude": -16.422,
+          "longitude": -71.55,
+          "label": "Zona de Carga",
+          "order": 2
+        },
+        {
+          "latitude": -16.43,
+          "longitude": -71.558,
+          "label": "Almacén Final",
+          "order": 3
+        }
       ]
+    },
+    {
+      "name": "qw",
+      "status": "suspended",
+      "assignedVehicleIds": [],
+      "shiftId": "SH-01",
+      "createdAt": "2026-06-14T15:36:45.058Z",
+      "waypoints": [
+        {
+          "latitude": -16.414637,
+          "longitude": -71.537977,
+          "label": "qwe",
+          "order": 1
+        },
+        {
+          "latitude": -16.415624,
+          "longitude": -71.537696,
+          "label": "eqwe",
+          "order": 2
+        },
+        {
+          "latitude": -16.415222,
+          "longitude": -71.536054,
+          "label": "t",
+          "order": 3
+        },
+        {
+          "latitude": -16.416888,
+          "longitude": -71.532819,
+          "label": "t",
+          "order": 4
+        },
+        {
+          "latitude": -16.444483,
+          "longitude": -71.564598,
+          "label": "r",
+          "order": 5
+        },
+        {
+          "latitude": -16.408224,
+          "longitude": -71.737633,
+          "label": "e",
+          "order": 6
+        },
+        {
+          "latitude": -16.29281,
+          "longitude": -71.752052,
+          "label": "tw",
+          "order": 7
+        }
+      ],
+      "id": "accWrou"
     }
   ],
   "shifts": [
-    { "id": "SH-01", "name": "Turno Mañana", "startTime": "06:00", "endTime": "14:00", "type": "morning" },
-    { "id": "SH-02", "name": "Turno Tarde",  "startTime": "14:00", "endTime": "22:00", "type": "afternoon" },
-    { "id": "SH-03", "name": "Turno Noche",  "startTime": "22:00", "endTime": "06:00", "type": "night" }
+    {
+      "id": "SH-01",
+      "name": "Turno Mañana",
+      "startTime": "06:00",
+      "endTime": "14:00",
+      "type": "morning"
+    },
+    {
+      "id": "SH-02",
+      "name": "Turno Tarde",
+      "startTime": "14:00",
+      "endTime": "22:00",
+      "type": "afternoon"
+    },
+    {
+      "id": "SH-03",
+      "name": "Turno Noche",
+      "startTime": "22:00",
+      "endTime": "06:00",
+      "type": "night"
+    }
   ]
 }

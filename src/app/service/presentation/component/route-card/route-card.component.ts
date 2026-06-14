@@ -5,11 +5,12 @@ import { TitleCasePipe } from '@angular/common';
 
 import { Route } from '../../../domain/model/route.entity';
 import { RouteStatus } from '../../../domain/model/route-status';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-route-card',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, TitleCasePipe],
+  imports: [MatButtonModule, MatIconModule, TitleCasePipe, TranslatePipe],
   templateUrl: './route-card.component.html',
   styleUrl: './route-card.component.css',
 })
