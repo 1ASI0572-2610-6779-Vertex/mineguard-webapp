@@ -4,6 +4,7 @@ import { Route } from '../domain/model/route.entity';
 import { Shift } from '../domain/model/shift.entity';
 import { RouteWaypoint } from '../domain/model/route-waypoint.value-object';
 import { RouteStatus } from '../domain/model/route-status';
+import { RouteOverlay } from '../../monitoring/presentation/components/live-map/live-map';
 
 
 
@@ -31,13 +32,14 @@ export class ServiceDesignStore {
     this.routes().find((r) => r.id === this.selectedId()) ?? null
   );
 
-  /** Waypoints de todas las rutas activas → para el Live Map */
-  readonly routeOverlays = computed(() =>
-    this.activeRoutes().map((r) => ({
-      id: r.id,
-      name: r.name,
-      coords: r.waypointCoords,
-      status: r.status,
+  readonly routeOverlays = computed<RouteOverlay[]>(() =>
+    this.routes().map(route => ({
+      id: route.id,
+      name: route.name,
+      status: 'active',
+      coords: route.waypoints
+        .sort((a, b) => a.order - b.order)
+        .map(wp => [wp.latitude, wp.longitude] as [number, number]),
     }))
   );
 

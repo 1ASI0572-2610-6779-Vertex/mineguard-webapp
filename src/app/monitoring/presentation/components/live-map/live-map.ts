@@ -38,6 +38,7 @@ export class LiveMap implements AfterViewInit, OnDestroy {
   private markers: L.CircleMarker[] = [];
   private routeLines: L.Polyline[]  = [];
   private resizeObserver: ResizeObserver | null = null;
+  private routePolygons: L.Polygon[] = [];
 
   @Input({ required: true }) set vehicles(value: LiveMapVehicle[]) {
     this.vehiclesSignal.set(value);
@@ -129,35 +130,59 @@ export class LiveMap implements AfterViewInit, OnDestroy {
   private renderRouteOverlays(overlays: RouteOverlay[]): void {
     if (!this.map) return;
 
-    this.routeLines.forEach((l) => l.remove());
+    // Limpiar anteriores
+    this.routeLines.forEach(l => l.remove());
     this.routeLines = [];
+    this.routePolygons.forEach(p => p.remove());   // ← nuevo
+    this.routePolygons = [];                        // ← nuevo
 
     overlays.forEach((route) => {
       if (route.coords.length < 2) return;
 
-      const color     = route.status === 'active' ? '#00c2b2' : '#3b82f6';
-      const dashArray = route.status === 'planned' ? '8 5' : undefined;
+      const isActive  = route.status === 'active';
+      const color     = isActive ? '#00c2b2' : '#3b82f6';
+      const dashArray = isActive ? undefined : '8 5';
 
+      // ── Polígono relleno (mancha) ──────────────────────────────
+      if (route.coords.length >= 3) {
+        const polygon = L.polygon(route.coords, {
+          color,
+          weight: 2,
+          fillColor: color,
+          fillOpacity: 0.18,        // mancha translúcida
+          dashArray,
+        }).bindTooltip(route.name, { sticky: true });
+
+        polygon.addTo(this.map!);
+        this.routePolygons.push(polygon);
+      }
+
+      // ── Línea de ruta encima ───────────────────────────────────
       const line = L.polyline(route.coords, {
         color,
-        weight: 4,
+        weight: 3,
         dashArray,
-        opacity: 0.85,
+        opacity: 0.9,
       }).bindTooltip(route.name, { sticky: true });
 
-      // Waypoint markers sobre la línea
+      line.addTo(this.map!);
+      this.routeLines.push(line);
+
+      // ── Waypoint markers ──────────────────────────────────────
       route.coords.forEach((coord, i) => {
+        const isFirst = i === 0;
+        const isLast  = i === route.coords.length - 1;
+
         L.circleMarker(coord, {
-          radius: 5,
+          radius: isFirst || isLast ? 7 : 5,
           weight: 2,
           color: '#ffffff',
           fillColor: color,
           fillOpacity: 1,
-        }).addTo(this.map!);
+        })
+          .bindTooltip(`${route.name} – punto ${i + 1}`, { direction: 'top' })
+          .addTo(this.map!);
       });
-
-      line.addTo(this.map!);
-      this.routeLines.push(line);
     });
   }
 
