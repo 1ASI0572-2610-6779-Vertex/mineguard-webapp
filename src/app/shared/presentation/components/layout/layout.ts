@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+// Removed unused NgClass import
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,7 +24,6 @@ interface MenuOption {
   selector: 'app-layout',
   standalone: true,
   imports: [
-    NgClass,
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
