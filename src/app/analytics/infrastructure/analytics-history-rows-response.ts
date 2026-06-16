@@ -11,6 +11,4 @@ export interface AnalyticsHistoryRowResource extends BaseResource {
   location: string;
 }
 
-export interface AnalyticsHistoryRowsResponse extends BaseResponse {
-  analyticsHistoryRows: AnalyticsHistoryRowResource[];
-}
+export interface AnalyticsHistoryRowsResponse extends BaseResponse {}

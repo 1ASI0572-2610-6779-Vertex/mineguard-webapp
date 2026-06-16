@@ -11,6 +11,4 @@ export interface ReportResource extends BaseResource {
   description: string;
 }
 
-export interface ReportsResponse extends BaseResponse {
-  reports: ReportResource[];
-}
+export interface ReportsResponse extends BaseResponse {}

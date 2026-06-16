@@ -15,6 +15,4 @@ export interface SupervisorResource extends BaseResource {
 /**
  * Response envelope returned by the supervisors collection endpoint.
  */
-export interface SupervisorsResponse extends BaseResponse {
-  supervisors: SupervisorResource[];
-}
+export interface SupervisorsResponse extends BaseResponse {}

@@ -29,6 +29,9 @@ export class SignUpAssembler {
     return {
       username: command.username,
       password: command.password,
+      email: command.email,
+      fullName: command.fullName,
+      roles: command.roles,
     } as SignUpRequest;
   }
 }

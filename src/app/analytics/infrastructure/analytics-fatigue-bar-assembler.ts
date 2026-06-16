@@ -9,8 +9,8 @@ export class AnalyticsFatigueBarAssembler
   implements
     BaseAssembler<AnalyticsFatigueBar, AnalyticsFatigueBarResource, AnalyticsFatigueBarsResponse>
 {
-  toEntitiesFromResponse(response: AnalyticsFatigueBarsResponse): AnalyticsFatigueBar[] {
-    return response.analyticsFatigueBars.map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: AnalyticsFatigueBarsResponse): AnalyticsFatigueBar[] {
+    return [];
   }
 
   toEntityFromResource(resource: AnalyticsFatigueBarResource): AnalyticsFatigueBar {

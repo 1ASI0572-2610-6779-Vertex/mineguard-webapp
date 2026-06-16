@@ -3,8 +3,8 @@ import { Report } from '../domain/model/report.entity';
 import { ReportResource, ReportsResponse } from './reports-response';
 
 export class ReportAssembler implements BaseAssembler<Report, ReportResource, ReportsResponse> {
-  toEntitiesFromResponse(response: ReportsResponse): Report[] {
-    return response.reports.map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: ReportsResponse): Report[] {
+    return [];
   }
 
   toEntityFromResource(resource: ReportResource): Report {

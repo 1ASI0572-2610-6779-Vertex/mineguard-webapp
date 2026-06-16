@@ -14,4 +14,4 @@ export interface AdminSummaryResource extends BaseResource {
 /**
  * Response envelope returned by the admin summary endpoint.
  */
-export interface AdminSummaryResponse extends BaseResponse, AdminSummaryResource {}
+export interface AdminSummaryResponse extends BaseResponse {}

@@ -21,74 +21,32 @@
  * ```
  */
 export class SignUpCommand {
-  /**
-   * The username for the new account.
-   * This is typically a corporate ID or user handle.
-   *
-   * @returns The username credential
-   */
-  get username(): string {
-    return this._username;
-  }
+  get username(): string { return this._username; }
+  set username(value: string) { this._username = value; }
 
-  /**
-   * Sets the username for sign-up.
-   *
-   * @param value The username value
-   */
-  set username(value: string) {
-    this._username = value;
-  }
+  get password(): string { return this._password; }
+  set password(value: string) { this._password = value; }
 
-  /**
-   * The password for the new account.
-   * This is the raw, unhashed password provided by the user.
-   *
-   * @remarks
-   * The password is stored in memory during command processing.
-   * In a production system, ensure the password is not logged or
-   * stored beyond its immediate use.
-   *
-   * @returns The password credential
-   */
-  get password(): string {
-    return this._password;
-  }
+  get email(): string { return this._email; }
+  set email(value: string) { this._email = value; }
 
-  /**
-   * Sets the password for sign-up.
-   *
-   * @param value The password value
-   */
-  set password(value: string) {
-    this._password = value;
-  }
+  get fullName(): string { return this._fullName; }
+  set fullName(value: string) { this._fullName = value; }
 
-  /**
-   * The username backing field.
-   * @private
-   */
+  get roles(): string[] { return this._roles; }
+  set roles(value: string[]) { this._roles = value; }
+
   private _username: string;
-
-  /**
-   * The password backing field.
-   * @private
-   */
   private _password: string;
+  private _email: string;
+  private _fullName: string;
+  private _roles: string[];
 
-  /**
-   * Creates a new SignUpCommand instance.
-   *
-   * @param props - Credential values for sign-up
-   * @param props.username - The new user's username or corporate ID
-   * @param props.password - The new user's password
-   *
-   * @remarks
-   * Initializes the command with the provided credential values.
-   * Both username and password are required for a valid command.
-   */
-  constructor(props: { username: string; password: string }) {
+  constructor(props: { username: string; password: string; email: string; fullName: string; roles: string[] }) {
     this._username = props.username;
     this._password = props.password;
+    this._email = props.email;
+    this._fullName = props.fullName;
+    this._roles = props.roles;
   }
 }

@@ -72,7 +72,7 @@ export class LiveMapVehicleAssembler
    * @param {LiveMapVehiclesResponse} response - La respuesta completa HTTP con la lista de vehículos.
    * @returns {LiveMapVehicle[]} Un arreglo de entidades de dominio listas para ser renderizadas.
    */
-  toEntitiesFromResponse(response: LiveMapVehiclesResponse): LiveMapVehicle[] {
-    return (response.vehicles ?? []).map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: LiveMapVehiclesResponse): LiveMapVehicle[] {
+    return [];
   }
 }

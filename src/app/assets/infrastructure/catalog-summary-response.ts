@@ -16,4 +16,4 @@ export interface CatalogSummaryResource extends BaseResource {
 /**
  * Response envelope returned by the catalog summary endpoint.
  */
-export interface CatalogSummaryResponse extends BaseResponse, CatalogSummaryResource {}
+export interface CatalogSummaryResponse extends BaseResponse {}

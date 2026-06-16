@@ -7,6 +7,4 @@ export interface AnalyticsInsightResource extends BaseResource {
   className: string;
 }
 
-export interface AnalyticsInsightsResponse extends BaseResponse {
-  analyticsInsights: AnalyticsInsightResource[];
-}
+export interface AnalyticsInsightsResponse extends BaseResponse {}

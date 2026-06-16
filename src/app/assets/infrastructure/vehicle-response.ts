@@ -11,6 +11,4 @@ export interface VehicleResource extends BaseResource {
   shiftLabel: string | null;
 }
 
-export interface VehiclesResponse extends BaseResponse {
-  vehicles: VehicleResource[];
-}
+export interface VehiclesResponse extends BaseResponse {}

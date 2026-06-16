@@ -28,7 +28,7 @@ export class AdminSummaryAssembler
     };
   }
 
-  toEntitiesFromResponse(response: AdminSummaryResponse): AdminSummary[] {
-    return [this.toEntityFromResource(response)];
+  toEntitiesFromResponse(_: AdminSummaryResponse): AdminSummary[] {
+    return [];
   }
 }

@@ -1,5 +1,10 @@
-<div class="container-with-spacing">
-  <h1>{{ 'page-not-found.title' | translate }}</h1>
-  <div [innerHTML]="'page-not-found.content' | translate: { invalid_path: invalidPath }"></div>
-</div>
-<button mat-button (click)="navigateToHome()">{{ 'page-not-found.go-home' | translate }}</button>
+<section class="not-found-card">
+  <div class="not-found-code" aria-hidden="true">404</div>
+  <h1 class="not-found-title">{{ 'page-not-found.title' | translate }}</h1>
+  <div class="not-found-body"
+       [innerHTML]="'page-not-found.content' | translate: { invalid_path: invalidPath }">
+  </div>
+  <button mat-flat-button color="primary" class="not-found-btn" (click)="navigateToHome()">
+    {{ 'page-not-found.go-home' | translate }}
+  </button>
+</section>

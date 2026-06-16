@@ -1,6 +1,12 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, Observable, throwError } from 'rxjs';
 
+interface ErrorResource {
+  code: string;
+  message: string;
+  details: string;
+}
+
 import { BaseEntity } from '../domain/model/base-entity';
 import { BaseAssembler } from './base-assembler';
 import { BaseResource, BaseResponse } from './base-response';
@@ -66,14 +72,17 @@ export abstract class BaseApiEndpoint<
 
   protected handleError(operation: string) {
     return (error: HttpErrorResponse): Observable<never> => {
-      let errorMessage = operation;
-      if (error.status === 404) {
-        errorMessage = `${operation}: Resource not found`;
-      } else if (error.error instanceof ErrorEvent) {
-        errorMessage = `${operation}: ${error.error.message}`;
+      let errorMessage: string;
+
+      if (error.error instanceof ErrorEvent) {
+        errorMessage = error.error.message;
+      } else if (error.error && typeof error.error === 'object' && 'message' in error.error) {
+        const body = error.error as ErrorResource;
+        errorMessage = body.message || `${operation}: ${error.status}`;
       } else {
         errorMessage = `${operation}: ${error.status || 'Unexpected error'}`;
       }
+
       return throwError(() => new Error(errorMessage));
     };
   }
