@@ -1457,7 +1457,7 @@
     {
       "id": "RT-01",
       "name": "Ruta Norte - Extracción",
-      "status": "active",
+      "status": "suspended",
       "assignedVehicleIds": [
         "V-12",
         "V-04"

@@ -12,6 +12,4 @@ export interface PerformanceMetricResource extends BaseResource {
   calculated_at: string;
 }
 
-export interface PerformanceMetricsResponse extends BaseResponse {
-  performanceMetrics: PerformanceMetricResource[];
-}
+export interface PerformanceMetricsResponse extends BaseResponse {}

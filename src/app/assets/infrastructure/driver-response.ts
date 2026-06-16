@@ -11,6 +11,4 @@ export interface DriverResource extends BaseResource {
   lastAccess: string;
 }
 
-export interface DriversResponse extends BaseResponse {
-  drivers: DriverResource[];
-}
+export interface DriversResponse extends BaseResponse {}

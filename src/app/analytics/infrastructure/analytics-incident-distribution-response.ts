@@ -8,6 +8,4 @@ export interface AnalyticsIncidentDistributionResource extends BaseResource {
   className: string;
 }
 
-export interface AnalyticsIncidentDistributionResponse extends BaseResponse {
-  analyticsIncidentDistribution: AnalyticsIncidentDistributionResource[];
-}
+export interface AnalyticsIncidentDistributionResponse extends BaseResponse {}

@@ -27,7 +27,7 @@ export class FleetSummaryAssembler
     };
   }
 
-  toEntitiesFromResponse(response: FleetSummaryResponse): FleetSummary[] {
-    return [this.toEntityFromResource(response)];
+  toEntitiesFromResponse(_: FleetSummaryResponse): FleetSummary[] {
+    return [];
   }
 }

@@ -29,7 +29,7 @@ export class DriverAssembler
     };
   }
 
-  toEntitiesFromResponse(response: DriversResponse): Driver[] {
-    return (response.drivers ?? []).map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: DriversResponse): Driver[] {
+    return [];
   }
 }

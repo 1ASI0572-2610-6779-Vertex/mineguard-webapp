@@ -68,10 +68,4 @@ export interface LiveMapVehicleResource extends BaseResource {
  *
  * @extends {BaseResponse}
  */
-export interface LiveMapVehiclesResponse extends BaseResponse {
-  /**
-   * @property {LiveMapVehicleResource[]} vehicles
-   * Arreglo que contiene la lista de recursos de los vehículos obtenidos.
-   */
-  vehicles: LiveMapVehicleResource[];
-}
+export interface LiveMapVehiclesResponse extends BaseResponse {}

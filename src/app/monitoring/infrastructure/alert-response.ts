@@ -18,6 +18,4 @@ export interface AlertResource extends BaseResource {
   resolutionNotes: string;
 }
 
-export interface AlertsResponse extends BaseResponse {
-  alerts: AlertResource[];
-}
+export interface AlertsResponse extends BaseResponse {}

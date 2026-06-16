@@ -8,8 +8,8 @@ import {
 export class PerformanceMetricAssembler
   implements BaseAssembler<PerformanceMetric, PerformanceMetricResource, PerformanceMetricsResponse>
 {
-  toEntitiesFromResponse(response: PerformanceMetricsResponse): PerformanceMetric[] {
-    return response.performanceMetrics.map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: PerformanceMetricsResponse): PerformanceMetric[] {
+    return [];
   }
 
   toEntityFromResource(resource: PerformanceMetricResource): PerformanceMetric {

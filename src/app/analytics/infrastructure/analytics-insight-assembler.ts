@@ -8,8 +8,8 @@ import {
 export class AnalyticsInsightAssembler
   implements BaseAssembler<AnalyticsInsight, AnalyticsInsightResource, AnalyticsInsightsResponse>
 {
-  toEntitiesFromResponse(response: AnalyticsInsightsResponse): AnalyticsInsight[] {
-    return response.analyticsInsights.map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: AnalyticsInsightsResponse): AnalyticsInsight[] {
+    return [];
   }
 
   toEntityFromResource(resource: AnalyticsInsightResource): AnalyticsInsight {

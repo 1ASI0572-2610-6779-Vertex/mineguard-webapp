@@ -9,8 +9,8 @@ export class DashboardRecentAlertsAssembler
   implements
     BaseAssembler<DashboardRecentAlert, DashboardRecentAlertResource, DashboardRecentAlertsResponse>
 {
-  toEntitiesFromResponse(response: DashboardRecentAlertsResponse): DashboardRecentAlert[] {
-    return response.dashboardRecentAlerts.map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: DashboardRecentAlertsResponse): DashboardRecentAlert[] {
+    return [];
   }
 
   toEntityFromResource(resource: DashboardRecentAlertResource): DashboardRecentAlert {

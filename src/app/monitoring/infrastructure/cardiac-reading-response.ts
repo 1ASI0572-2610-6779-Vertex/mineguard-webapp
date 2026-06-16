@@ -9,6 +9,4 @@ export interface CardiacReadingResource extends BaseResource {
   status: CardiacStatus;
 }
 
-export interface CardiacReadingsResponse extends BaseResponse {
-  readings: CardiacReadingResource[];
-}
+export interface CardiacReadingsResponse extends BaseResponse {}

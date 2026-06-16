@@ -32,8 +32,8 @@ export class SupervisorAssembler
     };
   }
 
-  toEntitiesFromResponse(response: SupervisorsResponse): Supervisor[] {
-    return (response.supervisors ?? []).map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: SupervisorsResponse): Supervisor[] {
+    return [];
   }
 
   toRequestFromCommand(command: CreateSupervisorCommand): CreateSupervisorRequest {

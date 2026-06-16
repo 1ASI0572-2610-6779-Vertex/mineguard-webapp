@@ -1,0 +1,30 @@
+/* ─────────────────────────────────────────────────────────────
+   HOME VIEW
+   ───────────────────────────────────────────────────────────── */
+:host {
+  display: block;
+}
+
+.container-with-spacing {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.container-with-spacing h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-neutral-black);
+  margin: 0;
+  line-height: 1.3;
+  letter-spacing: -0.3px;
+}
+
+.container-with-spacing p {
+  font-size: 15px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.65;
+  max-width: 560px;
+}

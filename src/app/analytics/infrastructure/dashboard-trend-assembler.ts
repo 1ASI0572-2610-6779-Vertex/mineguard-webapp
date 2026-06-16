@@ -5,8 +5,8 @@ import { DashboardTrendResource, DashboardTrendResponse } from './dashboard-tren
 export class DashboardTrendAssembler
   implements BaseAssembler<DashboardTrend, DashboardTrendResource, DashboardTrendResponse>
 {
-  toEntitiesFromResponse(response: DashboardTrendResponse): DashboardTrend[] {
-    return response.dashboardTrend.map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: DashboardTrendResponse): DashboardTrend[] {
+    return [];
   }
 
   toEntityFromResource(resource: DashboardTrendResource): DashboardTrend {

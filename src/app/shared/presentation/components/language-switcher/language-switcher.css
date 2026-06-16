@@ -1,23 +1,73 @@
-.language-toggle {
-  background-color: white;
-  color: black;
-  border-color: white;
-  transition: background-color 0.3s, color 0.3s;
+/* ═══════════════════════════════════════════════════════════════
+   LANGUAGE SWITCHER — pill toggle inside the white header
+   ═══════════════════════════════════════════════════════════════ */
+
+:host {
+  display: inline-flex;
+  align-items: center;
 }
 
-.language-toggle.mat-button-toggle-checked {
-  background-color: black;
-  color: white;
-  border-color: white;
+.lang-switcher {
+  display: inline-flex;
+  align-items: center;
 }
 
-.language-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-  color: black;
-  border-color: white;
+/* ── Override Material button-toggle-group container ───────────── */
+.lang-toggle-group.mat-button-toggle-group {
+  border: 1px solid var(--color-neutral-gray-300) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background: var(--color-neutral-white) !important;
+  box-shadow: none !important;
+  height: 34px !important;
 }
 
-.language-toggle.mat-button-toggle-checked:hover {
-  background-color: black;
-  color: white;
+/* ── Individual toggle button ──────────────────────────────────── */
+::ng-deep .lang-toggle-group .mat-button-toggle {
+  background: transparent !important;
+  border: none !important;
+  border-left: 1px solid var(--color-neutral-gray-300) !important;
+  min-width: 40px !important;
+  height: 34px !important;
+}
+
+::ng-deep .lang-toggle-group .mat-button-toggle:first-child {
+  border-left: none !important;
+}
+
+::ng-deep .lang-toggle-group .mat-button-toggle .mat-button-toggle-button {
+  height: 34px !important;
+  padding: 0 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+::ng-deep .lang-toggle-group .mat-button-toggle .mat-button-toggle-label-content {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.8px !important;
+  line-height: 1 !important;
+  color: #9ca3af !important;
+  padding: 0 !important;
+  transition: color 0.16s ease !important;
+}
+
+/* Hover */
+::ng-deep .lang-toggle-group .mat-button-toggle:hover .mat-button-toggle-label-content {
+  color: var(--color-neutral-black) !important;
+}
+
+/* Checked / active language */
+::ng-deep .lang-toggle-group .mat-button-toggle-checked {
+  background-color: var(--color-accent-main) !important;
+}
+
+::ng-deep .lang-toggle-group .mat-button-toggle-checked .mat-button-toggle-label-content {
+  color: var(--color-neutral-white) !important;
+}
+
+/* Ripple disable — keep the UI clean */
+::ng-deep .lang-toggle-group .mat-button-toggle-ripple {
+  display: none !important;
 }

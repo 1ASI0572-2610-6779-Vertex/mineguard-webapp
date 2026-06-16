@@ -25,7 +25,7 @@ export class CardiacReadingAssembler
     };
   }
 
-  toEntitiesFromResponse(response: CardiacReadingsResponse): CardiacReading[] {
-    return (response.readings ?? []).map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: CardiacReadingsResponse): CardiacReading[] {
+    return [];
   }
 }

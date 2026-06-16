@@ -39,7 +39,7 @@ export class AlertAssembler
     };
   }
 
-  toEntitiesFromResponse(response: AlertsResponse): Alert[] {
-    return (response.alerts ?? []).map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: AlertsResponse): Alert[] {
+    return [];
   }
 }

@@ -8,6 +8,4 @@ export interface DashboardRiskDriverResource extends BaseResource {
   riskScore: number;
 }
 
-export interface DashboardRiskDriversResponse extends BaseResponse {
-  dashboardRiskDrivers: DashboardRiskDriverResource[];
-}
+export interface DashboardRiskDriversResponse extends BaseResponse {}
