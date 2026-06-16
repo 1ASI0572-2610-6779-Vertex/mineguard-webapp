@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { Home } from './shared/presentation/views/home/home';
 import { iamGuard } from './iam/infrastructure/iam.guard';
 
 const about = () => import('./shared/presentation/views/about/about').then((m) => m.About);
@@ -28,14 +27,13 @@ const baseTitle = 'MineGuard';
  * context routes file (see `analytics.routes.ts`, `iam.routes.ts`, etc.).
  */
 export const routes: Routes = [
-  { path: 'home', component: Home, title: `${baseTitle} - Home`, canActivate: [iamGuard] },
   { path: 'about', loadComponent: about, title: `${baseTitle} - About`, canActivate: [iamGuard] },
   { path: 'iam', loadChildren: iamRoutes },
   { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [iamGuard] },
   { path: 'monitoring', loadChildren: monitoringRoutes, canActivate: [iamGuard] },
   { path: 'assets', loadChildren: assetsRoutes, canActivate: [iamGuard] },
   { path: 'service', loadChildren: serviceDesignRoutes, canActivate: [iamGuard] },
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: '', redirectTo: '/iam/sign-in', pathMatch: 'full' },
   {
     path: '**',
     loadComponent: pageNotFound,

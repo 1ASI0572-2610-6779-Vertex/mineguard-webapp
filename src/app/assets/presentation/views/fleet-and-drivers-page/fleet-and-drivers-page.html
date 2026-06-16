@@ -1,49 +1,85 @@
 <div class="fleet-page">
+
+  <!-- Page header -->
   <header class="page-header">
-    <h1>{{ 'assets.fleet.title' | translate }}</h1>
-    <p>{{ 'assets.fleet.subtitle' | translate }}</p>
+    <div class="page-header-text">
+      <h1>{{ 'assets.fleet.title' | translate }}</h1>
+      <p>{{ 'assets.fleet.subtitle' | translate }}</p>
+    </div>
   </header>
 
+  <!-- Error banner -->
+  @if (error()) {
+    <div class="error-banner">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      {{ error() }}
+    </div>
+  }
+
   <section class="page-content">
+
+    <!-- Tabs bar + CTA -->
     <div class="tabs-bar">
-      <nav class="tabs">
-        <button
-          class="tab"
+      <nav class="tabs" role="tablist">
+        <button class="tab" role="tab"
           [class.tab-active]="activeTab() === 'vehicles'"
-          (click)="selectTab('vehicles')"
-        >
+          [attr.aria-selected]="activeTab() === 'vehicles'"
+          (click)="selectTab('vehicles')">
           <mat-icon class="tab-icon">local_shipping</mat-icon>
           <span>{{ 'assets.fleet.tabs.vehicles' | translate }}</span>
         </button>
-        <button
-          class="tab"
+        <button class="tab" role="tab"
           [class.tab-active]="activeTab() === 'drivers'"
-          (click)="selectTab('drivers')"
-        >
+          [attr.aria-selected]="activeTab() === 'drivers'"
+          (click)="selectTab('drivers')">
           <mat-icon class="tab-icon">groups</mat-icon>
           <span>{{ 'assets.fleet.tabs.drivers' | translate }}</span>
         </button>
       </nav>
 
       @if (activeTab() === 'vehicles') {
-        <button mat-flat-button class="primary-btn">
-          <mat-icon>add_circle</mat-icon>
-          <span>{{ 'assets.fleet.action.newVehicle' | translate }}</span>
+        <button mat-flat-button class="cta-btn" (click)="openAddVehicle()">
+          <mat-icon>add</mat-icon>
+          {{ 'assets.fleet.action.newVehicle' | translate }}
         </button>
       } @else {
-        <button mat-flat-button class="primary-btn">
+        <button mat-flat-button class="cta-btn" (click)="openAddDriver()">
           <mat-icon>person_add</mat-icon>
-          <span>{{ 'assets.fleet.action.newDriver' | translate }}</span>
+          {{ 'assets.fleet.action.newDriver' | translate }}
         </button>
       }
     </div>
 
-    <div class="tab-panel">
+    <!-- Tab panel -->
+    <div class="tab-panel" role="tabpanel">
       @if (activeTab() === 'vehicles') {
-        <app-vehicles-inventory [vehicles]="vehicles()"></app-vehicles-inventory>
+        @if (vehicles().length === 0) {
+          <div class="empty-state">
+            <mat-icon class="empty-icon">local_shipping</mat-icon>
+            <p class="empty-title">Sin vehículos registrados</p>
+            <p class="empty-sub">Agrega el primer vehículo para comenzar a gestionar la flota.</p>
+            <button mat-flat-button class="cta-btn" (click)="openAddVehicle()">
+              <mat-icon>add</mat-icon> Registrar vehículo
+            </button>
+          </div>
+        } @else {
+          <app-vehicles-inventory [vehicles]="vehicles()"></app-vehicles-inventory>
+        }
       } @else {
-        <app-drivers-directory [drivers]="drivers()"></app-drivers-directory>
+        @if (drivers().length === 0) {
+          <div class="empty-state">
+            <mat-icon class="empty-icon">groups</mat-icon>
+            <p class="empty-title">Sin conductores registrados</p>
+            <p class="empty-sub">Incorpora el primer conductor al directorio operativo.</p>
+            <button mat-flat-button class="cta-btn" (click)="openAddDriver()">
+              <mat-icon>person_add</mat-icon> Registrar conductor
+            </button>
+          </div>
+        } @else {
+          <app-drivers-directory [drivers]="drivers()"></app-drivers-directory>
+        }
       }
     </div>
+
   </section>
 </div>

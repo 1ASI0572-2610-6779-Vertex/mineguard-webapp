@@ -1,42 +1,47 @@
 <div class="drivers-directory">
-  <div class="column-labels">
+  <!-- Column headers -->
+  <div class="col-headers">
     <span>{{ 'assets.fleet.drivers.column.personalData' | translate }}</span>
     <span>{{ 'assets.fleet.drivers.column.shiftStatus' | translate }}</span>
     <span>{{ 'assets.fleet.drivers.column.lastAccess' | translate }}</span>
-    <span class="actions-col">{{ 'assets.fleet.drivers.column.adminActions' | translate }}</span>
+    <span class="col-right">{{ 'assets.fleet.drivers.column.adminActions' | translate }}</span>
   </div>
 
-  <ul class="drivers-list">
-    @for (driver of drivers; track driver.id) {
-      <li
-        class="driver-row"
-        [class.driver-row-inactive]="driver.shiftStatus === 'inactive'"
-      >
+  <ul class="drivers-list" role="list">
+    @for (driver of drivers; track driver.id; let i = $index) {
+      <li class="driver-row"
+        [class.driver-row--inactive]="driver.shiftStatus === 'inactive'"
+        [style.animation-delay]="(i * 40) + 'ms'"
+        role="listitem">
+
+        <!-- Identity -->
         <div class="driver-identity">
-          <div class="avatar">{{ initialsOf(driver.fullName) }}</div>
+          <div class="avatar" [class.avatar--inactive]="driver.shiftStatus === 'inactive'">
+            {{ initialsOf(driver.fullName) }}
+          </div>
           <div class="identity-text">
-            <strong>
+            <span class="driver-name">
               {{ driver.fullName }}
-              <span class="operator-id">({{ driver.operatorId }})</span>
-            </strong>
+              <span class="operator-id">{{ driver.operatorId }}</span>
+            </span>
             @if (driver.shiftStatus === 'inactive') {
-              <span class="status-text-inactive">
+              <span class="offboarded-label">
                 {{ 'assets.fleet.drivers.offBoarded' | translate }}
               </span>
             } @else {
               <span class="license-line">
-                {{ 'assets.fleet.drivers.license' | translate }}: {{ driver.license }}
-                •
-                {{ 'assets.fleet.drivers.specialty' | translate }}: {{ driver.specialty }}
+                {{ driver.license }} · {{ driver.specialty }}
               </span>
             }
           </div>
         </div>
 
+        <!-- Shift status badge -->
         <div class="status-cell">
           @switch (driver.shiftStatus) {
             @case ('on_shift') {
               <span class="badge badge-on-shift">
+                <span class="badge-dot"></span>
                 {{ 'assets.fleet.drivers.status.onShift' | translate }}
               </span>
             }
@@ -53,30 +58,28 @@
           }
         </div>
 
+        <!-- Last access -->
         <div class="access-cell">
-          @if (driver.shiftStatus === 'inactive') {
-            <span class="access-muted">{{ driver.lastAccess }}</span>
-          } @else {
-            <span>{{ driver.lastAccess }}</span>
-          }
+          <span [class.access-muted]="driver.shiftStatus === 'inactive'">
+            {{ driver.lastAccess }}
+          </span>
         </div>
 
+        <!-- Actions -->
         <div class="actions-cell">
           @if (driver.shiftStatus === 'inactive') {
-            <span class="readonly-label">
+            <span class="archived-label">
               {{ 'assets.fleet.drivers.action.historyPreserved' | translate }}
             </span>
           } @else {
-            <button
-              mat-icon-button
-              [title]="'assets.fleet.drivers.action.edit' | translate"
-            >
+            <button mat-icon-button class="icon-btn"
+              (click)="openEdit(driver)"
+              [title]="'assets.fleet.drivers.action.edit' | translate">
               <mat-icon>edit</mat-icon>
             </button>
-            <button
-              mat-icon-button
-              [title]="'assets.fleet.drivers.action.revoke' | translate"
-            >
+            <button mat-icon-button class="icon-btn icon-btn--danger"
+              (click)="revoke(driver)"
+              [title]="'assets.fleet.drivers.action.revoke' | translate">
               <mat-icon>person_remove</mat-icon>
             </button>
           }

@@ -10,9 +10,6 @@ import { CatalogSummaryApiEndpoint } from './catalog-summary-api-endpoint';
 import { DriversApiEndpoint } from './drivers-api-endpoint';
 import { VehiclesApiEndpoint } from './vehicles-api-endpoint';
 
-/**
- * Infrastructure facade for the assets bounded context.
- */
 @Injectable({ providedIn: 'root' })
 export class AssetsApi extends BaseApi {
   private readonly catalogSummaryEndpoint: CatalogSummaryApiEndpoint;
@@ -34,11 +31,23 @@ export class AssetsApi extends BaseApi {
     return this.vehiclesEndpoint.getAll();
   }
 
+  createVehicle(vehicle: Vehicle): Observable<Vehicle> {
+    return this.vehiclesEndpoint.create(vehicle);
+  }
+
   updateVehicle(vehicle: Vehicle): Observable<Vehicle> {
     return this.vehiclesEndpoint.update(vehicle, vehicle.id);
   }
 
   getDrivers(): Observable<Driver[]> {
     return this.driversEndpoint.getAll();
+  }
+
+  createDriver(driver: Driver): Observable<Driver> {
+    return this.driversEndpoint.create(driver);
+  }
+
+  updateDriver(driver: Driver): Observable<Driver> {
+    return this.driversEndpoint.update(driver, driver.id);
   }
 }

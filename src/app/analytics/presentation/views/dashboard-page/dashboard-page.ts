@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 
+import { IamStore } from '../../../../iam/application/iam.store';
 import { AnalyticsStore } from '../../../application/analytics.store';
 import { DashboardTrend } from '../../../domain/model/dashboard-trend.entity';
 import { DashboardRecentAlerts } from '../../components/dashboard-recent-alerts/dashboard-recent-alerts';
@@ -20,6 +21,9 @@ import { DashboardTrend as DashboardTrendComponent } from '../../components/dash
 })
 export class DashboardPage {
   private store = inject(AnalyticsStore);
+  private iamStore = inject(IamStore);
+
+  readonly displayName = this.iamStore.currentUsername;
 
   readonly summary = this.store.dashboardSummary;
   readonly trend = this.store.dashboardTrend;

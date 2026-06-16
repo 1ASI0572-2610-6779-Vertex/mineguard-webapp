@@ -194,7 +194,8 @@ export class IamStore {
         };
         this.savePersistedSession(session);
         this.applySession(session);
-        router.navigate(['/home']).then();
+        const dest = session.role === 'Administrator' ? '/analytics/admin-summary' : '/analytics/dashboard';
+        router.navigate([dest]).then();
       },
       error: (err) => {
         console.error('Sign-in failed:', err);

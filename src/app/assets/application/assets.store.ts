@@ -1,23 +1,13 @@
 import { Injectable, signal } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 
 import { CatalogSummary } from '../domain/model/catalog-summary.entity';
 import { Driver } from '../domain/model/driver.entity';
+import { DriverShiftStatus } from '../domain/model/driver-shift-status';
 import { Vehicle } from '../domain/model/vehicle.entity';
 import { VehicleStatus } from '../domain/model/vehicle-status';
 import { AssetsApi } from '../infrastructure/assets-api';
 
-/**
- * Application service for the assets bounded context.
- *
- * @remarks
- * Holds three projections:
- * - Catalog summary (admin "Auditoría y Activos")
- * - Vehicles inventory (supervisor "Flota y Conductores" → tab Vehículos)
- * - Drivers directory (supervisor "Flota y Conductores" → tab Conductores)
- *
- * All loads run via plain `subscribe()` (no `takeUntilDestroyed`) because the
- * store is a root singleton and the calls happen from component `ngOnInit`.
- */
 @Injectable({ providedIn: 'root' })
 export class AssetsStore {
   private readonly catalogSummarySignal = signal<CatalogSummary | null>(null);
@@ -32,9 +22,6 @@ export class AssetsStore {
 
   constructor(private assetsApi: AssetsApi) {}
 
-  /**
-   * Loads the catalog summary aggregate on demand.
-   */
   loadCatalogSummary(): void {
     this.errorSignal.set(null);
     this.assetsApi.getCatalogSummary().subscribe({
@@ -46,9 +33,6 @@ export class AssetsStore {
     });
   }
 
-  /**
-   * Loads the vehicles inventory on demand.
-   */
   loadVehicles(): void {
     this.errorSignal.set(null);
     this.assetsApi.getVehicles().subscribe({
@@ -60,9 +44,6 @@ export class AssetsStore {
     });
   }
 
-  /**
-   * Loads the drivers directory on demand.
-   */
   loadDrivers(): void {
     this.errorSignal.set(null);
     this.assetsApi.getDrivers().subscribe({
@@ -74,11 +55,7 @@ export class AssetsStore {
     });
   }
 
-  /**
-   * Updates the operational status of a vehicle ("Enviar a Taller" /
-   * "Marcar Operativo") and replaces the entry in the local inventory signal
-   * on success.
-   */
+  /** Toggles vehicle operational status in-place (existing behaviour). */
   updateVehicleStatus(vehicleId: number, status: VehicleStatus): void {
     const current = this.vehiclesSignal().find((v) => v.id === vehicleId);
     if (!current) return;
@@ -93,17 +70,62 @@ export class AssetsStore {
       shiftLabel: status === 'maintenance' ? null : current.shiftLabel,
     });
 
-    this.errorSignal.set(null);
     this.assetsApi.updateVehicle(updated).subscribe({
-      next: (vehicle) => {
-        this.vehiclesSignal.update((list) =>
-          list.map((v) => (v.id === vehicle.id ? vehicle : v)),
-        );
-      },
+      next: (vehicle) => this.vehiclesSignal.update((list) => list.map((v) => (v.id === vehicle.id ? vehicle : v))),
       error: (err) => {
         console.error('Failed to update vehicle status:', err);
         this.errorSignal.set('Failed to update vehicle status');
       },
     });
+  }
+
+  // ── Observable-returning variants used by form dialogs ──────────────────
+
+  /** Creates a vehicle via API and prepends it to the local list. */
+  createVehicle$(vehicle: Vehicle): Observable<Vehicle> {
+    return this.assetsApi.createVehicle(vehicle).pipe(
+      tap((created) => this.vehiclesSignal.update((list) => [created, ...list])),
+    );
+  }
+
+  /** Updates a vehicle via API and replaces the entry in the local list. */
+  updateVehicle$(vehicle: Vehicle): Observable<Vehicle> {
+    return this.assetsApi.updateVehicle(vehicle).pipe(
+      tap((updated) => this.vehiclesSignal.update((list) => list.map((v) => (v.id === updated.id ? updated : v)))),
+    );
+  }
+
+  /** Creates a driver via API and prepends it to the local list. */
+  createDriver$(driver: Driver): Observable<Driver> {
+    return this.assetsApi.createDriver(driver).pipe(
+      tap((created) => this.driversSignal.update((list) => [created, ...list])),
+    );
+  }
+
+  /** Updates a driver via API and replaces the entry in the local list. */
+  updateDriver$(driver: Driver): Observable<Driver> {
+    return this.assetsApi.updateDriver(driver).pipe(
+      tap((updated) => this.driversSignal.update((list) => list.map((d) => (d.id === updated.id ? updated : d)))),
+    );
+  }
+
+  /** Marks a driver as inactive (soft-revoke). */
+  revokeDriver$(driverId: number): Observable<Driver> {
+    const current = this.driversSignal().find((d) => d.id === driverId);
+    if (!current) throw new Error(`Driver ${driverId} not found`);
+
+    const revoked = new Driver({
+      id: current.id,
+      fullName: current.fullName,
+      operatorId: current.operatorId,
+      license: current.license,
+      specialty: current.specialty,
+      shiftStatus: 'inactive' as DriverShiftStatus,
+      lastAccess: current.lastAccess,
+    });
+
+    return this.assetsApi.updateDriver(revoked).pipe(
+      tap((updated) => this.driversSignal.update((list) => list.map((d) => (d.id === updated.id ? updated : d)))),
+    );
   }
 }
