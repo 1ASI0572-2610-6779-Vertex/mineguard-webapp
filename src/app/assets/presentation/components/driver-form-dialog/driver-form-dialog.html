@@ -1,0 +1,88 @@
+<div class="dialog-shell">
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" class="dialog-progress"></mat-progress-bar>
+  }
+
+  <div class="dialog-header">
+    <div class="dialog-icon">
+      <mat-icon>person</mat-icon>
+    </div>
+    <div>
+      <h2 mat-dialog-title class="dialog-title">
+        {{ isEdit ? 'Editar Conductor' : 'Registrar Conductor' }}
+      </h2>
+      <p class="dialog-subtitle">
+        {{ isEdit ? 'Modifica los datos del conductor seleccionado.' : 'Completa los campos para incorporar un nuevo conductor al directorio.' }}
+      </p>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="cancel()" [disabled]="loading()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content>
+    <form [formGroup]="form" class="dialog-form">
+      <mat-form-field appearance="outline" class="field-full">
+        <mat-label>Nombre completo</mat-label>
+        <input matInput formControlName="fullName" placeholder="Ej. Juan Pérez López" />
+        @if (form.controls.fullName.hasError('required') && form.controls.fullName.touched) {
+          <mat-error>El nombre es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="field-half">
+          <mat-label>ID de Operador</mat-label>
+          <input matInput formControlName="operatorId" placeholder="Ej. OP-2341" />
+          @if (form.controls.operatorId.hasError('required') && form.controls.operatorId.touched) {
+            <mat-error>El ID es obligatorio</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field-half">
+          <mat-label>Licencia</mat-label>
+          <input matInput formControlName="license" placeholder="Ej. AIII-C" />
+          @if (form.controls.license.hasError('required') && form.controls.license.touched) {
+            <mat-error>La licencia es obligatoria</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="field-half">
+          <mat-label>Especialidad</mat-label>
+          <input matInput formControlName="specialty" placeholder="Ej. Vehículos Pesados" />
+          @if (form.controls.specialty.hasError('required') && form.controls.specialty.touched) {
+            <mat-error>La especialidad es obligatoria</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field-half">
+          <mat-label>Estado de turno</mat-label>
+          <mat-select formControlName="shiftStatus">
+            @for (opt of shiftStatusOptions; track opt.value) {
+              <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      @if (errorMsg()) {
+        <div class="error-banner">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMsg() }}</span>
+        </div>
+      }
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button class="btn-cancel" (click)="cancel()" [disabled]="loading()">
+      Cancelar
+    </button>
+    <button mat-flat-button class="btn-submit" (click)="submit()" [disabled]="loading()">
+      <mat-icon>{{ isEdit ? 'save' : 'person_add' }}</mat-icon>
+      {{ isEdit ? 'Guardar cambios' : 'Registrar conductor' }}
+    </button>
+  </mat-dialog-actions>
+</div>

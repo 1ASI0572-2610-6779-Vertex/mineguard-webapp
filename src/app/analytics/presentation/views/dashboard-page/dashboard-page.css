@@ -6,6 +6,36 @@
   font-family: 'Roboto', sans-serif;
 }
 
+.welcome-banner {
+  display: flex;
+  align-items: center;
+  padding: 20px 18px 14px;
+  background: var(--color-neutral-white, #ffffff);
+  border-bottom: 1px solid var(--color-neutral-gray-200, #e5e7eb);
+}
+
+.welcome-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.welcome-greeting {
+  font-size: 12px;
+  font-weight: 500;
+  color: #9ca3af;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.welcome-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-neutral-black, #171717);
+  letter-spacing: -0.4px;
+  line-height: 1.2;
+}
+
 .middle-grid {
   display: grid;
   grid-template-columns: 2fr 1.05fr;

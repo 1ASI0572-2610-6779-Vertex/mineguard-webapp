@@ -1,4 +1,11 @@
 <div class="control-page">
+  <div class="welcome-banner">
+    <div class="welcome-text">
+      <span class="welcome-greeting">Bienvenido de vuelta,</span>
+      <span class="welcome-name">{{ displayName() }}</span>
+    </div>
+  </div>
+
   @if (summary(); as s) {
     <app-dashboard-stats [summary]="s"></app-dashboard-stats>
 

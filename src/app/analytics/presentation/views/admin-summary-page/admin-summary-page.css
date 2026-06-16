@@ -5,20 +5,45 @@
 }
 
 .page-header {
-  padding: 24px 24px 18px;
+  padding: 20px 24px 18px;
   border-bottom: 1px solid #e8e8e8;
   background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.welcome-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: 14px;
+}
+
+.welcome-greeting {
+  font-size: 12px;
+  font-weight: 500;
+  color: #9ca3af;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.welcome-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a1a2e;
+  letter-spacing: -0.4px;
+  line-height: 1.2;
 }
 
 .page-header h1 {
   margin: 0;
-  font-size: 22px;
-  font-weight: 800;
+  font-size: 15px;
+  font-weight: 700;
   color: #1a1a2e;
 }
 
 .page-header p {
-  margin: 4px 0 0;
+  margin: 2px 0 0;
   font-size: 13px;
   color: #777;
 }

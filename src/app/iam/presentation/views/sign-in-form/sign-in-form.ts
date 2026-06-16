@@ -47,7 +47,8 @@ export class SignInForm extends BaseForm implements OnInit {
 
   ngOnInit(): void {
     if (this.store.isSignedIn()) {
-      this.router.navigate(['/home']).then();
+      const dest = this.store.currentRole() === 'Administrator' ? '/analytics/admin-summary' : '/analytics/dashboard';
+      this.router.navigate([dest]).then();
     }
   }
 

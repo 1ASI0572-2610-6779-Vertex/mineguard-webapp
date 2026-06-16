@@ -1,6 +1,6 @@
 // Removed unused NgClass import
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -105,13 +105,24 @@ export class Layout implements OnInit {
       title: 'option.reports',
       roles: ['Supervisor'],
     },
-    { icon: 'home', path: '/home', title: 'option.home' },
   ];
 
   private observer = inject(BreakpointObserver);
   private router = inject(Router);
   private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
   protected store = inject(IamStore);
+
+  constructor() {
+    // Re-configure sidenav mode whenever the shell becomes visible after login.
+    // ngAfterViewInit already ran (sidenav was undefined then), so we must
+    // re-trigger synchronously once the @if block renders the mat-sidenav.
+    effect(() => {
+      if (this.showShell()) {
+        Promise.resolve().then(() => this.reconfigureSidenav());
+      }
+    });
+  }
 
   readonly visibleOptions = computed(() => {
     const role = this.store.currentRole();
@@ -188,6 +199,22 @@ export class Layout implements OnInit {
 
   performSignOut(): void {
     this.store.signOut(this.router);
+  }
+
+  private reconfigureSidenav(): void {
+    if (!this.sidenav) return;
+    const isNarrow = this.observer.isMatched('(max-width: 1280px)');
+    if (isNarrow) {
+      this.sidenav.mode = 'over';
+      this.sidenav.close();
+      this.isSidenavOpen = false;
+      this.isCollapsed = false;
+    } else {
+      this.sidenav.mode = 'side';
+      this.sidenav.open();
+      this.isSidenavOpen = true;
+    }
+    this.cdr.detectChanges();
   }
 
   private static readonly NO_SHELL_ROUTES: readonly string[] = ['/iam/sign-in'];
