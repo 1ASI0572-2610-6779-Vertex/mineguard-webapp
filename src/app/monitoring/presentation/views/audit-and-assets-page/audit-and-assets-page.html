@@ -1,13 +1,24 @@
-<div class="audit-and-assets-page">
-  <header class="page-header">
-    <h1>{{ 'monitoring.auditAndAssets.title' | translate }}</h1>
-    <p>{{ 'monitoring.auditAndAssets.subtitle' | translate }}</p>
+<div class="aap-page">
+
+  <!-- Header -->
+  <header class="aap-header">
+    <div class="aap-header-left">
+      <div class="aap-icon">
+        <mat-icon>admin_panel_settings</mat-icon>
+      </div>
+      <div class="aap-title-block">
+        <h1 class="aap-title">{{ 'monitoring.auditAndAssets.title' | translate }}</h1>
+        <p class="aap-subtitle">{{ 'monitoring.auditAndAssets.subtitle' | translate }}</p>
+      </div>
+    </div>
   </header>
 
-  <div class="page-grid">
+  <!-- Content grid -->
+  <div class="aap-grid">
     @if (catalogSummary(); as s) {
       <app-catalog-summary [summary]="s"></app-catalog-summary>
     }
     <app-audit-log [entries]="auditLog()"></app-audit-log>
   </div>
+
 </div>

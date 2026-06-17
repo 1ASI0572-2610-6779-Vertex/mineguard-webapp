@@ -1,19 +1,58 @@
 <div class="admin-summary-page">
+
+  <!-- Page header -->
   <header class="page-header">
-    <div class="welcome-text">
-      <span class="welcome-greeting">Bienvenido de vuelta,</span>
-      <span class="welcome-name">{{ displayName() }}</span>
+    <div class="ph-left">
+      <div class="ph-icon">
+        <mat-icon>admin_panel_settings</mat-icon>
+      </div>
+      <div class="ph-text">
+        <p class="ph-eyebrow">Panel de Administración</p>
+        <h1 class="ph-title">Vista del Sistema</h1>
+        <p class="ph-date">{{ todayLabel }}</p>
+      </div>
     </div>
-    <h1>{{ 'admin.summary.title' | translate }}</h1>
-    <p>{{ 'admin.summary.subtitle' | translate }}</p>
+    <div class="ph-right">
+      <div class="ph-status-chip">
+        <span class="ph-live-dot"></span>
+        Servidor activo
+      </div>
+      @if (displayName(); as name) {
+        <div class="ph-admin-chip">
+          <mat-icon class="ph-chip-icon">manage_accounts</mat-icon>
+          <span>{{ name }}</span>
+        </div>
+      }
+    </div>
   </header>
 
-  <section class="system-health">
-    <h2>{{ 'admin.summary.sectionHealth' | translate }}</h2>
+  <!-- Hardware KPIs -->
+  <section class="as-section">
+    <div class="as-section-label">
+      <mat-icon class="asl-icon">monitor_heart</mat-icon>
+      Estado del Hardware
+    </div>
     @if (summary(); as s) {
       <app-admin-stats [summary]="s"></app-admin-stats>
+    } @else {
+      <div class="as-stats-skeleton">
+        <div class="skel-card"></div>
+        <div class="skel-card"></div>
+        <div class="skel-card"></div>
+      </div>
     }
   </section>
 
-  <app-admin-notices [notices]="notices()"></app-admin-notices>
+  <!-- Notices -->
+  <section class="as-section">
+    <div class="as-section-label">
+      <mat-icon class="asl-icon">campaign</mat-icon>
+      Avisos Pendientes
+      @if (notices().length > 0) {
+        <span class="asl-badge">{{ notices().length }}</span>
+      }
+    </div>
+    <app-admin-notices [notices]="notices()"></app-admin-notices>
+  </section>
+
 </div>

@@ -1,37 +1,73 @@
-<div class="admin-stats-grid">
-  <div class="stat-card">
-    <div class="card-body">
-      <h3>{{ 'admin.stats.hardwareStatus' | translate }}</h3>
-      <p class="value">{{ summary.activeSensors }}<span class="value-suffix">/{{ summary.totalSensors }}</span></p>
-      <p class="footer-ok">
-        <span class="status-dot status-dot-ok"></span>
-        {{ 'admin.stats.hardwareStatusFooter' | translate }}
+<div class="as-grid">
+
+  <!-- Sensors / Hardware -->
+  <div class="as-card as-card--sensors">
+    <div class="as-card-body">
+      <p class="as-label">Sensores Activos</p>
+      <div class="as-value-row">
+        <span class="as-value">{{ summary.activeSensors }}</span>
+        <span class="as-value-total">/ {{ summary.totalSensors }}</span>
+      </div>
+      <div class="as-health-bar">
+        <div class="as-health-fill" [style.width.%]="sensorHealthPct"></div>
+      </div>
+      <p class="as-footer as-footer--ok">
+        <mat-icon class="as-footer-icon">check_circle</mat-icon>
+        {{ sensorHealthPct }}% operativos
       </p>
     </div>
-    <div class="icon icon-ok">
-      <mat-icon>check_circle</mat-icon>
+    <div class="as-icon-wrap as-icon-wrap--ok">
+      <mat-icon>sensors</mat-icon>
     </div>
   </div>
 
-  <div class="stat-card">
-    <div class="card-body">
-      <h3>{{ 'admin.stats.lockedAccounts' | translate }}</h3>
-      <p class="value value-danger">{{ summary.lockedAccounts }}</p>
-      <p class="footer-danger">{{ 'admin.stats.lockedAccountsFooter' | translate }}</p>
+  <!-- Locked accounts -->
+  <div class="as-card" [class.as-card--alert]="summary.lockedAccounts > 0">
+    <div class="as-card-body">
+      <p class="as-label">Cuentas Bloqueadas</p>
+      <div class="as-value-row">
+        <span class="as-value" [class.as-value--danger]="summary.lockedAccounts > 0">
+          {{ summary.lockedAccounts }}
+        </span>
+      </div>
+      <p class="as-footer" [class.as-footer--danger]="summary.lockedAccounts > 0" [class.as-footer--muted]="summary.lockedAccounts === 0">
+        @if (summary.lockedAccounts > 0) {
+          <mat-icon class="as-footer-icon">warning</mat-icon>
+          Requieren revisión
+        } @else {
+          <mat-icon class="as-footer-icon">check_circle</mat-icon>
+          Sin cuentas bloqueadas
+        }
+      </p>
     </div>
-    <div class="icon icon-danger">
+    <div class="as-icon-wrap" [class.as-icon-wrap--danger]="summary.lockedAccounts > 0" [class.as-icon-wrap--ok]="summary.lockedAccounts === 0">
       <mat-icon>lock</mat-icon>
     </div>
+    <button
+      mat-stroked-button
+      class="as-nav-btn"
+      matTooltip="Gestionar supervisores"
+      (click)="goToUsers()">
+      <mat-icon>manage_accounts</mat-icon>
+      Gestionar usuarios
+    </button>
   </div>
 
-  <div class="stat-card">
-    <div class="card-body">
-      <h3>{{ 'admin.stats.registeredAssets' | translate }}</h3>
-      <p class="value">{{ summary.registeredAssets }}</p>
-      <p class="footer-muted">{{ 'admin.stats.registeredAssetsFooter' | translate }}</p>
+  <!-- Registered assets -->
+  <div class="as-card as-card--assets">
+    <div class="as-card-body">
+      <p class="as-label">Activos Registrados</p>
+      <div class="as-value-row">
+        <span class="as-value">{{ summary.registeredAssets }}</span>
+      </div>
+      <p class="as-footer as-footer--muted">
+        <mat-icon class="as-footer-icon">inventory_2</mat-icon>
+        Vehículos y conductores
+      </p>
     </div>
-    <div class="icon icon-info">
+    <div class="as-icon-wrap as-icon-wrap--info">
       <mat-icon>inventory_2</mat-icon>
     </div>
   </div>
+
 </div>

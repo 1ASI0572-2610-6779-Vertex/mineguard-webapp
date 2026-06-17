@@ -1,86 +1,144 @@
-.supervisor-form {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+/* ── Animations ─────────────────────────────────────────────────── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.form-header {
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Dialog container ────────────────────────────────────────────── */
+.sf-dialog {
+  background: var(--color-neutral-white);
+  border-radius: 16px;
+  overflow: hidden;
+  animation: slideUp 0.25s ease both;
+}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+.sf-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--color-neutral-gray-300);
+  background: var(--color-neutral-white);
 }
 
-.header-icon {
-  color: #1a1a2e;
-  font-size: 22px;
-  width: 22px;
-  height: 22px;
-}
-
-.form-header h2 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 800;
-  color: #1a1a2e;
-}
-
-.field {
+.sf-header-left {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 12px;
 }
 
-.field label {
-  font-size: 12px;
-  font-weight: 700;
-  color: #1a1a2e;
-}
-
-.field input {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 13px;
-  background: #f9fafb;
-  color: #1a1a2e;
-  outline: none;
-  transition: border-color 0.15s ease, background 0.15s ease;
-}
-
-.field input:focus {
-  border-color: #2563eb;
-  background: #ffffff;
-}
-
-.submit-btn {
-  margin-top: 8px;
-  height: 44px;
+.sf-icon {
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
-  font-weight: 700;
-  font-size: 13px;
-  background: #2563eb !important;
-  color: #ffffff !important;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  background: var(--color-accent-surface);
+  color: var(--color-accent-main);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
 }
 
-.submit-btn mat-icon {
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
+.sf-icon mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+.sf-title {
+  margin: 0 0 2px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-neutral-black);
 }
 
-.form-hint {
+.sf-subtitle {
   margin: 0;
-  text-align: center;
-  font-size: 11px;
-  color: #888;
-  font-style: italic;
+  font-size: 11.5px;
+  color: #9ca3af;
+  font-weight: 500;
 }
+
+.sf-close-btn { color: #9ca3af !important; transition: color 0.15s ease !important; }
+.sf-close-btn:hover { color: var(--color-neutral-black) !important; }
+
+/* ── Form body ──────────────────────────────────────────────────── */
+.sf-body {
+  padding: 20px 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sf-field {
+  width: 100%;
+}
+
+.sf-prefix-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #9ca3af;
+  margin-right: 4px;
+}
+
+/* ── Hint ───────────────────────────────────────────────────────── */
+.sf-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 4px 0 0;
+  font-size: 11.5px;
+  color: #9ca3af;
+  font-weight: 500;
+  line-height: 1.4;
+  padding: 10px 12px;
+  background: var(--color-neutral-gray-100);
+  border-radius: 8px;
+  border: 1px solid var(--color-neutral-gray-300);
+}
+
+.sf-hint-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--color-info-main);
+  margin-top: 1px;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────── */
+.sf-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 0 20px;
+}
+
+.sf-cancel-btn {
+  font-weight: 600 !important;
+  border-radius: 9px !important;
+  color: #6b7280 !important;
+  border-color: var(--color-neutral-gray-300) !important;
+  font-size: 13px !important;
+}
+
+.sf-submit-btn {
+  background: var(--color-accent-main) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border-radius: 9px !important;
+  font-size: 13px !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.15s ease !important;
+}
+
+.sf-submit-btn:hover:not([disabled]) { opacity: 0.88 !important; }
+.sf-submit-btn[disabled] { opacity: 0.45 !important; }
+.sf-submit-btn mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+.sf-spin { animation: spin 1s linear infinite; }

@@ -1,16 +1,64 @@
-<section class="admin-notices">
-  <header class="notices-header">
-    <mat-icon class="header-icon">info</mat-icon>
-    <h2>{{ 'admin.notices.title' | translate }}</h2>
-  </header>
+@if (visibleNotices().length === 0) {
+  <div class="an-empty">
+    <div class="an-empty-icon-wrap">
+      <mat-icon>notifications_none</mat-icon>
+    </div>
+    <p class="an-empty-title">Sin avisos pendientes</p>
+    <p class="an-empty-sub">El sistema no registra notificaciones activas.</p>
+  </div>
+} @else {
+  <ul class="an-list">
+    @for (notice of visibleNotices(); track notice.id) {
+      <li
+        class="an-item"
+        [class.an-item--warning]="notice.level === 'warning'"
+        [class.an-item--info]="notice.level === 'info'"
+        [class.an-item--read]="isRead(notice.id)">
 
-  <ul class="notice-list">
-    @for (notice of notices; track notice.id) {
-      <li class="notice-item" [class.notice-warning]="notice.level === 'warning'" [class.notice-info]="notice.level === 'info'">
-        <span class="notice-dot"></span>
-        <span class="notice-message">{{ notice.i18nKey | translate: notice.i18nParams }}</span>
-        <a class="notice-action">{{ notice.actionKey | translate }}</a>
+        <!-- Level icon -->
+        <div class="an-level-icon" [class.an-level-icon--warning]="notice.level === 'warning'" [class.an-level-icon--info]="notice.level === 'info'">
+          <mat-icon>{{ notice.level === 'warning' ? 'warning' : 'info' }}</mat-icon>
+        </div>
+
+        <!-- Message -->
+        <div class="an-body">
+          <p class="an-message">{{ notice.i18nKey | translate: notice.i18nParams }}</p>
+          @if (isRead(notice.id)) {
+            <span class="an-read-badge">
+              <mat-icon class="an-read-icon">done</mat-icon>
+              Leído
+            </span>
+          }
+        </div>
+
+        <!-- Actions -->
+        <div class="an-actions">
+          <button
+            mat-icon-button
+            class="an-action-btn an-action-btn--view"
+            matTooltip="Ver detalles"
+            (click)="viewDetails(notice)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          @if (!isRead(notice.id)) {
+            <button
+              mat-icon-button
+              class="an-action-btn an-action-btn--read"
+              matTooltip="Marcar como leído"
+              (click)="markRead(notice)">
+              <mat-icon>done</mat-icon>
+            </button>
+          }
+          <button
+            mat-icon-button
+            class="an-action-btn an-action-btn--dismiss"
+            matTooltip="Descartar"
+            (click)="dismiss(notice)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
       </li>
     }
   </ul>
-</section>
+}

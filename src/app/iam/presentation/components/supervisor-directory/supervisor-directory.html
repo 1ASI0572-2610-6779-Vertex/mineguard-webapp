@@ -1,82 +1,146 @@
-<section class="directory">
-  <header class="directory-header">
-    <h2>{{ 'iam.supervisors.directory.title' | translate }}</h2>
-    <input
-      class="search"
-      type="search"
-      [value]="query()"
-      (input)="onSearch($any($event.target).value)"
-      [placeholder]="'iam.supervisors.directory.searchPlaceholder' | translate"
-    />
-  </header>
+<div class="sd-card">
 
-  <div class="column-labels">
-    <span>{{ 'iam.supervisors.directory.column.userContact' | translate }}</span>
-    <span>{{ 'iam.supervisors.directory.column.accessStatus' | translate }}</span>
-    <span class="action-col">{{ 'iam.supervisors.directory.column.actionRequired' | translate }}</span>
+  <!-- Toolbar -->
+  <div class="sd-toolbar">
+    <div class="sd-search-wrap">
+      <mat-icon class="sd-search-icon">search</mat-icon>
+      <input
+        class="sd-search"
+        type="search"
+        [value]="query()"
+        (input)="onSearch($any($event.target).value)"
+        placeholder="Buscar por nombre, ID o correo..."
+      />
+    </div>
+    <span class="sd-result-count">
+      {{ filteredSupervisors().length }} resultado{{ filteredSupervisors().length !== 1 ? 's' : '' }}
+    </span>
   </div>
 
-  <ul class="directory-list">
-    @for (supervisor of filteredSupervisors(); track supervisor.id) {
-      <li
-        class="directory-row"
-        [class.row-inactive]="supervisor.accessStatus === 'inactive'"
-      >
-        <div class="user-cell">
-          <div class="avatar">{{ initialsOf(supervisor.fullName) }}</div>
-          <div class="user-info">
-            <span class="name">
-              <strong>{{ supervisor.fullName }}</strong>
-              <span class="corporate-id">({{ supervisor.corporateId }})</span>
+  <!-- Column headers -->
+  @if (filteredSupervisors().length > 0) {
+    <div class="sd-col-headers">
+      <span class="sd-col-header">Usuario / Contacto</span>
+      <span class="sd-col-header">Estado de Acceso</span>
+      <span class="sd-col-header sd-col-right">Acciones</span>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (supervisors.length === 0) {
+    <div class="sd-empty">
+      <div class="sd-empty-icon-wrap">
+        <mat-icon>group_off</mat-icon>
+      </div>
+      <p class="sd-empty-title">Sin supervisores registrados</p>
+      <p class="sd-empty-sub">Haz clic en "Nuevo Supervisor" para comenzar.</p>
+    </div>
+  } @else if (filteredSupervisors().length === 0) {
+    <div class="sd-empty">
+      <div class="sd-empty-icon-wrap">
+        <mat-icon>search_off</mat-icon>
+      </div>
+      <p class="sd-empty-title">Sin resultados</p>
+      <p class="sd-empty-sub">Ningún supervisor coincide con "{{ query() }}".</p>
+    </div>
+  }
+
+  <!-- Rows -->
+  <ul class="sd-list">
+    @for (s of filteredSupervisors(); track s.id) {
+
+      <li class="sd-row" [class.sd-row--inactive]="s.accessStatus === 'inactive'">
+
+        <!-- User cell -->
+        <div class="sd-user-cell">
+          <div class="sd-avatar" [class.sd-avatar--locked]="s.accessStatus === 'locked'" [class.sd-avatar--inactive]="s.accessStatus === 'inactive'">
+            {{ initialsOf(s.fullName) }}
+          </div>
+          <div class="sd-user-info">
+            <span class="sd-name">{{ s.fullName }}</span>
+            <span class="sd-meta">
+              <mat-icon class="sd-meta-icon">fingerprint</mat-icon>
+              {{ s.corporateId }}
+              <span class="sd-dot">·</span>
+              <mat-icon class="sd-meta-icon">mail</mat-icon>
+              {{ s.email }}
             </span>
-            <span class="email">{{ supervisor.email }}</span>
           </div>
         </div>
 
-        <div class="status-cell">
-          @switch (supervisor.accessStatus) {
+        <!-- Status cell -->
+        <div class="sd-status-cell">
+          @switch (s.accessStatus) {
             @case ('active') {
-              <span class="badge badge-active">
-                {{ 'iam.supervisors.directory.status.active' | translate }}
+              <span class="sd-badge sd-badge--active">
+                <mat-icon class="sd-badge-icon">check_circle</mat-icon>
+                Activo
               </span>
             }
             @case ('locked') {
-              <span class="badge badge-locked">
-                {{ 'iam.supervisors.directory.status.locked' | translate }}
+              <span class="sd-badge sd-badge--locked">
+                <mat-icon class="sd-badge-icon">lock</mat-icon>
+                Bloqueado
               </span>
             }
             @case ('inactive') {
-              <span class="badge badge-inactive">
-                {{ 'iam.supervisors.directory.status.inactive' | translate }}
+              <span class="sd-badge sd-badge--inactive">
+                <mat-icon class="sd-badge-icon">block</mat-icon>
+                Inactivo
               </span>
             }
           }
         </div>
 
-        <div class="action-cell">
-          @switch (supervisor.accessStatus) {
-            @case ('active') {
-              <button class="action-link action-suspend" (click)="suspend(supervisor)">
-                {{ 'iam.supervisors.directory.action.suspend' | translate }}
+        <!-- Action cell -->
+        <div class="sd-action-cell">
+          @if (pendingActionId() === s.id) {
+            <!-- Inline confirm -->
+            <div class="sd-confirm-strip">
+              <mat-icon class="sd-confirm-icon">warning</mat-icon>
+              <span class="sd-confirm-label">¿Suspender cuenta?</span>
+              <button mat-stroked-button class="sd-confirm-cancel-btn" (click)="cancelAction()">
+                No
               </button>
-            }
-            @case ('locked') {
-              <button
-                mat-stroked-button
-                class="action-restore"
-                (click)="restoreAccess(supervisor)"
-              >
-                {{ 'iam.supervisors.directory.action.restore' | translate }}
+              <button mat-flat-button class="sd-confirm-ok-btn" (click)="confirmSuspend(s)">
+                Suspender
               </button>
-            }
-            @case ('inactive') {
-              <span class="action-readonly">
-                {{ 'iam.supervisors.directory.action.historyPreserved' | translate }}
-              </span>
+            </div>
+          } @else {
+            @switch (s.accessStatus) {
+              @case ('active') {
+                <button
+                  mat-stroked-button
+                  class="sd-action-btn sd-action-btn--danger"
+                  matTooltip="Suspender acceso del supervisor"
+                  (click)="requestSuspend(s)">
+                  <mat-icon>lock</mat-icon>
+                  Suspender
+                </button>
+              }
+              @case ('locked') {
+                <button
+                  mat-stroked-button
+                  class="sd-action-btn sd-action-btn--success"
+                  matTooltip="Restaurar acceso del supervisor"
+                  (click)="restoreAccess(s)">
+                  <mat-icon>lock_open</mat-icon>
+                  Restaurar
+                </button>
+              }
+              @case ('inactive') {
+                <span class="sd-action-readonly">
+                  <mat-icon class="sd-readonly-icon">history</mat-icon>
+                  Historial preservado
+                </span>
+              }
             }
           }
         </div>
+
       </li>
+
     }
   </ul>
-</section>
+
+</div>

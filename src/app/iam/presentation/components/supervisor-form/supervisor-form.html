@@ -1,55 +1,80 @@
-<form class="supervisor-form" [formGroup]="form" (ngSubmit)="submit()">
-  <header class="form-header">
-    <mat-icon class="header-icon">person_add</mat-icon>
-    <h2>{{ 'iam.supervisors.newSupervisor.title' | translate }}</h2>
-  </header>
+<div class="sf-dialog">
 
-  <div class="field">
-    <label for="supervisor-fullName">
-      {{ 'iam.supervisors.newSupervisor.fullName.label' | translate }}
-    </label>
-    <input
-      id="supervisor-fullName"
-      type="text"
-      formControlName="fullName"
-      [placeholder]="'iam.supervisors.newSupervisor.fullName.placeholder' | translate"
-    />
+  <!-- Header -->
+  <div class="sf-header">
+    <div class="sf-header-left">
+      <div class="sf-icon">
+        <mat-icon>person_add</mat-icon>
+      </div>
+      <div>
+        <h2 class="sf-title">Nuevo Supervisor</h2>
+        <p class="sf-subtitle">Registra una cuenta de acceso operativo</p>
+      </div>
+    </div>
+    <button mat-icon-button class="sf-close-btn" type="button" (click)="cancel()">
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
 
-  <div class="field">
-    <label for="supervisor-corporateId">
-      {{ 'iam.supervisors.newSupervisor.corporateId.label' | translate }}
-    </label>
-    <input
-      id="supervisor-corporateId"
-      type="text"
-      formControlName="corporateId"
-      [placeholder]="'iam.supervisors.newSupervisor.corporateId.placeholder' | translate"
-    />
-  </div>
+  <!-- Form -->
+  <form class="sf-body" [formGroup]="form" (ngSubmit)="submit()">
 
-  <div class="field">
-    <label for="supervisor-email">
-      {{ 'iam.supervisors.newSupervisor.email.label' | translate }}
-    </label>
-    <input
-      id="supervisor-email"
-      type="email"
-      formControlName="email"
-      [placeholder]="'iam.supervisors.newSupervisor.email.placeholder' | translate"
-    />
-  </div>
+    <mat-form-field appearance="outline" class="sf-field">
+      <mat-label>Nombre completo</mat-label>
+      <mat-icon matPrefix class="sf-prefix-icon">badge</mat-icon>
+      <input matInput formControlName="fullName" placeholder="Ej. Carlos Mendoza Ríos" />
+      @if (fullNameInvalid) {
+        <mat-error>El nombre es obligatorio.</mat-error>
+      }
+    </mat-form-field>
 
-  <button
-    mat-flat-button
-    color="primary"
-    class="submit-btn"
-    type="submit"
-    [disabled]="form.invalid"
-  >
-    <mat-icon>mail</mat-icon>
-    <span>{{ 'iam.supervisors.newSupervisor.submit' | translate }}</span>
-  </button>
+    <mat-form-field appearance="outline" class="sf-field">
+      <mat-label>ID Corporativo</mat-label>
+      <mat-icon matPrefix class="sf-prefix-icon">fingerprint</mat-icon>
+      <input matInput formControlName="corporateId" placeholder="Ej. SUP-0042" />
+      @if (corporateIdInvalid) {
+        <mat-error>El ID corporativo es obligatorio.</mat-error>
+      }
+    </mat-form-field>
 
-  <p class="form-hint">{{ 'iam.supervisors.newSupervisor.hint' | translate }}</p>
-</form>
+    <mat-form-field appearance="outline" class="sf-field">
+      <mat-label>Correo corporativo</mat-label>
+      <mat-icon matPrefix class="sf-prefix-icon">mail</mat-icon>
+      <input matInput formControlName="email" type="email" placeholder="correo@empresa.com" />
+      @if (emailInvalid) {
+        <mat-error>{{ emailErrorMsg }}</mat-error>
+      }
+    </mat-form-field>
+
+    <p class="sf-hint">
+      <mat-icon class="sf-hint-icon">info</mat-icon>
+      El sistema generará una contraseña temporal. El supervisor deberá cambiarla en el primer inicio de sesión.
+    </p>
+
+    <!-- Footer actions -->
+    <div class="sf-footer">
+      <button mat-stroked-button type="button" class="sf-cancel-btn" (click)="cancel()">
+        Cancelar
+      </button>
+      <button
+        mat-flat-button
+        type="submit"
+        class="sf-submit-btn"
+        [disabled]="form.invalid || submitting()">
+        @if (submitting()) {
+          <ng-container>
+            <mat-icon class="sf-spin">sync</mat-icon>
+            Creando...
+          </ng-container>
+        } @else {
+          <ng-container>
+            <mat-icon>person_add</mat-icon>
+            Crear Supervisor
+          </ng-container>
+        }
+      </button>
+    </div>
+
+  </form>
+
+</div>
