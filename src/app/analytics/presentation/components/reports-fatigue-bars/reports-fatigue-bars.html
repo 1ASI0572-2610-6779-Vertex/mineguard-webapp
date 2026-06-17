@@ -1,23 +1,68 @@
 <section class="fatigue-card">
+
+  <!-- Header -->
   <header class="card-header">
-    <div class="title-block">
-      <h2>{{ 'reports.fatigueBars.title' | translate }}</h2>
-      <p class="subtitle">{{ 'reports.fatigueBars.subtitle' | translate }}</p>
+    <div class="header-left">
+      <div class="header-icon">
+        <mat-icon>bedtime</mat-icon>
+      </div>
+      <div class="title-block">
+        <h2>{{ 'reports.fatigueBars.title' | translate }}</h2>
+        <p class="subtitle">{{ 'reports.fatigueBars.subtitle' | translate }}</p>
+      </div>
     </div>
-    <button mat-icon-button class="export-btn" [title]="'reports.export' | translate">
-      <mat-icon>download</mat-icon>
-    </button>
+    <div class="header-meta">
+      <span class="total-chip">
+        <mat-icon>group</mat-icon>
+        {{ visibleBars().length }} conductores
+      </span>
+    </div>
   </header>
 
-  <ul class="bars-list">
-    @for (bar of visibleBars(); track bar.id) {
-      <li class="bar-row">
-        <span class="driver-name">{{ bar.driverName }}</span>
+  <!-- Bar chart -->
+  <ul class="bars-list" role="list">
+    @for (bar of visibleBars(); track bar.id; let i = $index) {
+      <li
+        class="bar-row"
+        [class.bar-row--dimmed]="isDimmed(bar.id)"
+        (mouseenter)="hoveredId.set(bar.id)"
+        (mouseleave)="hoveredId.set(null)"
+        role="listitem">
+
+        <!-- Driver name -->
+        <span class="driver-name"
+          [matTooltip]="bar.driverName"
+          matTooltipPosition="above">
+          {{ bar.driverName }}
+        </span>
+
+        <!-- Bar track + fill -->
         <div class="bar-track">
-          <div class="bar-fill" [style.width.%]="widthFor(bar.fatigueEvents)"></div>
+          <div
+            class="bar-fill"
+            [class]="barColorClass(i)"
+            [style.width.%]="widthFor(bar.fatigueEvents)">
+          </div>
         </div>
-        <span class="bar-value">{{ bar.fatigueEvents }}</span>
+
+        <!-- Event count badge -->
+        <span
+          class="bar-value"
+          [class]="barColorClass(i)"
+          [matTooltip]="bar.fatigueEvents + ' eventos de fatiga'"
+          matTooltipPosition="above">
+          {{ bar.fatigueEvents }}
+        </span>
+
       </li>
     }
   </ul>
+
+  @if (!visibleBars().length) {
+    <div class="empty-state">
+      <mat-icon>check_circle</mat-icon>
+      <span>Sin eventos de fatiga registrados</span>
+    </div>
+  }
+
 </section>

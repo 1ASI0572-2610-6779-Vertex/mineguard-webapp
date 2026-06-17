@@ -1,40 +1,61 @@
 <div class="chart-card">
+
+  <!-- Header -->
   <div class="card-header">
-    <h2>{{ 'dashboard.trend.title' | translate }}</h2>
-
-    <select>
-      <option>{{ 'dashboard.trend.today' | translate }}</option>
-    </select>
-  </div>
-
-  <div class="fake-chart">
-    <div class="chart-lines">
-      <svg viewBox="0 0 700 170" preserveAspectRatio="none">
-        <path
-          [attr.d]="alertTrendPath"
-          fill="none"
-          stroke="#3b82f6"
-          stroke-width="4"
-        ></path>
-
-        <path
-          [attr.d]="incidentTrendPath"
-          fill="none"
-          stroke="#f59e0b"
-          stroke-width="4"
-        ></path>
-      </svg>
+    <div class="header-left">
+      <div class="header-icon">
+        <mat-icon>show_chart</mat-icon>
+      </div>
+      <h2>{{ 'dashboard.trend.title' | translate }}</h2>
     </div>
 
+    <!-- Period filter buttons -->
+    <div class="period-filter" role="group" aria-label="Filtro de período">
+      @for (p of periods; track p.key) {
+        <button
+          class="period-btn"
+          [class.period-btn--active]="selectedPeriod() === p.key"
+          (click)="selectPeriod(p.key)"
+          type="button">
+          {{ p.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Chart area -->
+  <div class="chart-area">
+    <svg class="chart-svg" viewBox="0 0 700 140" preserveAspectRatio="none">
+      <!-- Horizontal guide lines -->
+      <line x1="0" y1="35"  x2="700" y2="35"  class="guide-line" />
+      <line x1="0" y1="70"  x2="700" y2="70"  class="guide-line" />
+      <line x1="0" y1="105" x2="700" y2="105" class="guide-line" />
+
+      <!-- Alerts line -->
+      <path [attr.d]="alertTrendPath" class="trend-line trend-line--alerts"></path>
+
+      <!-- Incidents line -->
+      <path [attr.d]="incidentTrendPath" class="trend-line trend-line--incidents"></path>
+    </svg>
+
+    <!-- X-axis labels -->
     <div class="chart-labels">
       @for (item of trend; track item.id) {
         <span>{{ item.hour }}</span>
       }
     </div>
+  </div>
 
-    <div class="chart-legend">
-      <span><b class="blue-dot"></b> {{ 'dashboard.trend.alerts' | translate }}</span>
-      <span><b class="orange-dot"></b> {{ 'dashboard.trend.incidents' | translate }}</span>
+  <!-- Legend -->
+  <div class="chart-legend">
+    <div class="legend-item">
+      <span class="legend-dot legend-dot--alerts"></span>
+      <span>{{ 'dashboard.trend.alerts' | translate }}</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-dot legend-dot--incidents"></span>
+      <span>{{ 'dashboard.trend.incidents' | translate }}</span>
     </div>
   </div>
+
 </div>

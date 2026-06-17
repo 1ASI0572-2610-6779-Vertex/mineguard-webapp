@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { DashboardSummary } from '../../../domain/model/dashboard-summary.entity';
@@ -9,7 +10,7 @@ import { DashboardSummary } from '../../../domain/model/dashboard-summary.entity
 @Component({
   selector: 'app-dashboard-stats',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [MatIconModule, TranslatePipe],
   templateUrl: './dashboard-stats.html',
   styleUrl: './dashboard-stats.css',
 })

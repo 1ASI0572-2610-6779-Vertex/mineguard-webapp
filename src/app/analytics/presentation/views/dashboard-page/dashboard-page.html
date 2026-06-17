@@ -1,14 +1,41 @@
 <div class="control-page">
-  <div class="welcome-banner">
-    <div class="welcome-text">
-      <span class="welcome-greeting">Bienvenido de vuelta,</span>
-      <span class="welcome-name">{{ displayName() }}</span>
+
+  <!-- ── Context Panel ─────────────────────────────────────────── -->
+  <div class="context-panel" [class]="'context-panel--' + operationStatus()">
+    <div class="context-left">
+      <div class="context-user">
+        <span class="context-tag">Supervisor en turno</span>
+        <h1 class="context-name">{{ displayName() }}</h1>
+      </div>
+      <div class="context-divider"></div>
+      <div class="context-meta">
+        <div class="meta-chip">
+          <mat-icon>calendar_today</mat-icon>
+          <span>{{ todayLabel }}</span>
+        </div>
+        <div class="meta-chip">
+          <mat-icon>badge</mat-icon>
+          <span>{{ displayRole() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="context-right">
+      <div class="op-status-badge">
+        <mat-icon class="op-status-icon">{{ operationStatusIcon() }}</mat-icon>
+        <div class="op-status-text">
+          <span class="op-status-label">Estado de operación</span>
+          <strong class="op-status-value">{{ operationStatusLabel() }}</strong>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- ── KPI Strip ─────────────────────────────────────────────── -->
   @if (summary(); as s) {
     <app-dashboard-stats [summary]="s"></app-dashboard-stats>
 
+    <!-- ── Middle grid ───────────────────────────────────────────── -->
     <div class="middle-grid">
       <app-dashboard-trend
         [trend]="trend()"
@@ -21,6 +48,7 @@
       ></app-dashboard-risk-drivers>
     </div>
 
+    <!-- ── Live Alerts ───────────────────────────────────────────── -->
     <app-dashboard-recent-alerts
       [recentAlerts]="recentAlerts()"
     ></app-dashboard-recent-alerts>

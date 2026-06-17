@@ -1,63 +1,133 @@
 <section class="history-card">
+
+  <!-- Header -->
   <header class="card-header">
-    <div class="title-block">
-      <h2>{{ 'reports.history.title' | translate }}</h2>
-      <p class="subtitle">{{ 'reports.history.subtitle' | translate }}</p>
+    <div class="header-left">
+      <div class="header-icon">
+        <mat-icon>history</mat-icon>
+      </div>
+      <div class="title-block">
+        <h2>{{ 'reports.history.title' | translate }}</h2>
+        <p class="subtitle">{{ 'reports.history.subtitle' | translate }}</p>
+      </div>
     </div>
 
     <div class="header-controls">
-      <input
-        class="search"
-        type="search"
-        [value]="query()"
-        (input)="onSearch($any($event.target).value)"
-        [placeholder]="'reports.history.searchPlaceholder' | translate"
-      />
-      <button mat-stroked-button class="filter-btn">
-        <mat-icon>filter_list</mat-icon>
-        <span>{{ 'reports.history.filtersButton' | translate }}</span>
-      </button>
+      <!-- Search -->
+      <div class="search-wrap">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input
+          class="search-input"
+          type="search"
+          [value]="query()"
+          (input)="onSearch($any($event.target).value)"
+          [placeholder]="'reports.history.searchPlaceholder' | translate"
+        />
+      </div>
+
+      <!-- Result counter -->
+      <span class="result-info">{{ filteredRows().length }} resultados</span>
     </div>
   </header>
 
-  <table class="history-table">
-    <thead>
-      <tr>
-        <th>{{ 'reports.history.column.dateTime' | translate }}</th>
-        <th>{{ 'reports.history.column.criticality' | translate }}</th>
-        <th>{{ 'reports.history.column.incidentType' | translate }}</th>
-        <th>{{ 'reports.history.column.involved' | translate }}</th>
-        <th>{{ 'reports.history.column.location' | translate }}</th>
-        <th class="action-col">{{ 'reports.history.column.action' | translate }}</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (row of filteredRows(); track row.id) {
+  <!-- Table -->
+  <div class="table-wrapper">
+    <table class="history-table">
+      <thead>
         <tr>
-          <td>
-            <strong>{{ row.date }}</strong>
-            <span>{{ row.time }}</span>
-          </td>
-          <td>
-            <span
-              class="badge"
-              [class.badge-high]="row.criticality === 'high'"
-              [class.badge-medium]="row.criticality === 'medium'"
-              [class.badge-low]="row.criticality === 'low'"
-            >
-              {{ row.criticalityLabel }}
-            </span>
-          </td>
-          <td>{{ row.incidentType }}</td>
-          <td>{{ row.involved }}</td>
-          <td>
-            <span class="location-pill">{{ row.location }}</span>
-          </td>
-          <td class="action-cell">
-            <a class="action-link">{{ 'reports.history.viewReport' | translate }}</a>
-          </td>
+          <th>{{ 'reports.history.column.dateTime' | translate }}</th>
+          <th>{{ 'reports.history.column.criticality' | translate }}</th>
+          <th>{{ 'reports.history.column.incidentType' | translate }}</th>
+          <th>{{ 'reports.history.column.involved' | translate }}</th>
+          <th>{{ 'reports.history.column.location' | translate }}</th>
+          <th class="col-action">{{ 'reports.history.column.action' | translate }}</th>
         </tr>
-      }
-    </tbody>
-  </table>
+      </thead>
+
+      <tbody>
+        @for (row of pagedRows(); track row.id; let i = $index) {
+          <tr class="data-row" [style.animation-delay]="(i * 30) + 'ms'">
+
+            <!-- Date + time -->
+            <td>
+              <span class="date-main">{{ row.date }}</span>
+              <span class="date-sub">{{ row.time }}</span>
+            </td>
+
+            <!-- Criticality badge -->
+            <td>
+              <span
+                class="crit-badge"
+                [class.crit-badge--high]="row.criticality === 'high'"
+                [class.crit-badge--medium]="row.criticality === 'medium'"
+                [class.crit-badge--low]="row.criticality === 'low'"
+                [matTooltip]="row.criticalityLabel">
+                <mat-icon class="crit-icon">{{ criticalityIcon(row.criticality) }}</mat-icon>
+                {{ row.criticalityLabel }}
+              </span>
+            </td>
+
+            <!-- Incident type -->
+            <td class="incident-type">{{ row.incidentType }}</td>
+
+            <!-- Involved -->
+            <td class="involved-cell">{{ row.involved }}</td>
+
+            <!-- Location pill -->
+            <td>
+              <span class="location-pill">
+                <mat-icon class="loc-icon">location_on</mat-icon>
+                {{ row.location }}
+              </span>
+            </td>
+
+            <!-- Action -->
+            <td class="col-action">
+              <button
+                mat-stroked-button
+                class="view-btn"
+                [matTooltip]="'reports.history.viewReport' | translate">
+                <mat-icon>open_in_new</mat-icon>
+                {{ 'reports.history.viewReport' | translate }}
+              </button>
+            </td>
+
+          </tr>
+        }
+
+        @if (!pagedRows().length) {
+          <tr>
+            <td colspan="6" class="empty-cell">
+              <mat-icon>search_off</mat-icon>
+              Sin resultados para la búsqueda actual
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <span class="page-info">{{ pageLabel() }}</span>
+    <div class="page-controls">
+      <button
+        mat-icon-button
+        class="page-btn"
+        (click)="prevPage()"
+        [disabled]="!canGoPrev()"
+        [matTooltip]="'Página anterior'">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        class="page-btn"
+        (click)="nextPage()"
+        [disabled]="!canGoNext()"
+        [matTooltip]="'Página siguiente'">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+
 </section>

@@ -1,0 +1,83 @@
+<div class="dialog-container">
+
+  <!-- Dialog header -->
+  <div class="dialog-header" [class]="'dialog-header--' + alert.severity">
+    <div class="dialog-header-left">
+      <div class="severity-icon-wrap">
+        <mat-icon>{{ alert.severity === 'high' ? 'crisis_alert' : alert.severity === 'medium' ? 'warning' : 'info' }}</mat-icon>
+      </div>
+      <div>
+        <h2 class="dialog-title">{{ alert.alertCode }}</h2>
+        <span class="dialog-category">{{ alert.category }}</span>
+      </div>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="close()" aria-label="Cerrar">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Severity badge -->
+  <div class="dialog-body">
+    <div class="badge-row">
+      <span
+        class="severity-badge"
+        [class.severity-badge--high]="alert.severity === 'high'"
+        [class.severity-badge--medium]="alert.severity === 'medium'"
+        [class.severity-badge--low]="alert.severity === 'low'">
+        <mat-icon>circle</mat-icon>
+        {{ getSeverityKey(alert.severity) | translate }}
+      </span>
+      <span class="status-chip" [class.status-chip--active]="alert.status === 'active'">
+        <mat-icon>{{ alert.status === 'active' ? 'radio_button_checked' : 'check_circle' }}</mat-icon>
+        {{ alert.status === 'active' ? 'Activa' : 'Resuelta' }}
+      </span>
+    </div>
+
+    <!-- Detail grid -->
+    <div class="detail-grid">
+      <div class="detail-item">
+        <mat-icon class="detail-icon">person</mat-icon>
+        <div class="detail-content">
+          <span class="detail-label">Conductor implicado</span>
+          <strong class="detail-value">{{ alert.driverName }}</strong>
+        </div>
+      </div>
+
+      <div class="detail-item">
+        <mat-icon class="detail-icon">local_shipping</mat-icon>
+        <div class="detail-content">
+          <span class="detail-label">Vehículo</span>
+          <strong class="detail-value">{{ alert.vehicleCode }} — {{ alert.vehicleType }}</strong>
+        </div>
+      </div>
+
+      <div class="detail-item">
+        <mat-icon class="detail-icon">route</mat-icon>
+        <div class="detail-content">
+          <span class="detail-label">Ruta</span>
+          <strong class="detail-value">{{ alert.route }}</strong>
+        </div>
+      </div>
+
+      <div class="detail-item">
+        <mat-icon class="detail-icon">schedule</mat-icon>
+        <div class="detail-content">
+          <span class="detail-label">Hora del evento</span>
+          <strong class="detail-value">{{ alert.time }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer actions -->
+  <div class="dialog-footer">
+    <button mat-stroked-button class="btn-cancel" (click)="close()">
+      Cerrar
+    </button>
+    <button mat-flat-button class="btn-attend" (click)="close()">
+      <mat-icon>assignment_turned_in</mat-icon>
+      Marcar como atendida
+    </button>
+  </div>
+
+</div>

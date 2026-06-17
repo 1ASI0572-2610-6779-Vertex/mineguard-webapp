@@ -1,67 +1,97 @@
 <div class="alerts-card">
-  <div class="alerts-title">
-    <span>⌁</span>
-    <h2>{{ 'dashboard.liveAlerts.title' | translate }}</h2>
+
+  <!-- Header -->
+  <div class="alerts-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <mat-icon>notifications_active</mat-icon>
+      </div>
+      <div>
+        <h2>{{ 'dashboard.liveAlerts.title' | translate }}</h2>
+        <span class="alerts-count">{{ recentAlerts.length }} alertas registradas</span>
+      </div>
+    </div>
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>{{ 'dashboard.liveAlerts.alertId' | translate }}</th>
-        <th>{{ 'dashboard.liveAlerts.level' | translate }}</th>
-        <th>{{ 'dashboard.liveAlerts.category' | translate }}</th>
-        <th>{{ 'dashboard.liveAlerts.involved' | translate }}</th>
-        <th>{{ 'dashboard.liveAlerts.routeTime' | translate }}</th>
-        <th>{{ 'dashboard.liveAlerts.action' | translate }}</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      @for (alert of recentAlerts; track alert.id) {
+  <!-- Table -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
         <tr>
-          <td>
-            <strong>{{ alert.alertCode }}</strong>
-          </td>
-
-          <td>
-            <span
-              class="badge"
-              [class.badge-red]="alert.severity === 'high'"
-              [class.badge-yellow]="alert.severity === 'medium'"
-              [class.badge-green]="alert.severity === 'low'"
-            >
-              {{ getSeverityKey(alert.severity) | translate }}
-            </span>
-          </td>
-
-          <td>
-            <strong>{{ alert.category }}</strong>
-          </td>
-
-          <td>
-            <strong>{{ alert.driverName }}</strong>
-            <span>{{ alert.vehicleType }} - {{ alert.vehicleCode }}</span>
-          </td>
-
-          <td>
-            <strong>{{ alert.route }}</strong>
-            <span>{{ alert.time }}</span>
-          </td>
-
-          <td>
-            <button
-              class="action-btn"
-              [class.resolved]="alert.status !== 'active'"
-            >
-              @if (alert.status === 'active') {
-                {{ 'dashboard.liveAlerts.attend' | translate }}
-              } @else {
-                {{ 'dashboard.liveAlerts.resolved' | translate }}
-              }
-            </button>
-          </td>
+          <th>{{ 'dashboard.liveAlerts.alertId' | translate }}</th>
+          <th>{{ 'dashboard.liveAlerts.level' | translate }}</th>
+          <th>{{ 'dashboard.liveAlerts.category' | translate }}</th>
+          <th>{{ 'dashboard.liveAlerts.involved' | translate }}</th>
+          <th>{{ 'dashboard.liveAlerts.routeTime' | translate }}</th>
+          <th class="col-action">{{ 'dashboard.liveAlerts.action' | translate }}</th>
         </tr>
-      }
-    </tbody>
-  </table>
+      </thead>
+
+      <tbody>
+        @for (alert of recentAlerts; track alert.id; let i = $index) {
+          <tr class="alert-row" [style.animation-delay]="(i * 40) + 'ms'">
+
+            <!-- Alert code -->
+            <td>
+              <span class="alert-code">{{ alert.alertCode }}</span>
+            </td>
+
+            <!-- Severity badge -->
+            <td>
+              <span
+                class="severity-badge"
+                [class.severity-badge--high]="alert.severity === 'high'"
+                [class.severity-badge--medium]="alert.severity === 'medium'"
+                [class.severity-badge--low]="alert.severity === 'low'">
+                <mat-icon class="badge-icon">
+                  {{ alert.severity === 'high' ? 'crisis_alert' : alert.severity === 'medium' ? 'warning' : 'info' }}
+                </mat-icon>
+                {{ getSeverityKey(alert.severity) | translate }}
+              </span>
+            </td>
+
+            <!-- Category -->
+            <td>
+              <span class="category-text">{{ alert.category }}</span>
+            </td>
+
+            <!-- Driver + vehicle -->
+            <td>
+              <span class="driver-name">{{ alert.driverName }}</span>
+              <span class="vehicle-info">{{ alert.vehicleType }} · {{ alert.vehicleCode }}</span>
+            </td>
+
+            <!-- Route + time -->
+            <td>
+              <span class="route-text">{{ alert.route }}</span>
+              <span class="time-text">
+                <mat-icon class="time-icon">schedule</mat-icon>
+                {{ alert.time }}
+              </span>
+            </td>
+
+            <!-- Action -->
+            <td class="col-action">
+              @if (alert.status === 'active') {
+                <button
+                  mat-flat-button
+                  class="attend-btn"
+                  (click)="openAlertDetail(alert)">
+                  <mat-icon>visibility</mat-icon>
+                  {{ 'dashboard.liveAlerts.attend' | translate }}
+                </button>
+              } @else {
+                <span class="resolved-chip">
+                  <mat-icon>check_circle</mat-icon>
+                  {{ 'dashboard.liveAlerts.resolved' | translate }}
+                </span>
+              }
+            </td>
+
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
 </div>
