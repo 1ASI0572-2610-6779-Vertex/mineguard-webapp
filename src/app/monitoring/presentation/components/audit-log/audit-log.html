@@ -1,47 +1,129 @@
-<section class="audit-log">
-  <header class="audit-header">
-    <h2>{{ 'monitoring.audit.title' | translate }}</h2>
+<section class="al-card">
 
-    <div class="audit-controls">
-      <label class="filter">
-        <span>{{ 'monitoring.audit.filter.label' | translate }}</span>
-        <select>
-          <option value="all">{{ 'monitoring.audit.filter.all' | translate }}</option>
-        </select>
-      </label>
+  <!-- Header -->
+  <div class="al-header">
+    <div class="al-header-left">
+      <div class="al-header-icon">
+        <mat-icon>history</mat-icon>
+      </div>
+      <div>
+        <h2 class="al-title">{{ 'monitoring.audit.title' | translate }}</h2>
+        <p class="al-subtitle">{{ filteredEntries().length }} evento{{ filteredEntries().length !== 1 ? 's' : '' }} registrado{{ filteredEntries().length !== 1 ? 's' : '' }}</p>
+      </div>
+    </div>
+    <button mat-stroked-button class="al-export-btn" matTooltip="Exportar registro">
+      <mat-icon>download</mat-icon>
+      Exportar
+    </button>
+  </div>
 
-      <button mat-stroked-button class="export-btn">
-        <mat-icon>download</mat-icon>
-        <span>{{ 'monitoring.audit.export' | translate }}</span>
+  <!-- Toolbar: search + category filters -->
+  <div class="al-toolbar">
+    <div class="al-search-wrap">
+      <mat-icon class="al-search-icon">search</mat-icon>
+      <input
+        class="al-search"
+        type="search"
+        [value]="query()"
+        (input)="onSearch($any($event.target).value)"
+        placeholder="Buscar evento, usuario..."
+      />
+    </div>
+    <div class="al-category-pills">
+      <button
+        class="al-pill"
+        [class.al-pill--active]="categoryFilter() === 'all'"
+        (click)="setCategory('all')">
+        Todos
+        @if (counts().all > 0) { <span class="al-pill-count">{{ counts().all }}</span> }
+      </button>
+      <button
+        class="al-pill al-pill--security"
+        [class.al-pill--active]="categoryFilter() === 'security'"
+        (click)="setCategory('security')">
+        <mat-icon class="al-pill-icon">gpp_bad</mat-icon>
+        Seguridad
+        @if (counts().security > 0) { <span class="al-pill-count">{{ counts().security }}</span> }
+      </button>
+      <button
+        class="al-pill al-pill--administrative"
+        [class.al-pill--active]="categoryFilter() === 'administrative'"
+        (click)="setCategory('administrative')">
+        <mat-icon class="al-pill-icon">manage_accounts</mat-icon>
+        Admin
+        @if (counts().administrative > 0) { <span class="al-pill-count">{{ counts().administrative }}</span> }
+      </button>
+      <button
+        class="al-pill al-pill--operational"
+        [class.al-pill--active]="categoryFilter() === 'operational'"
+        (click)="setCategory('operational')">
+        <mat-icon class="al-pill-icon">construction</mat-icon>
+        Operativo
+        @if (counts().operational > 0) { <span class="al-pill-count">{{ counts().operational }}</span> }
       </button>
     </div>
-  </header>
+  </div>
 
-  <ol class="timeline">
-    @for (entry of entries; track entry.id) {
+  <!-- Empty state -->
+  @if (filteredEntries().length === 0) {
+    <div class="al-empty">
+      <div class="al-empty-icon">
+        <mat-icon>manage_search</mat-icon>
+      </div>
+      <p class="al-empty-title">Sin eventos</p>
+      <p class="al-empty-sub">
+        @if (query() || categoryFilter() !== 'all') {
+          Ningún evento coincide con los filtros aplicados.
+        } @else {
+          El registro de auditoría está vacío.
+        }
+      </p>
+    </div>
+  }
+
+  <!-- Timeline -->
+  <ol class="al-timeline">
+    @for (entry of filteredEntries(); track entry.id; let last = $last; let i = $index) {
       <li
-        class="event"
-        [class.event-security]="entry.category === 'security'"
-        [class.event-administrative]="entry.category === 'administrative'"
-        [class.event-operational]="entry.category === 'operational'"
-      >
-        <span class="event-dot"></span>
-        <span class="event-category">
-          {{ 'monitoring.audit.category.' + entry.category | translate }}
-        </span>
-        <time class="event-time">{{ formatTimestamp(entry.occurredAt) }}</time>
-        <h3 class="event-title">{{ entry.titleKey | translate }}</h3>
-        <p class="event-description">
-          {{ entry.descriptionKey | translate: entry.descriptionParams }}
-        </p>
-        <p class="event-actor">
-          <mat-icon class="actor-icon">person</mat-icon>
-          <span>
-            {{ 'monitoring.audit.actorLabel' | translate }}:
-            {{ entry.actorKey | translate }}
-          </span>
-        </p>
+        class="al-event"
+        [class.al-event--security]="entry.category === 'security'"
+        [class.al-event--administrative]="entry.category === 'administrative'"
+        [class.al-event--operational]="entry.category === 'operational'"
+        [style.animation-delay.ms]="i * 55">
+
+        <!-- Node column -->
+        <div class="al-node">
+          <div class="al-dot">
+            <mat-icon class="al-dot-icon">{{ iconForCategory(entry.category) }}</mat-icon>
+          </div>
+          @if (!last) {
+            <div class="al-connector"></div>
+          }
+        </div>
+
+        <!-- Content column -->
+        <div class="al-content">
+          <div class="al-meta-row">
+            <span class="al-category-badge">
+              {{ 'monitoring.audit.category.' + entry.category | translate }}
+            </span>
+            <div class="al-time-block">
+              <time class="al-time">{{ formatTime(entry.occurredAt) }}</time>
+              <span class="al-date">{{ formatDate(entry.occurredAt) }}</span>
+            </div>
+          </div>
+          <h3 class="al-event-title">{{ entry.titleKey | translate }}</h3>
+          <p class="al-event-desc">
+            {{ entry.descriptionKey | translate: entry.descriptionParams }}
+          </p>
+          <div class="al-actor">
+            <mat-icon class="al-actor-icon">person</mat-icon>
+            <span>{{ entry.actorKey | translate }}</span>
+          </div>
+        </div>
+
       </li>
     }
   </ol>
+
 </section>

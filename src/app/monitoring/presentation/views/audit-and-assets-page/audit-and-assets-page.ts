@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { AssetsStore } from '../../../../assets/application/assets.store';
@@ -17,7 +18,7 @@ import { AuditLog } from '../../components/audit-log/audit-log';
 @Component({
   selector: 'app-audit-and-assets-page',
   standalone: true,
-  imports: [CatalogSummaryWidget, AuditLog, TranslatePipe],
+  imports: [CatalogSummaryWidget, AuditLog, TranslatePipe, MatIconModule],
   templateUrl: './audit-and-assets-page.html',
   styleUrl: './audit-and-assets-page.css',
 })

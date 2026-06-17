@@ -1,37 +1,78 @@
-.audit-and-assets-page {
+/* ── Animations ─────────────────────────────────────────────────── */
+@keyframes fadeSlideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Root ───────────────────────────────────────────────────────── */
+.aap-page {
   padding: 0;
-  background: #f7f8fa;
+  background: var(--color-neutral-gray-100);
   min-height: 100vh;
 }
 
-.page-header {
-  padding: 24px 24px 18px;
-  border-bottom: 1px solid #e8e8e8;
-  background: #ffffff;
+/* ── Header ─────────────────────────────────────────────────────── */
+.aap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  background: var(--color-neutral-white);
+  border-bottom: 1px solid var(--color-neutral-gray-300);
+  animation: fadeSlideDown 0.3s ease both;
 }
 
-.page-header h1 {
-  margin: 0;
-  font-size: 22px;
+.aap-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.aap-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--color-accent-surface);
+  color: var(--color-accent-main);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.aap-icon mat-icon { font-size: 22px; width: 22px; height: 22px; }
+
+.aap-title {
+  margin: 0 0 2px;
+  font-size: 18px;
   font-weight: 800;
-  color: #1a1a2e;
+  color: var(--color-neutral-black);
+  letter-spacing: -0.3px;
 }
 
-.page-header p {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: #777;
+.aap-subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
 }
 
-.page-grid {
+/* ── Content grid ───────────────────────────────────────────────── */
+.aap-grid {
   display: grid;
   grid-template-columns: minmax(280px, 340px) 1fr;
-  gap: 22px;
-  padding: 24px;
+  gap: 24px;
+  padding: 24px 28px;
+  animation: fadeSlideUp 0.35s ease both;
+  animation-delay: 0.06s;
 }
 
 @media (max-width: 1100px) {
-  .page-grid {
-    grid-template-columns: 1fr;
-  }
+  .aap-grid { grid-template-columns: 1fr; }
+  .aap-header { padding: 16px; }
+  .aap-grid   { padding: 16px; }
 }
