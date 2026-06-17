@@ -1,57 +1,120 @@
 <div
   class="route-card"
-  [class.selected]="selected"
+  [class.route-card--selected]="selected"
+  [class.route-card--active]="route.status === 'active'"
+  [class.route-card--planned]="route.status === 'planned'"
+  [class.route-card--suspended]="route.status === 'suspended'"
+  [class.route-card--completed]="route.status === 'completed'"
   (click)="select.emit(route.id)"
 >
-  <div class="route-card-header">
-    <span class="route-id">{{ route.id }}</span>
-    <span class="route-status-badge" [class]="route.status">
-      {{ route.status | titlecase }}
+
+  <!-- Card header: status badge + ID + shift -->
+  <div class="rc-header">
+    <span class="rc-status-badge"
+      [class.rc-status-badge--active]="route.status === 'active'"
+      [class.rc-status-badge--planned]="route.status === 'planned'"
+      [class.rc-status-badge--suspended]="route.status === 'suspended'"
+      [class.rc-status-badge--completed]="route.status === 'completed'">
+      @if (route.status === 'active') { <mat-icon class="status-icon">radio_button_checked</mat-icon> }
+      @else if (route.status === 'suspended') { <mat-icon class="status-icon">pause_circle</mat-icon> }
+      @else if (route.status === 'completed') { <mat-icon class="status-icon">check_circle</mat-icon> }
+      @else { <mat-icon class="status-icon">schedule</mat-icon> }
+      {{ statusLabel }}
+    </span>
+    <span class="rc-id">{{ route.id }}</span>
+  </div>
+
+  <!-- Route name -->
+  <h3 class="rc-name">
+    <mat-icon class="rc-name-icon">route</mat-icon>
+    {{ route.name }}
+  </h3>
+
+  <!-- Meta row -->
+  <div class="rc-meta-row">
+    <span class="rc-meta-item">
+      <mat-icon class="rc-meta-icon">{{ shiftIcon }}</mat-icon>
+      {{ route.shift.name }} · {{ route.shift.startTime }}–{{ route.shift.endTime }}
+    </span>
+    <span class="rc-meta-item">
+      <mat-icon class="rc-meta-icon">directions_car</mat-icon>
+      {{ route.assignedVehicleIds.length }} {{ 'routeCard.vehicles' | translate }}
     </span>
   </div>
 
-  <p class="route-name">{{ route.name }}</p>
-
-  <div class="route-meta">
-    <mat-icon class="meta-icon">schedule</mat-icon>
-    <span>{{ route.shift.name }} · {{ route.shift.startTime }}–{{ route.shift.endTime }}</span>
+  <!-- Waypoint preview chips -->
+  <div class="rc-waypoints">
+    @for (wp of previewWaypoints; track $index) {
+      <span class="wp-chip">
+        <span class="wp-num">{{ $index + 1 }}</span>
+        {{ wp }}
+      </span>
+    }
+    @if (hasMoreWaypoints) {
+      <span class="wp-more">+{{ route.waypoints.length - 3 }}</span>
+    }
   </div>
 
-  <div class="route-meta">
-    <mat-icon class="meta-icon">directions_car</mat-icon>
-    <span>{{ route.assignedVehicleIds.length }} {{ 'routeCard.vehicles' | translate }}</span>
-  </div>
+  <!-- Action buttons -->
+  <div class="rc-actions" (click)="$event.stopPropagation()">
 
-  <div class="route-meta">
-    <mat-icon class="meta-icon">place</mat-icon>
-    <span>{{ route.waypoints.length }} {{ 'routeCard.waypoints' | translate }}</span>
-  </div>
-
-  <div class="route-card-actions">
+    <!-- Status toggle -->
     @if (route.status === 'planned') {
       <button
         mat-stroked-button
-        class="action-btn activate"
-        (click)="$event.stopPropagation(); statusChange.emit({ id: route.id, status: 'active' })"
-      >
+        class="rc-action-btn rc-action-btn--activate"
+        [matTooltip]="'routeCard.activate' | translate"
+        (click)="statusChange.emit({ id: route.id, status: 'active' })">
+        <mat-icon>play_arrow</mat-icon>
         {{ 'routeCard.activate' | translate }}
       </button>
     }
     @if (route.status === 'active') {
       <button
         mat-stroked-button
-        class="action-btn suspend"
-        (click)="$event.stopPropagation(); statusChange.emit({ id: route.id, status: 'suspended' })"
-      >
+        class="rc-action-btn rc-action-btn--suspend"
+        [matTooltip]="'routeCard.suspend' | translate"
+        (click)="statusChange.emit({ id: route.id, status: 'suspended' })">
+        <mat-icon>pause</mat-icon>
         {{ 'routeCard.suspend' | translate }}
       </button>
     }
+
+    <!-- View on map -->
     <button
       mat-icon-button
-      class="delete-btn"
-      (click)="$event.stopPropagation(); delete.emit(route.id)"
-    >
+      class="rc-icon-btn"
+      [matTooltip]="'Ver en mapa'"
+      (click)="viewOnMap.emit(route.id)">
+      <mat-icon>map</mat-icon>
+    </button>
+
+    <!-- Edit -->
+    <button
+      mat-icon-button
+      class="rc-icon-btn"
+      [matTooltip]="'Editar ruta'"
+      (click)="editRoute.emit(route.id)">
+      <mat-icon>edit</mat-icon>
+    </button>
+
+    <!-- Assign vehicle -->
+    <button
+      mat-icon-button
+      class="rc-icon-btn"
+      [matTooltip]="'Asignar vehículo'"
+      (click)="assignVehicle.emit(route.id)">
+      <mat-icon>directions_car</mat-icon>
+    </button>
+
+    <!-- Delete -->
+    <button
+      mat-icon-button
+      class="rc-icon-btn rc-icon-btn--delete"
+      [matTooltip]="'Eliminar'"
+      (click)="delete.emit(route.id)">
       <mat-icon>delete_outline</mat-icon>
     </button>
+
   </div>
 </div>

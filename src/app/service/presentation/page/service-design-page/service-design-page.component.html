@@ -1,74 +1,139 @@
 <div class="sd-page">
+
+  <!-- Page header -->
   <header class="page-header">
-    <h1>{{ 'serviceDesign.title' | translate }}</h1>
-    <p>{{ 'serviceDesign.subtitle' | translate }}</p>
+    <div class="page-header-left">
+      <div class="page-header-icon">
+        <mat-icon>route</mat-icon>
+      </div>
+      <div>
+        <h1>{{ 'serviceDesign.title' | translate }}</h1>
+        <p>{{ 'serviceDesign.subtitle' | translate }}</p>
+      </div>
+    </div>
+    <button
+      mat-flat-button
+      class="new-route-btn-header"
+      [routerLink]="['new']">
+      <mat-icon>add</mat-icon>
+      {{ 'serviceDesign.routes.newRoute' | translate }}
+    </button>
   </header>
 
+  <!-- Main grid: map + sidebar -->
   <div class="sd-grid">
+
+    <!-- Map section -->
     <section class="map-section">
       <app-live-map
         [vehicles]="vehicles()"
+        [routeOverlays]="routeOverlays()"
       ></app-live-map>
 
+      <!-- Legend overlay -->
       <div class="map-legend">
-        <span class="legend-item planned">
-          <span class="legend-line"></span> {{ 'serviceDesign.map.planned' | translate }}
-        </span>
-        <span class="legend-item active">
-          <span class="legend-line"></span> {{ 'serviceDesign.map.active' | translate }}
-        </span>
+        <div class="legend-item">
+          <span class="legend-line legend-line--active"></span>
+          <span class="legend-label">{{ 'serviceDesign.map.active' | translate }}</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-line legend-line--planned"></span>
+          <span class="legend-label">{{ 'serviceDesign.map.planned' | translate }}</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot legend-dot--success"></span>
+          <span class="legend-label">Operativo</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot legend-dot--danger"></span>
+          <span class="legend-label">Alerta</span>
+        </div>
       </div>
     </section>
 
+    <!-- Sidebar panel -->
     <aside class="sd-sidebar">
       <mat-tab-group animationDuration="200ms" class="sd-tabs">
 
-        <mat-tab label="{{ 'serviceDesign.tabs.routes' | translate }}">
+        <!-- Routes tab -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">route</mat-icon>
+            {{ 'serviceDesign.tabs.routes' | translate }}
+          </ng-template>
+
           <div class="tab-content">
-            <button
-              mat-flat-button
-              color="primary"
-              class="new-route-btn"
-              [routerLink]="['new']"
-            >
-              <mat-icon>add</mat-icon>
-              {{ 'serviceDesign.routes.newRoute' | translate }}
-            </button>
+
+            @if (store.loading()) {
+              @for (i of [1,2,3]; track i) {
+                <div class="skeleton-card"></div>
+              }
+            }
 
             @if (store.activeRoutes().length) {
-              <p class="routes-section-label">{{ 'serviceDesign.routes.active' | translate }}</p>
+              <div class="section-label">
+                <mat-icon class="sl-icon">radio_button_checked</mat-icon>
+                {{ 'serviceDesign.routes.active' | translate }}
+                <span class="sl-count">{{ store.activeRoutes().length }}</span>
+              </div>
               @for (route of store.activeRoutes(); track route.id) {
                 <app-route-card
                   [route]="route"
-                  (select)="store.selectRoute($event)"
+                  [selected]="store.selectedId() === route.id"
+                  (select)="onSelectRoute($event)"
                   (statusChange)="store.updateStatus($event.id, $event.status)"
                   (delete)="store.deleteRoute($event)"
+                  (editRoute)="onEditRoute($event)"
+                  (viewOnMap)="onViewOnMap($event)"
+                  (assignVehicle)="onAssignVehicle($event)"
                 ></app-route-card>
               }
             }
 
             @if (store.plannedRoutes().length) {
-              <p class="routes-section-label">{{ 'serviceDesign.routes.planned' | translate }}</p>
+              <div class="section-label">
+                <mat-icon class="sl-icon">schedule</mat-icon>
+                {{ 'serviceDesign.routes.planned' | translate }}
+                <span class="sl-count">{{ store.plannedRoutes().length }}</span>
+              </div>
               @for (route of store.plannedRoutes(); track route.id) {
                 <app-route-card
                   [route]="route"
-                  (select)="store.selectRoute($event)"
+                  [selected]="store.selectedId() === route.id"
+                  (select)="onSelectRoute($event)"
                   (statusChange)="store.updateStatus($event.id, $event.status)"
                   (delete)="store.deleteRoute($event)"
+                  (editRoute)="onEditRoute($event)"
+                  (viewOnMap)="onViewOnMap($event)"
+                  (assignVehicle)="onAssignVehicle($event)"
                 ></app-route-card>
               }
             }
 
             @if (!store.routes().length && !store.loading()) {
               <div class="empty-state">
-                <mat-icon>route</mat-icon>
-                <p>{{ 'serviceDesign.routes.empty' | translate }}</p>
+                <div class="empty-icon-wrap">
+                  <mat-icon>route</mat-icon>
+                </div>
+                <h3 class="empty-title">Sin rutas configuradas</h3>
+                <p class="empty-text">{{ 'serviceDesign.routes.empty' | translate }}</p>
+                <button mat-flat-button class="empty-cta" [routerLink]="['new']">
+                  <mat-icon>add</mat-icon>
+                  Nueva ruta
+                </button>
               </div>
             }
+
           </div>
         </mat-tab>
 
-        <mat-tab label="{{ 'serviceDesign.tabs.shifts' | translate }}">
+        <!-- Shifts tab -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">schedule</mat-icon>
+            {{ 'serviceDesign.tabs.shifts' | translate }}
+          </ng-template>
+
           <div class="tab-content">
             @for (shift of store.shifts(); track shift.id) {
               <app-shift-card [shift]="shift"></app-shift-card>
@@ -78,6 +143,7 @@
 
       </mat-tab-group>
     </aside>
+
   </div>
 
   <router-outlet></router-outlet>
