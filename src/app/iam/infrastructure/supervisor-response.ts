@@ -6,10 +6,12 @@ import { AccessStatus } from '../domain/model/access-status';
  */
 export interface SupervisorResource extends BaseResource {
   id: number;
+  username: string;
   fullName: string;
   corporateId: string;
   email: string;
   accessStatus: AccessStatus;
+  idCompany: number;
 }
 
 /**

@@ -20,6 +20,7 @@ export const environment = {
   platformProviderCatalogSummaryEndpointPath: '/catalogSummary',
   platformProviderVehiclesInventoryEndpointPath: '/vehiclesInventory',
   platformProviderDriversDirectoryEndpointPath: '/driversDirectory',
+  platformProviderDriversEndpointPath: '/drivers',
   platformProviderOperationalAlertsEndpointPath: '/operationalAlerts',
   platformProviderLiveMapVehiclesEndpointPath: '/liveMapVehicles',
   platformProviderFleetSummaryEndpointPath: '/fleetSummary',

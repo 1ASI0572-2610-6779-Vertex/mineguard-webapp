@@ -156,6 +156,23 @@ export class AnalyticsStore {
     });
   }
 
+  /**
+   * Downloads GET /reports/{id}/pdf and triggers a browser file-save dialog.
+   */
+  downloadReportPdf(id: number): void {
+    this.analyticsApi.downloadReportPdf(id).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `mineguard-report-${id}.pdf`;
+        anchor.click();
+        URL.revokeObjectURL(url);
+      },
+      error: (err) => this.handleFailure(err, `Failed to download report ${id}`),
+    });
+  }
+
   private handleFailure(error: unknown, fallback: string): void {
     this.loadingSignal.set(false);
     if (error instanceof Error) {

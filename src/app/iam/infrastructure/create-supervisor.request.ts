@@ -1,8 +1,12 @@
 /**
- * HTTP request payload to register a new supervisor.
+ * HTTP request payload for POST /supervisors.
+ * Mirrors the exact body required by the backend contract.
  */
 export interface CreateSupervisorRequest {
-  fullName: string;
-  corporateId: string;
+  username: string;
+  password: string;
   email: string;
+  fullName: string;
+  idCompany: number;
+  corporateId: string;
 }

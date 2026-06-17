@@ -111,4 +111,9 @@ export class AnalyticsApi extends BaseApi {
   getAdminNotices(): Observable<AdminNotice[]> {
     return this.adminNoticesEndpoint.getAll();
   }
+
+  /** GET /reports/{id}/pdf — download binary PDF report as Blob. */
+  downloadReportPdf(id: number): Observable<Blob> {
+    return this.reportsEndpoint.downloadPdf(id);
+  }
 }

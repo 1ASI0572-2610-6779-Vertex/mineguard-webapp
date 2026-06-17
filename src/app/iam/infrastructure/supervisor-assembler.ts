@@ -4,31 +4,35 @@ import { Supervisor } from '../domain/model/supervisor.entity';
 import { CreateSupervisorRequest } from './create-supervisor.request';
 import { SupervisorResource, SupervisorsResponse } from './supervisor-response';
 
-/**
- * Converts between {@link Supervisor} domain entities and infrastructure
- * resources, and between {@link CreateSupervisorCommand} domain commands and
- * HTTP request payloads.
- */
 export class SupervisorAssembler
   implements BaseAssembler<Supervisor, SupervisorResource, SupervisorsResponse>
 {
   toEntityFromResource(resource: SupervisorResource): Supervisor {
     return new Supervisor({
       id: resource.id,
+      username: resource.username ?? '',
       fullName: resource.fullName,
       corporateId: resource.corporateId,
       email: resource.email,
       accessStatus: resource.accessStatus,
+      idCompany: resource.idCompany ?? 1,
     });
   }
 
+  /**
+   * Builds the PUT /supervisors/{id} body.
+   * Sends all contract fields; password is omitted on update (the backend
+   * treats a missing password as "no change").
+   */
   toResourceFromEntity(entity: Supervisor): SupervisorResource {
     return {
       id: entity.id,
+      username: entity.username,
       fullName: entity.fullName,
       corporateId: entity.corporateId,
       email: entity.email,
       accessStatus: entity.accessStatus,
+      idCompany: entity.idCompany,
     };
   }
 
@@ -38,9 +42,12 @@ export class SupervisorAssembler
 
   toRequestFromCommand(command: CreateSupervisorCommand): CreateSupervisorRequest {
     return {
-      fullName: command.fullName,
-      corporateId: command.corporateId,
+      username: command.username,
+      password: command.password,
       email: command.email,
+      fullName: command.fullName,
+      idCompany: command.idCompany,
+      corporateId: command.corporateId,
     };
   }
 }

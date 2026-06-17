@@ -10,7 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { AssetsStore } from '../../../application/assets.store';
 import { Driver } from '../../../domain/model/driver.entity';
-import { DriverShiftStatus } from '../../../domain/model/driver-shift-status';
+import { SaveDriverCommand } from '../../../domain/model/save-driver.command';
 
 export interface DriverDialogData {
   driver?: Driver;
@@ -42,39 +42,43 @@ export class DriverFormDialog {
   readonly loading = signal(false);
   readonly errorMsg = signal<string | null>(null);
 
-  readonly shiftStatusOptions: { value: DriverShiftStatus; label: string }[] = [
-    { value: 'on_shift',  label: 'En turno' },
-    { value: 'off_shift', label: 'Fuera de turno' },
-    { value: 'inactive',  label: 'Inactivo' },
+  readonly workShiftOptions = [
+    { value: 'Morning', label: 'Mañana' },
+    { value: 'Afternoon', label: 'Tarde' },
+    { value: 'Night', label: 'Noche' },
   ];
 
   form = this.fb.nonNullable.group({
-    fullName:    [this.data.driver?.fullName    ?? '', Validators.required],
-    operatorId:  [this.data.driver?.operatorId  ?? '', Validators.required],
-    license:     [this.data.driver?.license     ?? '', Validators.required],
-    specialty:   [this.data.driver?.specialty   ?? '', Validators.required],
-    shiftStatus: [this.data.driver?.shiftStatus ?? ('on_shift' as DriverShiftStatus), Validators.required],
-    lastAccess:  [this.data.driver?.lastAccess  ?? ''],
+    fullName:      [this.data.driver?.fullName ?? '', Validators.required],
+    username:      ['', Validators.required],
+    password:      ['', this.isEdit ? [] : [Validators.required, Validators.minLength(6)]],
+    email:         ['', [Validators.required, Validators.email]],
+    licenseNumber: [this.data.driver?.license ?? '', Validators.required],
+    workShift:     ['Morning', Validators.required],
+    idCompany:     [1, Validators.required],
   });
 
   submit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
     const v = this.form.getRawValue();
-    const driver = new Driver({
-      id:          this.data.driver?.id ?? 0,
-      fullName:    v.fullName,
-      operatorId:  v.operatorId,
-      license:     v.license,
-      specialty:   v.specialty,
-      shiftStatus: v.shiftStatus,
-      lastAccess:  v.lastAccess || new Date().toLocaleDateString('es-PE'),
+    const command = new SaveDriverCommand({
+      id:            this.data.driver?.id,
+      fullName:      v.fullName,
+      username:      v.username,
+      password:      v.password,
+      email:         v.email,
+      licenseNumber: v.licenseNumber,
+      workShift:     v.workShift,
+      idCompany:     v.idCompany,
     });
 
     this.loading.set(true);
     this.errorMsg.set(null);
 
-    const call$ = this.isEdit ? this.store.updateDriver$(driver) : this.store.createDriver$(driver);
+    const call$ = this.isEdit
+      ? this.store.updateDriver$(command)
+      : this.store.createDriver$(command);
 
     call$.subscribe({
       next:  (saved) => { this.loading.set(false); this.dialogRef.close(saved); },

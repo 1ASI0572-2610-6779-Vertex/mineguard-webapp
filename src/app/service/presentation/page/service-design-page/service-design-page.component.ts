@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,7 +25,7 @@ import { ShiftCard } from '../../component/shift-card/shift-card.component';
   templateUrl: './service-design-page.component.html',
   styleUrl: './service-design-page.component.css',
 })
-export class ServiceDesignPage implements OnInit {
+export class ServiceDesignPage implements OnInit, OnDestroy {
   protected store   = inject(ServiceDesignStore);
   private monitoring = inject(MonitoringStore);
   private router    = inject(Router);
@@ -36,8 +36,12 @@ export class ServiceDesignPage implements OnInit {
 
   ngOnInit(): void {
     this.store.loadRoutes();
-    this.monitoring.loadLiveMapVehicles();
+    this.monitoring.startLiveMapPolling();
     this.monitoring.loadRoutes();
+  }
+
+  ngOnDestroy(): void {
+    this.monitoring.stopLiveMapPolling();
   }
 
   onSelectRoute(id: string): void {

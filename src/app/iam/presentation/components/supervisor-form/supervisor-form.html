@@ -1,6 +1,5 @@
 <div class="sf-dialog">
 
-  <!-- Header -->
   <div class="sf-header">
     <div class="sf-header-left">
       <div class="sf-icon">
@@ -16,7 +15,6 @@
     </button>
   </div>
 
-  <!-- Form -->
   <form class="sf-body" [formGroup]="form" (ngSubmit)="submit()">
 
     <mat-form-field appearance="outline" class="sf-field">
@@ -46,12 +44,29 @@
       }
     </mat-form-field>
 
+    <mat-form-field appearance="outline" class="sf-field">
+      <mat-label>Nombre de usuario</mat-label>
+      <mat-icon matPrefix class="sf-prefix-icon">account_circle</mat-icon>
+      <input matInput formControlName="username" placeholder="Ej. sup.carlos" />
+      @if (usernameInvalid) {
+        <mat-error>El nombre de usuario es obligatorio.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="sf-field">
+      <mat-label>Contraseña temporal</mat-label>
+      <mat-icon matPrefix class="sf-prefix-icon">lock</mat-icon>
+      <input matInput formControlName="password" type="password" placeholder="Mínimo 6 caracteres" />
+      @if (passwordInvalid) {
+        <mat-error>La contraseña debe tener al menos 6 caracteres.</mat-error>
+      }
+    </mat-form-field>
+
     <p class="sf-hint">
       <mat-icon class="sf-hint-icon">info</mat-icon>
-      El sistema generará una contraseña temporal. El supervisor deberá cambiarla en el primer inicio de sesión.
+      El supervisor deberá cambiar esta contraseña en el primer inicio de sesión.
     </p>
 
-    <!-- Footer actions -->
     <div class="sf-footer">
       <button mat-stroked-button type="button" class="sf-cancel-btn" (click)="cancel()">
         Cancelar

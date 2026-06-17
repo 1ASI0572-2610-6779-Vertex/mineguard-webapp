@@ -37,9 +37,11 @@ export class DriversDirectory {
   }
 
   revoke(driver: Driver): void {
-    if (!confirm(`¿Revocar acceso a ${driver.fullName}? Esta acción lo marcará como inactivo.`)) return;
-    this.store.revokeDriver$(driver.id).subscribe({
-      error: (err) => console.error('Failed to revoke driver:', err),
+    this.dialog.open(DriverFormDialog, {
+      width: '560px',
+      maxWidth: '95vw',
+      panelClass: 'mg-dialog',
+      data: { driver } as DriverDialogData,
     });
   }
 }

@@ -37,6 +37,24 @@
                 {{ 'assets.fleet.vehicles.status.maintenance' | translate }}
               </span>
             }
+            @case ('alert') {
+              <span class="badge badge-danger">
+                <mat-icon class="badge-icon">warning</mat-icon>
+                {{ 'assets.fleet.vehicles.status.alert' | translate }}
+              </span>
+            }
+            @case ('inactive') {
+              <span class="badge badge-inactive">
+                <mat-icon class="badge-icon">block</mat-icon>
+                {{ 'assets.fleet.vehicles.status.inactive' | translate }}
+              </span>
+            }
+            @case ('restricted_route') {
+              <span class="badge badge-restricted">
+                <mat-icon class="badge-icon">do_not_disturb_on</mat-icon>
+                {{ 'assets.fleet.vehicles.status.restrictedRoute' | translate }}
+              </span>
+            }
           }
         </div>
 

@@ -1,5 +1,9 @@
 /**
- * Operational status a vehicle can be in, as displayed in the
- * "Inventario de Vehículos" supervisor view.
+ * All operational statuses a vehicle can have, as defined by GET /vehiclesInventory.
  */
-export type VehicleStatus = 'operational' | 'maintenance';
+export type VehicleStatus =
+  | 'operational'
+  | 'maintenance'
+  | 'alert'
+  | 'inactive'
+  | 'restricted_route';

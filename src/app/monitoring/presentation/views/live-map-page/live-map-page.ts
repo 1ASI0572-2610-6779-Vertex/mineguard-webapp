@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
@@ -14,7 +14,7 @@ import { LiveMap } from '../../components/live-map/live-map';
   templateUrl: './live-map-page.html',
   styleUrl: './live-map-page.css',
 })
-export class LiveMapPage implements OnInit {
+export class LiveMapPage implements OnInit, OnDestroy {
   private store  = inject(MonitoringStore);
   private router = inject(Router);
 
@@ -46,11 +46,15 @@ export class LiveMapPage implements OnInit {
   });
 
   ngOnInit(): void {
-    this.store.loadLiveMapVehicles();
+    this.store.startLiveMapPolling();
     this.store.loadFleetSummary();
     this.store.loadCardiacReadings();
     this.store.loadAlerts();
     this.store.loadRoutes();
+  }
+
+  ngOnDestroy(): void {
+    this.store.stopLiveMapPolling();
   }
 
   vehicleTypeIcon(vehicleType: string): string {

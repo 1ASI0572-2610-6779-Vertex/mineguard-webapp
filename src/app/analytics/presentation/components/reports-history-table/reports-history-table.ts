@@ -1,4 +1,4 @@
-import { Component, Input, computed, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -21,6 +21,8 @@ const PAGE_SIZE = 8;
   styleUrl: './reports-history-table.css',
 })
 export class ReportsHistoryTable {
+  @Output() readonly viewReport = new EventEmitter<number>();
+
   private readonly rowsSignal = signal<AnalyticsHistoryRow[]>([]);
 
   readonly query = signal<string>('');
@@ -74,6 +76,10 @@ export class ReportsHistoryTable {
 
   nextPage(): void {
     if (this.canGoNext()) this.currentPage.update((p) => p + 1);
+  }
+
+  onViewReport(id: number): void {
+    this.viewReport.emit(id);
   }
 
   criticalityIcon(level: string): string {

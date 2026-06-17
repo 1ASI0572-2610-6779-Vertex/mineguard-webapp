@@ -42,19 +42,21 @@ export class SupervisorForm extends BaseForm {
       nonNullable: true,
       validators: [Validators.required, Validators.email],
     }),
+    username: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    password: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(6)],
+    }),
   });
 
-  get fullNameInvalid(): boolean {
-    return this.isInvalidControl(this.form, 'fullName');
-  }
-
-  get corporateIdInvalid(): boolean {
-    return this.isInvalidControl(this.form, 'corporateId');
-  }
-
-  get emailInvalid(): boolean {
-    return this.isInvalidControl(this.form, 'email');
-  }
+  get fullNameInvalid(): boolean { return this.isInvalidControl(this.form, 'fullName'); }
+  get corporateIdInvalid(): boolean { return this.isInvalidControl(this.form, 'corporateId'); }
+  get emailInvalid(): boolean { return this.isInvalidControl(this.form, 'email'); }
+  get usernameInvalid(): boolean { return this.isInvalidControl(this.form, 'username'); }
+  get passwordInvalid(): boolean { return this.isInvalidControl(this.form, 'password'); }
 
   get emailErrorMsg(): string {
     const ctrl = this.form.controls.email;
@@ -64,16 +66,18 @@ export class SupervisorForm extends BaseForm {
   }
 
   submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+
     this.submitting.set(true);
     const command = new CreateSupervisorCommand({
-      fullName: this.form.value.fullName!.trim(),
+      fullName:    this.form.value.fullName!.trim(),
       corporateId: this.form.value.corporateId!.trim(),
-      email: this.form.value.email!.trim(),
+      email:       this.form.value.email!.trim(),
+      username:    this.form.value.username!.trim(),
+      password:    this.form.value.password!,
+      idCompany:   1,
     });
+
     this.store.createSupervisor(command);
     this.submitting.set(false);
     this.dialogRef.close(true);

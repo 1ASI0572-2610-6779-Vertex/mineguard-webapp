@@ -64,6 +64,10 @@ export class ReportsPage implements OnInit {
     this.store.loadHistoryRows();
   }
 
+  onViewReport(id: number): void {
+    this.store.downloadReportPdf(id);
+  }
+
   /** Generates and downloads a CSV of the currently filtered history rows. */
   exportCsv(): void {
     const rows = this.filteredHistoryRows();

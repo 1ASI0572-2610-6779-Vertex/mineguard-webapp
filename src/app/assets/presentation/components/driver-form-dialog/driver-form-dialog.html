@@ -32,35 +32,49 @@
 
       <div class="form-row">
         <mat-form-field appearance="outline" class="field-half">
-          <mat-label>ID de Operador</mat-label>
-          <input matInput formControlName="operatorId" placeholder="Ej. OP-2341" />
-          @if (form.controls.operatorId.hasError('required') && form.controls.operatorId.touched) {
-            <mat-error>El ID es obligatorio</mat-error>
+          <mat-label>Usuario</mat-label>
+          <input matInput formControlName="username" placeholder="Ej. juan.perez" />
+          @if (form.controls.username.hasError('required') && form.controls.username.touched) {
+            <mat-error>El usuario es obligatorio</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="field-half">
-          <mat-label>Licencia</mat-label>
-          <input matInput formControlName="license" placeholder="Ej. AIII-C" />
-          @if (form.controls.license.hasError('required') && form.controls.license.touched) {
-            <mat-error>La licencia es obligatoria</mat-error>
+          <mat-label>{{ isEdit ? 'Nueva contraseña (opcional)' : 'Contraseña' }}</mat-label>
+          <input matInput type="password" formControlName="password" placeholder="Mínimo 6 caracteres" />
+          @if (form.controls.password.hasError('required') && form.controls.password.touched) {
+            <mat-error>La contraseña es obligatoria</mat-error>
+          }
+          @if (form.controls.password.hasError('minlength') && form.controls.password.touched) {
+            <mat-error>Mínimo 6 caracteres</mat-error>
           }
         </mat-form-field>
       </div>
 
+      <mat-form-field appearance="outline" class="field-full">
+        <mat-label>Correo electrónico</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="Ej. juan.perez@mineguard.com" />
+        @if (form.controls.email.hasError('required') && form.controls.email.touched) {
+          <mat-error>El correo es obligatorio</mat-error>
+        }
+        @if (form.controls.email.hasError('email') && form.controls.email.touched) {
+          <mat-error>Ingresa un correo válido</mat-error>
+        }
+      </mat-form-field>
+
       <div class="form-row">
         <mat-form-field appearance="outline" class="field-half">
-          <mat-label>Especialidad</mat-label>
-          <input matInput formControlName="specialty" placeholder="Ej. Vehículos Pesados" />
-          @if (form.controls.specialty.hasError('required') && form.controls.specialty.touched) {
-            <mat-error>La especialidad es obligatoria</mat-error>
+          <mat-label>N.º de Licencia</mat-label>
+          <input matInput formControlName="licenseNumber" placeholder="Ej. A3C-8841" />
+          @if (form.controls.licenseNumber.hasError('required') && form.controls.licenseNumber.touched) {
+            <mat-error>La licencia es obligatoria</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="field-half">
-          <mat-label>Estado de turno</mat-label>
-          <mat-select formControlName="shiftStatus">
-            @for (opt of shiftStatusOptions; track opt.value) {
+          <mat-label>Turno</mat-label>
+          <mat-select formControlName="workShift">
+            @for (opt of workShiftOptions; track opt.value) {
               <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
             }
           </mat-select>
