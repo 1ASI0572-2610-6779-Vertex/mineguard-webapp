@@ -1,41 +1,140 @@
 .control-page {
   padding: 0;
-  background: #f4f4f5;
+  background: var(--color-neutral-gray-100);
   min-height: 100vh;
-  color: #171717;
-  font-family: 'Roboto', sans-serif;
+  color: var(--color-neutral-black);
+  font-family: var(--font-base);
 }
 
-.welcome-banner {
+/* ── Context Panel ──────────────────────────────────────────────── */
+.context-panel {
   display: flex;
   align-items: center;
-  padding: 20px 18px 14px;
-  background: var(--color-neutral-white, #ffffff);
-  border-bottom: 1px solid var(--color-neutral-gray-200, #e5e7eb);
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 24px;
+  background: var(--color-neutral-white);
+  border-bottom: 3px solid var(--color-neutral-gray-300);
+  border-left: 4px solid var(--color-accent-main);
+  transition: border-left-color 0.3s ease;
 }
 
-.welcome-text {
+.context-panel--warning  { border-left-color: var(--color-warning-main); }
+.context-panel--critical { border-left-color: var(--color-danger-main); }
+.context-panel--normal   { border-left-color: var(--color-success-main); }
+
+.context-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.context-user {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.context-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+.context-name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-neutral-black);
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.context-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--color-neutral-gray-300);
+  flex-shrink: 0;
+}
+
+.context-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.meta-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.meta-chip mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+  color: #9ca3af;
+}
+
+/* ── Operation Status Badge ─────────────────────────────────────── */
+.op-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: var(--color-neutral-gray-100);
+  border: 1px solid var(--color-neutral-gray-300);
+  min-width: 240px;
+  transition: all 0.3s ease;
+}
+
+.context-panel--normal   .op-status-badge { background: var(--color-success-surface); border-color: var(--color-success-main); }
+.context-panel--warning  .op-status-badge { background: var(--color-warning-surface); border-color: var(--color-warning-main); }
+.context-panel--critical .op-status-badge { background: var(--color-danger-surface);  border-color: var(--color-danger-main); }
+
+.op-status-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  transition: color 0.3s ease;
+}
+
+.context-panel--normal   .op-status-icon { color: var(--color-success-main); }
+.context-panel--warning  .op-status-icon { color: var(--color-warning-main); }
+.context-panel--critical .op-status-icon { color: var(--color-danger-main); }
+
+.op-status-text {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.welcome-greeting {
-  font-size: 12px;
-  font-weight: 500;
-  color: #9ca3af;
-  letter-spacing: 0.2px;
+.op-status-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
+  color: #9ca3af;
 }
 
-.welcome-name {
-  font-size: 20px;
+.op-status-value {
+  font-size: 13px;
   font-weight: 800;
-  color: var(--color-neutral-black, #171717);
-  letter-spacing: -0.4px;
-  line-height: 1.2;
+  letter-spacing: 0.2px;
 }
 
+.context-panel--normal   .op-status-value { color: #15803d; }
+.context-panel--warning  .op-status-value { color: #92400e; }
+.context-panel--critical .op-status-value { color: var(--color-danger-main); }
+
+/* ── Middle grid ────────────────────────────────────────────────── */
 .middle-grid {
   display: grid;
   grid-template-columns: 2fr 1.05fr;
@@ -44,7 +143,11 @@
 }
 
 @media (max-width: 1000px) {
-  .middle-grid {
-    grid-template-columns: 1fr;
-  }
+  .middle-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .context-panel { flex-direction: column; align-items: flex-start; }
+  .op-status-badge { min-width: 0; width: 100%; }
+  .context-divider { display: none; }
 }

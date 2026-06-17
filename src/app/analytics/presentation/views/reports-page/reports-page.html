@@ -1,15 +1,60 @@
 <div class="reports-page">
+
+  <!-- ── Page Header ───────────────────────────────────────────── -->
   <header class="page-header">
-    <h1>{{ 'reports.title' | translate }}</h1>
-    <p>{{ 'reports.subtitle' | translate }}</p>
+    <div class="header-identity">
+      <div class="header-icon">
+        <mat-icon>insert_chart</mat-icon>
+      </div>
+      <div>
+        <h1>{{ 'reports.title' | translate }}</h1>
+        <p>{{ 'reports.subtitle' | translate }}</p>
+      </div>
+    </div>
+
+    <!-- Filter toolbar -->
+    <div class="filter-toolbar">
+      <!-- Criticality filter -->
+      <mat-form-field appearance="outline" class="filter-select">
+        <mat-label>Criticidad</mat-label>
+        <mat-select
+          [value]="criticalityFilter()"
+          (selectionChange)="criticalityFilter.set($event.value)">
+          @for (opt of criticalityOptions; track opt.value) {
+            <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Result count -->
+      <span class="result-count">
+        <mat-icon>table_rows</mat-icon>
+        {{ totalFiltered() }} registros
+      </span>
+
+      <!-- Export CSV -->
+      <button
+        mat-flat-button
+        class="export-btn"
+        (click)="exportCsv()"
+        [disabled]="totalFiltered() === 0">
+        <mat-icon>download</mat-icon>
+        Exportar CSV
+      </button>
+    </div>
   </header>
 
-  <div class="top-row">
+  <!-- ── Charts Row ────────────────────────────────────────────── -->
+  <div class="charts-row">
     <app-reports-fatigue-bars [bars]="fatigueBars()"></app-reports-fatigue-bars>
     <app-reports-incident-distribution
       [distribution]="incidentDistribution()"
     ></app-reports-incident-distribution>
   </div>
 
-  <app-reports-history-table [rows]="historyRows()"></app-reports-history-table>
+  <!-- ── History Table ─────────────────────────────────────────── -->
+  <div class="table-section">
+    <app-reports-history-table [rows]="filteredHistoryRows()"></app-reports-history-table>
+  </div>
+
 </div>
