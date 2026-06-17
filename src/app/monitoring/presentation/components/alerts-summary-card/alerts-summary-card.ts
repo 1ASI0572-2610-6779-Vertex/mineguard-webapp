@@ -1,19 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
 
 import { Alert } from '../../../domain/model/alert.entity';
 
-/**
- * "Resumen de Alertas" sidebar widget for the live-map view.
- *
- * @remarks
- * Receives the pre-filtered critical-active subset; the live-map page is
- * responsible for the filtering via the `criticalActiveAlerts` computed.
- */
 @Component({
   selector: 'app-alerts-summary-card',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, MatIconModule],
   templateUrl: './alerts-summary-card.html',
   styleUrl: './alerts-summary-card.css',
 })
