@@ -1,7 +1,24 @@
 <section class="live-map">
-  <div class="map-overlay">
-    <span class="overlay-label">{{ 'monitoring.liveMap.activeRoutes' | translate }}</span>
-    <span class="overlay-count">{{ activeRoutesCount }}</span>
+
+  <!-- Top-left telemetry overlay chips -->
+  <div class="map-hud-tl">
+    <span class="hud-chip hud-chip--dark">
+      <span class="hud-dot hud-dot--pulse"></span>
+      EN VIVO
+    </span>
+    <span class="hud-chip hud-chip--dark">
+      <span class="hud-dot hud-dot--success"></span>
+      {{ operationalCount }} operativos
+    </span>
+    @if (alertCount > 0) {
+      <span class="hud-chip hud-chip--alert">
+        <span class="hud-dot hud-dot--danger"></span>
+        {{ alertCount }} en alerta
+      </span>
+    }
   </div>
+
+  <!-- Map container -->
   <div #mapContainer class="map-container"></div>
+
 </section>

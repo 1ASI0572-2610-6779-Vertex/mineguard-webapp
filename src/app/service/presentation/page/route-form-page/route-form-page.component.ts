@@ -3,6 +3,7 @@ import {
   AfterViewInit, ViewChild, ElementRef
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,6 +27,7 @@ interface WaypointForm {
   selector: 'app-route-form-page',
   standalone: true,
   imports: [
+    DecimalPipe,
     FormsModule,
     MatButtonModule, MatIconModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,

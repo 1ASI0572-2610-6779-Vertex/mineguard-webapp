@@ -1,80 +1,143 @@
 <div class="rf-overlay" (click)="close()">
   <div class="rf-dialog" (click)="$event.stopPropagation()">
 
+    <!-- Dialog header -->
     <div class="rf-header">
-      <h2>{{ 'routeForm.title' | translate }}</h2>
-      <button mat-icon-button (click)="close()">
+      <div class="rf-header-left">
+        <div class="rf-header-icon">
+          <mat-icon>route</mat-icon>
+        </div>
+        <div>
+          <h2 class="rf-title">{{ 'routeForm.title' | translate }}</h2>
+          <p class="rf-subtitle">Haz clic en el mapa para añadir puntos de control</p>
+        </div>
+      </div>
+      <button mat-icon-button class="rf-close-btn" (click)="close()">
         <mat-icon>close</mat-icon>
       </button>
     </div>
 
+    <!-- Dialog body: left panel + map -->
     <div class="rf-body">
 
-      <!-- Panel izquierdo: campos + lista waypoints -->
+      <!-- Left panel: fields + waypoints -->
       <div class="rf-left-panel">
+
+        <!-- Route fields -->
         <div class="rf-fields">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>{{ 'routeForm.nameLabel' | translate }}</mat-label>
+            <mat-icon matPrefix class="field-prefix-icon">route</mat-icon>
             <input matInput [(ngModel)]="form.name" />
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>{{ 'routeForm.shiftLabel' | translate }}</mat-label>
+            <mat-icon matPrefix class="field-prefix-icon">schedule</mat-icon>
             <mat-select [(ngModel)]="form.shiftId">
               @for (shift of store.shifts(); track shift.id) {
-                <mat-option [value]="shift.id">{{ shift.name }}</mat-option>
+                <mat-option [value]="shift.id">
+                  {{ shift.name }} · {{ shift.startTime }}–{{ shift.endTime }}
+                </mat-option>
               }
             </mat-select>
           </mat-form-field>
         </div>
 
+        <!-- Waypoints section -->
         <div class="rf-wp-section">
-          <p class="section-label">{{ 'routeForm.waypointsTitle' | translate }}</p>
-          <p class="map-hint">
+          <div class="wp-section-header">
+            <span class="wp-section-label">
+              <mat-icon class="wsl-icon">place</mat-icon>
+              {{ 'routeForm.waypointsTitle' | translate }}
+            </span>
+            <span class="wp-count-chip">{{ form.waypoints.length }}</span>
+          </div>
+
+          <div class="map-hint">
             <mat-icon class="hint-icon">touch_app</mat-icon>
-            {{ 'routeForm.mapClickHint' | translate }}
-          </p>
+            <span>{{ 'routeForm.mapClickHint' | translate }}</span>
+          </div>
+
+          @if (form.waypoints.length === 0) {
+            <div class="wp-empty">
+              <mat-icon>my_location</mat-icon>
+              <span>Sin puntos de control. Haz clic en el mapa.</span>
+            </div>
+          }
 
           <div class="wp-list">
-            @for (wp of form.waypoints; track $index) {
+            @for (wp of form.waypoints; track $index; let i = $index) {
               <div class="wp-item">
-                <span class="wp-num">{{ $index + 1 }}</span>
-                <mat-form-field appearance="outline" class="wp-label-field">
-                  <mat-label>{{ 'routeForm.wpLabel' | translate }}</mat-label>
-                  <input matInput [(ngModel)]="wp.label" />
-                </mat-form-field>
-                <button mat-icon-button class="wp-del" (click)="removeWaypoint($index)">
-                  <mat-icon>close</mat-icon>
-                </button>
+
+                <!-- Connector line -->
+                @if (i > 0) { <div class="wp-connector"></div> }
+
+                <div class="wp-item-row">
+                  <div class="wp-num-wrap">
+                    <span class="wp-num">{{ i + 1 }}</span>
+                  </div>
+
+                  <div class="wp-fields">
+                    <mat-form-field appearance="outline" class="wp-label-field">
+                      <mat-label>{{ 'routeForm.wpLabel' | translate }}</mat-label>
+                      <input matInput [(ngModel)]="wp.label" />
+                    </mat-form-field>
+                    <span class="wp-coords">
+                      {{ wp.latitude | number:'1.4-4' }}, {{ wp.longitude | number:'1.4-4' }}
+                    </span>
+                  </div>
+
+                  <button mat-icon-button class="wp-del-btn" (click)="removeWaypoint(i)">
+                    <mat-icon>delete_outline</mat-icon>
+                  </button>
+                </div>
+
               </div>
             }
           </div>
         </div>
+
+        <!-- Validation hint -->
+        @if (form.waypoints.length < 2) {
+          <div class="rf-validation-hint">
+            <mat-icon>info</mat-icon>
+            Se necesitan al menos 2 puntos de control para guardar la ruta
+          </div>
+        }
+
       </div>
 
-      <!-- Panel derecho: mapa -->
+      <!-- Right panel: map preview -->
       <div class="rf-map-area" #mapContainer></div>
 
     </div>
 
+    <!-- Dialog footer -->
     <div class="rf-footer">
-      <span class="footer-info">
+      <div class="footer-info">
+        <mat-icon class="fi-icon">place</mat-icon>
         {{ form.waypoints.length }} {{ 'routeForm.wpCount' | translate }}
-      </span>
+      </div>
       <div class="footer-actions">
-        <button mat-stroked-button (click)="close()">
+        <button mat-stroked-button class="rf-cancel-btn" (click)="close()">
           {{ 'routeForm.cancel' | translate }}
         </button>
         <button
           mat-flat-button
-          color="primary"
+          class="rf-save-btn"
           [disabled]="!isValid() || store.loading()"
-          (click)="save()"
-        >
+          (click)="save()">
           @if (store.loading()) {
-            <mat-icon class="spin">sync</mat-icon>
+            <ng-container>
+              <mat-icon class="spin">sync</mat-icon>
+              Guardando...
+            </ng-container>
           } @else {
-            {{ 'routeForm.submit' | translate }}
+            <ng-container>
+              <mat-icon>save</mat-icon>
+              {{ 'routeForm.submit' | translate }}
+            </ng-container>
           }
         </button>
       </div>
