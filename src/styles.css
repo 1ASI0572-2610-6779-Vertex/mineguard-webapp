@@ -68,3 +68,34 @@ body {
 .leaflet-control {
   z-index: 800 !important;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   GLOBAL — MatDialog panel override
+   ───────────────────────────────────────────────────────────── */
+.mg-dialog-panel .mat-mdc-dialog-surface {
+  border-radius: 16px !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   GLOBAL — MatSnackBar custom panel classes
+   ───────────────────────────────────────────────────────────── */
+.mg-snack .mdc-snackbar__surface {
+  border-radius: 10px !important;
+}
+
+.mg-snack--success .mdc-snackbar__surface {
+  background: var(--color-success-main) !important;
+  color: #ffffff !important;
+}
+
+.mg-snack--neutral .mdc-snackbar__surface {
+  background: #374151 !important;
+  color: #ffffff !important;
+}
+
+.mg-snack--info .mdc-snackbar__surface {
+  background: var(--color-accent-main) !important;
+  color: #ffffff !important;
+}
