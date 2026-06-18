@@ -21,6 +21,8 @@ export class App {
 
   constructor() {
     this.translate.addLangs(['en', 'es']);
-    this.translate.use('en');
+    const saved = localStorage.getItem('mineguard.lang') ?? 'es';
+    this.translate.setDefaultLang('es');
+    this.translate.use(saved).subscribe();
   }
 }

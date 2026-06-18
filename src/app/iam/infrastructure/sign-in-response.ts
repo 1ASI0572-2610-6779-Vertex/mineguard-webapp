@@ -12,24 +12,12 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
  * authenticated requests and the role used for authorization decisions.
  */
 export interface SignInResource extends BaseResource {
-  /**
-   * The unique identifier of the authenticated user.
-   */
   id: number;
-  /**
-   * The username of the authenticated user.
-   */
   username: string;
-  /**
-   * The authentication token (JWT or similar) for this session.
-   * Used for authenticating subsequent requests to protected resources.
-   */
   token: string;
-  /**
-   * The role assigned to the authenticated user.
-   * Used by route guards to authorize access to role-restricted views.
-   */
   role: string;
+  /** True when the backend issued a temporary password — user must set a new one before proceeding. */
+  requiresPasswordChange: boolean;
 }
 
 /**

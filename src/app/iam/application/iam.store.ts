@@ -1,4 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { AccessStatus } from '../domain/model/access-status';
@@ -194,8 +195,14 @@ export class IamStore {
         };
         this.savePersistedSession(session);
         this.applySession(session);
-        const dest = session.role === 'Administrator' ? '/analytics/admin-summary' : '/analytics/dashboard';
-        router.navigate([dest]).then();
+
+        if (signInResource.requiresPasswordChange) {
+          // Token saved so the interceptor can authenticate the PUT /authentication/change-password call.
+          router.navigate(['/iam/change-password']).then();
+        } else {
+          const dest = session.role === 'Administrator' ? '/analytics/admin-summary' : '/analytics/dashboard';
+          router.navigate([dest]).then();
+        }
       },
       error: (err) => {
         console.error('Sign-in failed:', err);
@@ -204,6 +211,30 @@ export class IamStore {
         router.navigate(['/iam/sign-in']).then();
       },
     });
+  }
+
+  /**
+   * Requests a password-reset email from the backend.
+   * Returns the raw Observable so the caller can manage its own loading/success state.
+   * The backend always responds 200 OK regardless of whether the email exists
+   * (security best practice — never reveal email existence).
+   */
+  forgotPassword(email: string): Observable<void> {
+    return this.iamApi.forgotPassword(email);
+  }
+
+  /**
+   * Sends the new password to the backend.
+   * Returns the raw Observable so the caller manages loading/error state.
+   * Navigation to the dashboard is handled by the caller on success.
+   */
+  changePassword(newPassword: string): Observable<void> {
+    return this.iamApi.changePassword(newPassword);
+  }
+
+  /** Resolves the post-change-password destination based on the current role. */
+  postChangePasswordDestination(): string {
+    return this.currentRole() === 'Administrator' ? '/analytics/admin-summary' : '/analytics/dashboard';
   }
 
   /**

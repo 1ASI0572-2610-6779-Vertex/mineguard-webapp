@@ -7,8 +7,8 @@
         <mat-icon>person_add</mat-icon>
       </div>
       <div>
-        <h2 class="sf-title">Nuevo Supervisor</h2>
-        <p class="sf-subtitle">Registra una cuenta de acceso operativo</p>
+        <h2 class="sf-title">{{ 'iam.supervisors.newSupervisor.title' | translate }}</h2>
+        <p class="sf-subtitle">{{ 'iam.supervisors.newSupervisor.subtitle' | translate }}</p>
       </div>
     </div>
     <button mat-icon-button class="sf-close-btn" type="button" (click)="cancel()">
@@ -16,60 +16,57 @@
     </button>
   </div>
 
-  <!-- Form -->
+  <!-- Auto-credentials banner -->
+  <div class="sf-banner">
+    <mat-icon class="sf-banner-icon">info</mat-icon>
+    <span>{{ 'iam.autoCredentialsBanner' | translate }}</span>
+  </div>
+
   <form class="sf-body" [formGroup]="form" (ngSubmit)="submit()">
 
     <mat-form-field appearance="outline" class="sf-field">
-      <mat-label>Nombre completo</mat-label>
-      <mat-icon matPrefix class="sf-prefix-icon">badge</mat-icon>
-      <input matInput formControlName="fullName" placeholder="Ej. Carlos Mendoza Ríos" />
+      <mat-label>{{ 'iam.supervisors.newSupervisor.fullName.label' | translate }}</mat-label>
+      <mat-icon matPrefix>badge</mat-icon>
+      <input matInput formControlName="fullName"
+        [placeholder]="'iam.supervisors.newSupervisor.fullName.placeholder' | translate" />
       @if (fullNameInvalid) {
-        <mat-error>El nombre es obligatorio.</mat-error>
+        <mat-error>{{ 'iam.supervisors.newSupervisor.fullName.required' | translate }}</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="sf-field">
-      <mat-label>ID Corporativo</mat-label>
-      <mat-icon matPrefix class="sf-prefix-icon">fingerprint</mat-icon>
-      <input matInput formControlName="corporateId" placeholder="Ej. SUP-0042" />
+      <mat-label>{{ 'iam.supervisors.newSupervisor.corporateId.label' | translate }}</mat-label>
+      <mat-icon matPrefix>fingerprint</mat-icon>
+      <input matInput formControlName="corporateId"
+        [placeholder]="'iam.supervisors.newSupervisor.corporateId.placeholder' | translate" />
       @if (corporateIdInvalid) {
-        <mat-error>El ID corporativo es obligatorio.</mat-error>
+        <mat-error>{{ 'iam.supervisors.newSupervisor.corporateId.required' | translate }}</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="sf-field">
-      <mat-label>Correo corporativo</mat-label>
-      <mat-icon matPrefix class="sf-prefix-icon">mail</mat-icon>
-      <input matInput formControlName="email" type="email" placeholder="correo@empresa.com" />
+      <mat-label>{{ 'iam.supervisors.newSupervisor.email.label' | translate }}</mat-label>
+      <mat-icon matPrefix>mail</mat-icon>
+      <input matInput formControlName="email" type="email"
+        [placeholder]="'iam.supervisors.newSupervisor.email.placeholder' | translate" />
       @if (emailInvalid) {
-        <mat-error>{{ emailErrorMsg }}</mat-error>
+        <mat-error>{{ emailErrorKey | translate }}</mat-error>
       }
     </mat-form-field>
 
-    <p class="sf-hint">
-      <mat-icon class="sf-hint-icon">info</mat-icon>
-      El sistema generará una contraseña temporal. El supervisor deberá cambiarla en el primer inicio de sesión.
-    </p>
-
-    <!-- Footer actions -->
     <div class="sf-footer">
       <button mat-stroked-button type="button" class="sf-cancel-btn" (click)="cancel()">
-        Cancelar
+        {{ 'iam.supervisors.newSupervisor.cancel' | translate }}
       </button>
-      <button
-        mat-flat-button
-        type="submit"
-        class="sf-submit-btn"
+      <button mat-flat-button type="submit" class="sf-submit-btn"
         [disabled]="form.invalid || submitting()">
         @if (submitting()) {
-          <ng-container>
-            <mat-icon class="sf-spin">sync</mat-icon>
-            Creando...
-          </ng-container>
+          <mat-spinner diameter="18"></mat-spinner>
+          <span>{{ 'iam.supervisors.newSupervisor.submitting' | translate }}</span>
         } @else {
           <ng-container>
             <mat-icon>person_add</mat-icon>
-            Crear Supervisor
+            <span>{{ 'iam.supervisors.newSupervisor.submit' | translate }}</span>
           </ng-container>
         }
       </button>

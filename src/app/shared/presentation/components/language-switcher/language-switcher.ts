@@ -27,5 +27,6 @@ export class LanguageSwitcher {
   useLanguage(language: string): void {
     this.translate.use(language);
     this.currentLang = language;
+    localStorage.setItem('mineguard.lang', language);
   }
 }

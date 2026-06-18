@@ -54,7 +54,10 @@
 
   <!-- ── History Table ─────────────────────────────────────────── -->
   <div class="table-section">
-    <app-reports-history-table [rows]="filteredHistoryRows()"></app-reports-history-table>
+    <app-reports-history-table
+      [rows]="filteredHistoryRows()"
+      (viewReport)="onViewReport($event)"
+    ></app-reports-history-table>
   </div>
 
 </div>

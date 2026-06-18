@@ -7,10 +7,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { AssetsStore } from '../../../application/assets.store';
 import { Driver } from '../../../domain/model/driver.entity';
-import { DriverShiftStatus } from '../../../domain/model/driver-shift-status';
+import { SaveDriverCommand } from '../../../domain/model/save-driver.command';
 
 export interface DriverDialogData {
   driver?: Driver;
@@ -28,57 +29,61 @@ export interface DriverDialogData {
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './driver-form-dialog.html',
-  styleUrl: './driver-form-dialog.css',
+  styleUrl:    './driver-form-dialog.css',
 })
 export class DriverFormDialog {
-  private fb = inject(FormBuilder);
-  private dialogRef = inject(MatDialogRef<DriverFormDialog>);
-  private store = inject(AssetsStore);
+  private readonly fb        = inject(FormBuilder);
+  private readonly dialogRef = inject(MatDialogRef<DriverFormDialog>);
+  private readonly store     = inject(AssetsStore);
   readonly data: DriverDialogData = inject(MAT_DIALOG_DATA) ?? {};
 
-  readonly isEdit = !!this.data.driver;
-  readonly loading = signal(false);
+  readonly isEdit   = !!this.data.driver;
+  readonly loading  = signal(false);
   readonly errorMsg = signal<string | null>(null);
 
-  readonly shiftStatusOptions: { value: DriverShiftStatus; label: string }[] = [
-    { value: 'on_shift',  label: 'En turno' },
-    { value: 'off_shift', label: 'Fuera de turno' },
-    { value: 'inactive',  label: 'Inactivo' },
+  readonly workShiftOptions = [
+    { value: 'Morning',   labelKey: 'assets.fleet.drivers.shift.morning' },
+    { value: 'Afternoon', labelKey: 'assets.fleet.drivers.shift.afternoon' },
+    { value: 'Night',     labelKey: 'assets.fleet.drivers.shift.night' },
   ];
 
-  form = this.fb.nonNullable.group({
-    fullName:    [this.data.driver?.fullName    ?? '', Validators.required],
-    operatorId:  [this.data.driver?.operatorId  ?? '', Validators.required],
-    license:     [this.data.driver?.license     ?? '', Validators.required],
-    specialty:   [this.data.driver?.specialty   ?? '', Validators.required],
-    shiftStatus: [this.data.driver?.shiftStatus ?? ('on_shift' as DriverShiftStatus), Validators.required],
-    lastAccess:  [this.data.driver?.lastAccess  ?? ''],
+  readonly form = this.fb.nonNullable.group({
+    fullName:      [this.data.driver?.fullName ?? '', Validators.required],
+    email:         ['', [Validators.required, Validators.email]],
+    licenseNumber: [this.data.driver?.license ?? '', Validators.required],
+    workShift:     ['Morning', Validators.required],
+    idCompany:     [1, Validators.required],
   });
 
   submit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
     const v = this.form.getRawValue();
-    const driver = new Driver({
-      id:          this.data.driver?.id ?? 0,
-      fullName:    v.fullName,
-      operatorId:  v.operatorId,
-      license:     v.license,
-      specialty:   v.specialty,
-      shiftStatus: v.shiftStatus,
-      lastAccess:  v.lastAccess || new Date().toLocaleDateString('es-PE'),
+    const command = new SaveDriverCommand({
+      id:            this.data.driver?.id,
+      fullName:      v.fullName,
+      email:         v.email,
+      licenseNumber: v.licenseNumber,
+      workShift:     v.workShift,
+      idCompany:     v.idCompany,
     });
 
     this.loading.set(true);
     this.errorMsg.set(null);
 
-    const call$ = this.isEdit ? this.store.updateDriver$(driver) : this.store.createDriver$(driver);
+    const call$ = this.isEdit
+      ? this.store.updateDriver$(command)
+      : this.store.createDriver$(command);
 
     call$.subscribe({
       next:  (saved) => { this.loading.set(false); this.dialogRef.close(saved); },
-      error: (err)   => { this.loading.set(false); this.errorMsg.set(err.message ?? 'Error al guardar el conductor'); },
+      error: (err)   => {
+        this.loading.set(false);
+        this.errorMsg.set(err.message ?? 'Error al guardar el conductor');
+      },
     });
   }
 

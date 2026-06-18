@@ -3,9 +3,10 @@ import { Observable, tap } from 'rxjs';
 
 import { CatalogSummary } from '../domain/model/catalog-summary.entity';
 import { Driver } from '../domain/model/driver.entity';
-import { DriverShiftStatus } from '../domain/model/driver-shift-status';
+import { SaveDriverCommand } from '../domain/model/save-driver.command';
 import { Vehicle } from '../domain/model/vehicle.entity';
 import { VehicleStatus } from '../domain/model/vehicle-status';
+import { DriverResource } from '../infrastructure/driver-response';
 import { AssetsApi } from '../infrastructure/assets-api';
 
 @Injectable({ providedIn: 'root' })
@@ -95,37 +96,17 @@ export class AssetsStore {
     );
   }
 
-  /** Creates a driver via API and prepends it to the local list. */
-  createDriver$(driver: Driver): Observable<Driver> {
-    return this.assetsApi.createDriver(driver).pipe(
-      tap((created) => this.driversSignal.update((list) => [created, ...list])),
+  /** POST /drivers — creates a driver and refreshes the local directory list. */
+  createDriver$(command: SaveDriverCommand): Observable<DriverResource> {
+    return this.assetsApi.createDriver(command).pipe(
+      tap(() => this.loadDrivers()),
     );
   }
 
-  /** Updates a driver via API and replaces the entry in the local list. */
-  updateDriver$(driver: Driver): Observable<Driver> {
-    return this.assetsApi.updateDriver(driver).pipe(
-      tap((updated) => this.driversSignal.update((list) => list.map((d) => (d.id === updated.id ? updated : d)))),
-    );
-  }
-
-  /** Marks a driver as inactive (soft-revoke). */
-  revokeDriver$(driverId: number): Observable<Driver> {
-    const current = this.driversSignal().find((d) => d.id === driverId);
-    if (!current) throw new Error(`Driver ${driverId} not found`);
-
-    const revoked = new Driver({
-      id: current.id,
-      fullName: current.fullName,
-      operatorId: current.operatorId,
-      license: current.license,
-      specialty: current.specialty,
-      shiftStatus: 'inactive' as DriverShiftStatus,
-      lastAccess: current.lastAccess,
-    });
-
-    return this.assetsApi.updateDriver(revoked).pipe(
-      tap((updated) => this.driversSignal.update((list) => list.map((d) => (d.id === updated.id ? updated : d)))),
+  /** PUT /drivers/{id} — updates a driver and refreshes the local directory list. */
+  updateDriver$(command: SaveDriverCommand): Observable<DriverResource> {
+    return this.assetsApi.updateDriver(command).pipe(
+      tap(() => this.loadDrivers()),
     );
   }
 }

@@ -43,8 +43,11 @@ export class VehicleFormDialog {
   readonly errorMsg = signal<string | null>(null);
 
   readonly statusOptions: { value: VehicleStatus; label: string }[] = [
-    { value: 'operational', label: 'Operativo' },
-    { value: 'maintenance', label: 'En Mantenimiento' },
+    { value: 'operational',     label: 'Operativo' },
+    { value: 'maintenance',     label: 'En Mantenimiento' },
+    { value: 'alert',           label: 'En Alerta' },
+    { value: 'inactive',        label: 'Inactivo' },
+    { value: 'restricted_route', label: 'Ruta Restringida' },
   ];
 
   form = this.fb.nonNullable.group({

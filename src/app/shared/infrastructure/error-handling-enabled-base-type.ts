@@ -5,6 +5,7 @@ interface ErrorResource {
   code: string;
   message: string;
   details: string;
+  title: string;
 }
 
 /**
@@ -18,9 +19,9 @@ export abstract class ErrorHandlingEnabledBaseType {
 
       if (error.error instanceof ErrorEvent) {
         errorMessage = error.error.message;
-      } else if (error.error && typeof error.error === 'object' && 'message' in error.error) {
+      } else if (error.error && typeof error.error === 'object') {
         const body = error.error as ErrorResource;
-        errorMessage = body.message || `${operation}: ${error.status}`;
+        errorMessage = body.message || body.title || body.details || `${operation}: ${error.status}`;
       } else {
         errorMessage = `${operation}: ${error.status || 'Unexpected error'}`;
       }

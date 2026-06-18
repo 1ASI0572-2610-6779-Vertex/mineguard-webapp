@@ -35,29 +35,9 @@ export class AlertDetail {
     return !!alert && alert.status === 'active';
   });
 
-  readonly formattedTime = computed(() => {
-    const alert = this.alertSignal();
-    if (!alert) return '';
-    const date = new Date(alert.occurredAt);
-    if (Number.isNaN(date.getTime())) return alert.occurredAt;
-    return date.toLocaleTimeString(undefined, {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
-  });
-
-  readonly formattedDate = computed(() => {
-    const alert = this.alertSignal();
-    if (!alert) return '';
-    const date = new Date(alert.occurredAt);
-    if (Number.isNaN(date.getTime())) return '';
-    return date.toLocaleDateString(undefined, {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    });
-  });
+  /** The backend sends occurredAt as a pre-formatted string — render it directly. */
+  readonly formattedTime = computed(() => this.alertSignal()?.occurredAt ?? '');
+  readonly formattedDate = computed(() => '');
 
   onNotesChange(value: string): void {
     this.notes.set(value);

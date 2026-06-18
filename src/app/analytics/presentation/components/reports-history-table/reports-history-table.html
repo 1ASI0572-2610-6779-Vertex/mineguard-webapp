@@ -86,8 +86,9 @@
               <button
                 mat-stroked-button
                 class="view-btn"
+                (click)="onViewReport(row.id)"
                 [matTooltip]="'reports.history.viewReport' | translate">
-                <mat-icon>open_in_new</mat-icon>
+                <mat-icon>picture_as_pdf</mat-icon>
                 {{ 'reports.history.viewReport' | translate }}
               </button>
             </td>

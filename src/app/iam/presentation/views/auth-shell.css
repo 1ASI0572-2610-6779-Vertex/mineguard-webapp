@@ -1,0 +1,327 @@
+/*
+ * auth-shell.css — Light Corporate Theme for all unauthenticated views.
+ * Applied via styleUrls in sign-in, change-password, forgot-password components.
+ */
+
+/* ── CSS variables ──────────────────────────────────────── */
+:host {
+  --bg:            #F8FAFC;
+  --card:          #FFFFFF;
+  --border:        #E2E8F0;
+  --border-focus:  #2578F4;
+
+  --text-900:      #0F172A;
+  --text-700:      #1E293B;
+  --text-500:      #475569;
+  --text-400:      #94A3B8;
+
+  --yellow:        #FCB502;
+  --yellow-hover:  #e5a400;
+  --yellow-text:   #1E293B;
+
+  --blue:          #2578F4;
+  --blue-hover:    #1d6ae0;
+
+  --green:         #16A34A;
+  --green-dim:     rgba(22, 163, 74, 0.08);
+  --green-border:  rgba(22, 163, 74, 0.25);
+
+  --red:           #DC2626;
+  --red-dim:       rgba(220, 38, 38, 0.06);
+  --red-border:    rgba(220, 38, 38, 0.2);
+
+  --amber-dim:     rgba(252, 181, 2, 0.08);
+  --amber-border:  rgba(252, 181, 2, 0.25);
+
+  --shadow:        0 10px 40px rgba(0, 0, 0, 0.05);
+  --shadow-sm:     0 2px 8px rgba(0, 0, 0, 0.05);
+
+  --radius:        14px;
+  --radius-sm:     8px;
+
+  /* Angular Material MDC overrides — applied at :host so they cascade into fields */
+  --mdc-outlined-text-field-focus-outline-color:         var(--border-focus);
+  --mdc-outlined-text-field-hover-outline-color:         var(--text-500);
+  --mdc-outlined-text-field-outline-color:               var(--border);
+  --mdc-outlined-text-field-label-text-color:            var(--text-400);
+  --mdc-outlined-text-field-focus-label-text-color:      var(--border-focus);
+  --mdc-outlined-text-field-input-text-color:            var(--text-900);
+  --mat-form-field-leading-icon-color:                   var(--text-500);
+  --mat-form-field-trailing-icon-color:                  var(--text-500);
+}
+
+/* ── Full-viewport shell ────────────────────────────────── */
+.auth-shell {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg);
+  padding: 40px 20px;
+  position: relative;
+}
+
+/* Subtle brand stripe at top */
+.auth-shell::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--yellow);
+}
+
+/* ── Card ───────────────────────────────────────────────── */
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px 40px 36px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.auth-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.auth-eyebrow {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin: 0;
+}
+
+.auth-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-900);
+  letter-spacing: -0.4px;
+  line-height: 1.15;
+  margin: 4px 0 0;
+}
+
+.auth-subtitle {
+  font-size: 0.855rem;
+  color: var(--text-500);
+  line-height: 1.55;
+  margin: 4px 0 0;
+}
+
+/* ── Field wrap ─────────────────────────────────────────── */
+.auth-field-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.auth-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-700);
+  display: block;
+}
+
+.auth-field {
+  width: 100%;
+}
+
+/* ── Primary CTA button ─────────────────────────────────── */
+.auth-submit {
+  width: 100% !important;
+  height: 50px !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2px;
+  background: var(--yellow) !important;
+  color: var(--yellow-text) !important;
+  box-shadow: 0 2px 12px rgba(252, 181, 2, 0.25) !important;
+  transition: background 0.15s, box-shadow 0.15s, opacity 0.15s !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.auth-submit:not([disabled]):hover {
+  background: var(--yellow-hover) !important;
+  box-shadow: 0 4px 18px rgba(252, 181, 2, 0.35) !important;
+}
+
+.auth-submit[disabled] {
+  opacity: 0.55 !important;
+  box-shadow: none !important;
+}
+
+/* Spinner color matching button text */
+.auth-spinner {
+  --mdc-circular-progress-active-indicator-color: var(--yellow-text);
+}
+
+/* ── Error banner ───────────────────────────────────────── */
+.auth-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--red-dim);
+  border: 1px solid var(--red-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  color: var(--red);
+  line-height: 1.4;
+}
+
+.auth-error mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── Success state ──────────────────────────────────────── */
+.auth-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.auth-success-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--green-dim);
+  border: 1px solid var(--green-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green);
+}
+
+.auth-success-icon mat-icon {
+  font-size: 26px;
+  width: 26px;
+  height: 26px;
+}
+
+.auth-success-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-900);
+  margin: 0;
+}
+
+.auth-success-body {
+  font-size: 0.855rem;
+  color: var(--text-500);
+  line-height: 1.55;
+  margin: 0;
+  max-width: 320px;
+}
+
+/* ── Info / hint bar ────────────────────────────────────── */
+.auth-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--amber-dim);
+  border: 1px solid var(--amber-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  color: var(--text-500);
+  line-height: 1.4;
+}
+
+.auth-hint mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+  color: var(--yellow-hover);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── Card footer ────────────────────────────────────────── */
+.auth-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.auth-security {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: var(--text-400);
+  font-weight: 500;
+}
+
+.auth-security mat-icon {
+  font-size: 13px;
+  width: 13px;
+  height: 13px;
+  color: var(--text-400);
+}
+
+.auth-copyright {
+  font-size: 0.65rem;
+  color: var(--text-400);
+  margin: 0;
+}
+
+/* ── Back / navigation link ─────────────────────────────── */
+.auth-back-link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-500);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.15s;
+}
+
+.auth-back-link:hover {
+  color: var(--blue);
+}
+
+.auth-back-link mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 28px 20px 24px;
+    border-radius: var(--radius-sm);
+    border: none;
+    box-shadow: none;
+  }
+}

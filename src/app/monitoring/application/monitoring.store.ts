@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
 
 import { Alert } from '../domain/model/alert.entity';
 import { AuditLogEntry } from '../domain/model/audit-log-entry.entity';
@@ -22,8 +22,11 @@ import { Route } from '../../service/domain/model/route.entity';
  * All loads run via plain `subscribe()` (no `takeUntilDestroyed`) because the
  * store is a root singleton and the calls happen from component `ngOnInit`.
  */
+const LIVE_MAP_POLL_INTERVAL_MS = 4000;
+
 @Injectable({ providedIn: 'root' })
-export class MonitoringStore {
+export class MonitoringStore implements OnDestroy {
+  private liveMapPollHandle: ReturnType<typeof setInterval> | null = null;
   private routeRepo = inject(RouteRepository);
 
   private readonly auditLogSignal = signal<AuditLogEntry[]>([]);
@@ -137,8 +140,34 @@ export class MonitoringStore {
   }
 
   /**
-   * Loads the live-map vehicles positions on demand.
+   * Starts polling GET /liveMapVehicles every 4 s to simulate real-time positions.
+   * Safe to call multiple times — clears any existing interval before starting a new one.
    */
+  startLiveMapPolling(intervalMs = LIVE_MAP_POLL_INTERVAL_MS): void {
+    this.stopLiveMapPolling();
+    const fetch = () => {
+      this.monitoringApi.getLiveMapVehicles().subscribe({
+        next: (vehicles) => this.liveMapVehiclesSignal.set(vehicles),
+        error: (err) => console.error('Live-map poll error:', err),
+      });
+    };
+    fetch();
+    this.liveMapPollHandle = setInterval(fetch, intervalMs);
+  }
+
+  /** Stops the live-map polling interval. */
+  stopLiveMapPolling(): void {
+    if (this.liveMapPollHandle !== null) {
+      clearInterval(this.liveMapPollHandle);
+      this.liveMapPollHandle = null;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.stopLiveMapPolling();
+  }
+
+  /** @deprecated Use startLiveMapPolling() to enable real-time updates. */
   loadLiveMapVehicles(): void {
     this.errorSignal.set(null);
     this.monitoringApi.getLiveMapVehicles().subscribe({
