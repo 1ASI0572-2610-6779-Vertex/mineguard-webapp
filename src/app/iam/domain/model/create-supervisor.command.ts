@@ -1,13 +1,13 @@
 /**
  * Domain command to register a new supervisor.
- * Carries all fields required by POST /supervisors.
+ * Password is intentionally absent: the backend auto-generates a temporary
+ * password and emails it to the supervisor on account creation.
  */
 export class CreateSupervisorCommand {
   readonly fullName: string;
   readonly corporateId: string;
   readonly email: string;
   readonly username: string;
-  readonly password: string;
   readonly idCompany: number;
 
   constructor(props: {
@@ -15,14 +15,12 @@ export class CreateSupervisorCommand {
     corporateId: string;
     email: string;
     username: string;
-    password: string;
     idCompany: number;
   }) {
-    this.fullName = props.fullName;
+    this.fullName    = props.fullName;
     this.corporateId = props.corporateId;
-    this.email = props.email;
-    this.username = props.username;
-    this.password = props.password;
-    this.idCompany = props.idCompany;
+    this.email       = props.email;
+    this.username    = props.username;
+    this.idCompany   = props.idCompany;
   }
 }

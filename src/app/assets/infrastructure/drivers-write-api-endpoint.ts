@@ -8,7 +8,6 @@ import { DriverResource } from './driver-response';
 
 interface DriverWriteBody {
   username: string;
-  password: string;
   email: string;
   fullName: string;
   idCompany: number;
@@ -20,8 +19,7 @@ const endpointUrl = `${environment.platformProviderApiBaseUrl}${environment.plat
 
 /**
  * HTTP endpoint client for driver write operations (POST /drivers, PUT /drivers/{id}).
- * Separate from DriversApiEndpoint (GET /driversDirectory) because the write contract
- * uses different fields: username, password, email, idCompany, licenseNumber, workShift.
+ * Password is omitted — the backend auto-generates a temporary one on creation.
  */
 export class DriversWriteApiEndpoint extends ErrorHandlingEnabledBaseType {
   constructor(private http: HttpClient) {
@@ -29,16 +27,14 @@ export class DriversWriteApiEndpoint extends ErrorHandlingEnabledBaseType {
   }
 
   create(command: SaveDriverCommand): Observable<DriverResource> {
-    const body = this.toBody(command);
-    return this.http.post<DriverResource>(endpointUrl, body).pipe(
+    return this.http.post<DriverResource>(endpointUrl, this.toBody(command)).pipe(
       map((res) => res),
       catchError(this.handleError('Failed to create driver')),
     );
   }
 
   update(command: SaveDriverCommand): Observable<DriverResource> {
-    const body = this.toBody(command);
-    return this.http.put<DriverResource>(`${endpointUrl}/${command.id}`, body).pipe(
+    return this.http.put<DriverResource>(`${endpointUrl}/${command.id}`, this.toBody(command)).pipe(
       map((res) => res),
       catchError(this.handleError('Failed to update driver')),
     );
@@ -52,13 +48,12 @@ export class DriversWriteApiEndpoint extends ErrorHandlingEnabledBaseType {
 
   private toBody(command: SaveDriverCommand): DriverWriteBody {
     return {
-      username: command.username,
-      password: command.password,
-      email: command.email,
-      fullName: command.fullName,
-      idCompany: command.idCompany,
+      username:      command.username,
+      email:         command.email,
+      fullName:      command.fullName,
+      idCompany:     command.idCompany,
       licenseNumber: command.licenseNumber,
-      workShift: command.workShift,
+      workShift:     command.workShift,
     };
   }
 }

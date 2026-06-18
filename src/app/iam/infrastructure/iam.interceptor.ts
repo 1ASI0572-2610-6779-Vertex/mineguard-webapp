@@ -1,13 +1,19 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../application/iam.store';
+import { environment } from '../../../environments/environment';
 
 export const iamInterceptor: HttpInterceptorFn = (request, next) => {
   const store = inject(IamStore);
-  const translate = inject(TranslateService);
+
+  // Only add headers to backend API requests; skip i18n file loading and other assets.
+  const isApiRequest = request.url.startsWith(environment.platformProviderApiBaseUrl);
+  if (!isApiRequest) {
+    return next(request);
+  }
+
   const token = store.currentToken();
-  const lang = translate.currentLang || translate.defaultLang || 'es';
+  const lang = localStorage.getItem('mineguard.lang') ?? 'es';
 
   let headers = request.headers.set('Accept-Language', lang);
   if (token) {

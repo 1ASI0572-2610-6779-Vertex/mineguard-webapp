@@ -52,19 +52,71 @@
   },
   "iam": {
     "signIn": {
-      "title": "Operations Portal",
-      "subtitle": "MineGuard Control Center",
+      "eyebrow": "Enterprise Platform",
+      "title": "Operational Access",
+      "subtitle": "Enter your corporate credentials to continue.",
+      "brand": {
+        "tagline": "Industrial real-time monitoring for high-demand mining operations.",
+        "feature1": "Secure JWT authentication",
+        "feature2": "Continuous fleet and personnel monitoring",
+        "feature3": "Advanced operational analytics",
+        "securityBadge": "SSL/TLS encrypted connection"
+      },
       "username": {
         "label": "Corporate ID",
-        "placeholder": "e.g. SUP-001"
+        "placeholder": "e.g. SUP-001",
+        "required": "Corporate ID is required."
       },
       "password": {
-        "label": "Password"
+        "label": "Password",
+        "toggle": "Toggle visibility",
+        "required": "Password is required."
       },
+      "forgotPassword": "Forgot your password?",
       "troubleLink": "Login trouble?",
-      "submit": "Sign In",
+      "submit": "Sign in to system",
+      "submitting": "Verifying...",
       "securityNote": "Restricted access. All activity is being monitored.",
-      "copyright": "© 2026 MineGuard Systems v2.4.1"
+      "copyright": "© 2026 MineGuard Systems v2.4.1",
+      "langSwitcher": {
+        "ariaLabel": "Switch language"
+      }
+    },
+    "forgotPassword": {
+      "eyebrow": "Access recovery",
+      "title": "Forgot your password?",
+      "subtitle": "Enter your corporate email. If it exists in the system, you will receive a recovery link.",
+      "email": {
+        "label": "Corporate email",
+        "placeholder": "supervisor@company.com",
+        "required": "Email is required.",
+        "invalid": "Enter a valid email address."
+      },
+      "submit": "Send recovery link",
+      "submitting": "Sending...",
+      "successTitle": "Request sent",
+      "successBody": "If the email exists in the system, you will receive a recovery link within the next few minutes.",
+      "backToLogin": "Back to sign in"
+    },
+    "changePassword": {
+      "eyebrow": "Mandatory security",
+      "title": "Set your password",
+      "subtitle": "For security, you must create a personal password before continuing. The temporary password is no longer valid.",
+      "newPassword": {
+        "label": "New password",
+        "placeholder": "Minimum 8 characters",
+        "required": "Password is required.",
+        "minlength": "Must be at least 8 characters."
+      },
+      "confirmPassword": {
+        "label": "Confirm password",
+        "placeholder": "Repeat the new password",
+        "mismatch": "Passwords do not match."
+      },
+      "hint": "Minimum 8 characters. Do not reuse the temporary password.",
+      "submit": "Confirm and continue",
+      "submitting": "Saving...",
+      "errorGeneric": "Could not update password. Please try again."
     },
     "supervisors": {
       "title": "User Management",

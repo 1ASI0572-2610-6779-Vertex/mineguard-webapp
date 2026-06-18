@@ -33,25 +33,24 @@ export interface DriverDialogData {
   styleUrl: './driver-form-dialog.css',
 })
 export class DriverFormDialog {
-  private fb = inject(FormBuilder);
+  private fb        = inject(FormBuilder);
   private dialogRef = inject(MatDialogRef<DriverFormDialog>);
-  private store = inject(AssetsStore);
+  private store     = inject(AssetsStore);
   readonly data: DriverDialogData = inject(MAT_DIALOG_DATA) ?? {};
 
-  readonly isEdit = !!this.data.driver;
+  readonly isEdit  = !!this.data.driver;
   readonly loading = signal(false);
   readonly errorMsg = signal<string | null>(null);
 
   readonly workShiftOptions = [
-    { value: 'Morning', label: 'Mañana' },
+    { value: 'Morning',   label: 'Mañana' },
     { value: 'Afternoon', label: 'Tarde' },
-    { value: 'Night', label: 'Noche' },
+    { value: 'Night',     label: 'Noche' },
   ];
 
   form = this.fb.nonNullable.group({
     fullName:      [this.data.driver?.fullName ?? '', Validators.required],
     username:      ['', Validators.required],
-    password:      ['', this.isEdit ? [] : [Validators.required, Validators.minLength(6)]],
     email:         ['', [Validators.required, Validators.email]],
     licenseNumber: [this.data.driver?.license ?? '', Validators.required],
     workShift:     ['Morning', Validators.required],
@@ -66,7 +65,6 @@ export class DriverFormDialog {
       id:            this.data.driver?.id,
       fullName:      v.fullName,
       username:      v.username,
-      password:      v.password,
       email:         v.email,
       licenseNumber: v.licenseNumber,
       workShift:     v.workShift,

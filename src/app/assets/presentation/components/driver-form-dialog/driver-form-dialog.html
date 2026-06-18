@@ -22,6 +22,7 @@
 
   <mat-dialog-content>
     <form [formGroup]="form" class="dialog-form">
+
       <mat-form-field appearance="outline" class="field-full">
         <mat-label>Nombre completo</mat-label>
         <input matInput formControlName="fullName" placeholder="Ej. Juan Pérez López" />
@@ -40,27 +41,16 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="field-half">
-          <mat-label>{{ isEdit ? 'Nueva contraseña (opcional)' : 'Contraseña' }}</mat-label>
-          <input matInput type="password" formControlName="password" placeholder="Mínimo 6 caracteres" />
-          @if (form.controls.password.hasError('required') && form.controls.password.touched) {
-            <mat-error>La contraseña es obligatoria</mat-error>
+          <mat-label>Correo electrónico</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="Ej. juan@mineguard.com" />
+          @if (form.controls.email.hasError('required') && form.controls.email.touched) {
+            <mat-error>El correo es obligatorio</mat-error>
           }
-          @if (form.controls.password.hasError('minlength') && form.controls.password.touched) {
-            <mat-error>Mínimo 6 caracteres</mat-error>
+          @if (form.controls.email.hasError('email') && form.controls.email.touched) {
+            <mat-error>Ingresa un correo válido</mat-error>
           }
         </mat-form-field>
       </div>
-
-      <mat-form-field appearance="outline" class="field-full">
-        <mat-label>Correo electrónico</mat-label>
-        <input matInput type="email" formControlName="email" placeholder="Ej. juan.perez@mineguard.com" />
-        @if (form.controls.email.hasError('required') && form.controls.email.touched) {
-          <mat-error>El correo es obligatorio</mat-error>
-        }
-        @if (form.controls.email.hasError('email') && form.controls.email.touched) {
-          <mat-error>Ingresa un correo válido</mat-error>
-        }
-      </mat-form-field>
 
       <div class="form-row">
         <mat-form-field appearance="outline" class="field-half">
@@ -81,12 +71,21 @@
         </mat-form-field>
       </div>
 
+      <!-- Auto-password notice (creation only) -->
+      @if (!isEdit) {
+        <div class="auto-password-notice">
+          <mat-icon class="notice-icon">mark_email_read</mat-icon>
+          <span>El sistema generará y enviará una contraseña temporal al correo del conductor.</span>
+        </div>
+      }
+
       @if (errorMsg()) {
         <div class="error-banner">
           <mat-icon>error_outline</mat-icon>
           <span>{{ errorMsg() }}</span>
         </div>
       }
+
     </form>
   </mat-dialog-content>
 

@@ -217,7 +217,11 @@ export class Layout implements OnInit {
     this.cdr.detectChanges();
   }
 
-  private static readonly NO_SHELL_ROUTES: readonly string[] = ['/iam/sign-in'];
+  private static readonly NO_SHELL_ROUTES: readonly string[] = [
+    '/iam/sign-in',
+    '/iam/change-password',
+    '/iam/forgot-password',
+  ];
 
   private updateShellVisibility(url: string): void {
     const pathOnly = url.split('?')[0].split(';')[0];

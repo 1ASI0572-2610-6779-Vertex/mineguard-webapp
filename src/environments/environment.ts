@@ -1,8 +1,10 @@
 export const environment = {
   production: true,
-  platformProviderApiBaseUrl: 'http://localhost:3000/api/v1',
+  platformProviderApiBaseUrl: 'https://your-production-host.com',
   platformProviderSignInEndpointPath: '/authentication/sign-in',
   platformProviderSignUpEndpointPath: '/authentication/sign-up',
+  platformProviderChangePasswordEndpointPath: '/authentication/change-password',
+  platformProviderForgotPasswordEndpointPath: '/authentication/forgot-password',
   platformProviderDashboardSummaryEndpointPath: '/dashboardSummary',
   platformProviderDashboardTrendEndpointPath: '/dashboardTrend',
   platformProviderDashboardRiskDriversEndpointPath: '/dashboardRiskDrivers',

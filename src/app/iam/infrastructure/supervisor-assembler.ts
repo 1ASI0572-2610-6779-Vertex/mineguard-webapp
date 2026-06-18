@@ -42,11 +42,10 @@ export class SupervisorAssembler
 
   toRequestFromCommand(command: CreateSupervisorCommand): CreateSupervisorRequest {
     return {
-      username: command.username,
-      password: command.password,
-      email: command.email,
-      fullName: command.fullName,
-      idCompany: command.idCompany,
+      username:    command.username,
+      email:       command.email,
+      fullName:    command.fullName,
+      idCompany:   command.idCompany,
       corporateId: command.corporateId,
     };
   }

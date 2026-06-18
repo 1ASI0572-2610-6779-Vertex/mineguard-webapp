@@ -23,9 +23,9 @@ import { CreateSupervisorCommand } from '../../../domain/model/create-supervisor
   styleUrl: './supervisor-form.css',
 })
 export class SupervisorForm extends BaseForm {
-  private store = inject(IamStore);
+  private store     = inject(IamStore);
   private dialogRef = inject(MatDialogRef<SupervisorForm>);
-  private snackBar = inject(MatSnackBar);
+  private snackBar  = inject(MatSnackBar);
 
   readonly submitting = signal(false);
 
@@ -46,22 +46,17 @@ export class SupervisorForm extends BaseForm {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    password: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.minLength(6)],
-    }),
   });
 
-  get fullNameInvalid(): boolean { return this.isInvalidControl(this.form, 'fullName'); }
+  get fullNameInvalid():   boolean { return this.isInvalidControl(this.form, 'fullName'); }
   get corporateIdInvalid(): boolean { return this.isInvalidControl(this.form, 'corporateId'); }
-  get emailInvalid(): boolean { return this.isInvalidControl(this.form, 'email'); }
-  get usernameInvalid(): boolean { return this.isInvalidControl(this.form, 'username'); }
-  get passwordInvalid(): boolean { return this.isInvalidControl(this.form, 'password'); }
+  get emailInvalid():      boolean { return this.isInvalidControl(this.form, 'email'); }
+  get usernameInvalid():   boolean { return this.isInvalidControl(this.form, 'username'); }
 
   get emailErrorMsg(): string {
     const ctrl = this.form.controls.email;
     if (ctrl.hasError('required')) return 'El correo es obligatorio.';
-    if (ctrl.hasError('email')) return 'Formato de correo no válido.';
+    if (ctrl.hasError('email'))    return 'Formato de correo no válido.';
     return '';
   }
 
@@ -74,15 +69,14 @@ export class SupervisorForm extends BaseForm {
       corporateId: this.form.value.corporateId!.trim(),
       email:       this.form.value.email!.trim(),
       username:    this.form.value.username!.trim(),
-      password:    this.form.value.password!,
       idCompany:   1,
     });
 
     this.store.createSupervisor(command);
     this.submitting.set(false);
     this.dialogRef.close(true);
-    this.snackBar.open('Supervisor creado exitosamente', 'OK', {
-      duration: 3500,
+    this.snackBar.open('Supervisor creado. Se ha enviado una contraseña temporal por correo.', 'OK', {
+      duration: 5000,
       panelClass: ['mg-snack', 'mg-snack--success'],
     });
   }

@@ -53,18 +53,9 @@
       }
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="sf-field">
-      <mat-label>Contraseña temporal</mat-label>
-      <mat-icon matPrefix class="sf-prefix-icon">lock</mat-icon>
-      <input matInput formControlName="password" type="password" placeholder="Mínimo 6 caracteres" />
-      @if (passwordInvalid) {
-        <mat-error>La contraseña debe tener al menos 6 caracteres.</mat-error>
-      }
-    </mat-form-field>
-
     <p class="sf-hint">
-      <mat-icon class="sf-hint-icon">info</mat-icon>
-      El supervisor deberá cambiar esta contraseña en el primer inicio de sesión.
+      <mat-icon class="sf-hint-icon">mark_email_read</mat-icon>
+      El sistema generará una contraseña temporal y la enviará al correo del supervisor.
     </p>
 
     <div class="sf-footer">
