@@ -1,26 +1,25 @@
 /**
- * Command encapsulating all fields required to create or update a driver via POST/PUT /drivers.
- * Password is intentionally absent: the backend auto-generates a temporary password on creation.
+ * Command encapsulating the fields required to create or update a driver
+ * via POST /drivers or PUT /drivers/{id}.
+ * Both username and password are intentionally absent: the backend
+ * auto-generates them and delivers the credentials via corporate email.
  */
 export class SaveDriverCommand {
-  readonly username: string;
-  readonly email: string;
-  readonly fullName: string;
-  readonly idCompany: number;
+  readonly email:         string;
+  readonly fullName:      string;
+  readonly idCompany:     number;
   readonly licenseNumber: string;
-  readonly workShift: string;
-  readonly id?: number;
+  readonly workShift:     string;
+  readonly id?:           number;
 
   constructor(props: {
-    username: string;
-    email: string;
-    fullName: string;
-    idCompany: number;
+    email:         string;
+    fullName:      string;
+    idCompany:     number;
     licenseNumber: string;
-    workShift: string;
-    id?: number;
+    workShift:     string;
+    id?:           number;
   }) {
-    this.username      = props.username;
     this.email         = props.email;
     this.fullName      = props.fullName;
     this.idCompany     = props.idCompany;

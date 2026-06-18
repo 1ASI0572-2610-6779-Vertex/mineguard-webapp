@@ -63,9 +63,9 @@
         "securityBadge": "Conexión cifrada SSL/TLS"
       },
       "username": {
-        "label": "ID Corporativo",
-        "placeholder": "Ej. SUP-001",
-        "required": "El ID corporativo es obligatorio."
+        "label": "ID de Usuario",
+        "placeholder": "Ej. ADM-001 o SUP-001",
+        "required": "El ID de usuario es obligatorio."
       },
       "password": {
         "label": "Contraseña",
@@ -124,19 +124,27 @@
       "newSupervisor": {
         "title": "Nuevo Supervisor",
         "fullName": {
-          "label": "Nombre Completo",
-          "placeholder": "Ej. Ana Torres"
+          "label": "Nombre completo",
+          "placeholder": "Ej. Carlos Mendoza Ríos",
+          "required": "El nombre es obligatorio."
         },
         "corporateId": {
-          "label": "ID Corporativo (Único)",
-          "placeholder": "Ej. SUP-025"
+          "label": "ID Corporativo (único)",
+          "placeholder": "Ej. SUP-0042",
+          "required": "El ID corporativo es obligatorio."
         },
         "email": {
-          "label": "Correo Corporativo",
-          "placeholder": "ana.torres@mineguard.com"
+          "label": "Correo corporativo",
+          "placeholder": "correo@empresa.com",
+          "required": "El correo es obligatorio.",
+          "invalid": "Formato de correo no válido."
         },
-        "submit": "Crear y Enviar Accesos",
-        "hint": "El sistema generará una clave temporal y forzará su cambio en el primer ingreso"
+        "submit": "Crear y enviar acceso",
+        "hint": "El sistema generará una clave temporal y forzará su cambio en el primer ingreso",
+        "subtitle": "Registra una cuenta de acceso operativo",
+        "cancel": "Cancelar",
+        "submitting": "Creando...",
+        "successSnack": "Supervisor creado. Las credenciales serán enviadas al correo corporativo."
       },
       "directory": {
         "title": "Directorio de Supervisores",
@@ -157,7 +165,8 @@
           "historyPreserved": "Historial conservado"
         }
       }
-    }
+    },
+    "autoCredentialsBanner": "Las credenciales de acceso (ID de Usuario y Contraseña) serán generadas automáticamente por el sistema y enviadas al correo corporativo del empleado."
   },
   "reports": {
     "title": "Reportes y Analítica",
@@ -387,6 +396,37 @@
           "edit": "Editar",
           "revoke": "Revocar acceso",
           "historyPreserved": "Historial conservado en analytics"
+        },
+        "form": {
+          "titleCreate": "Registrar Conductor",
+          "titleEdit": "Editar Conductor",
+          "subtitleCreate": "Completa los campos para incorporar un nuevo conductor al directorio.",
+          "subtitleEdit": "Modifica los datos del conductor seleccionado.",
+          "fullName": {
+            "label": "Nombre completo",
+            "placeholder": "Ej. Juan Pérez López",
+            "required": "El nombre es obligatorio."
+          },
+          "email": {
+            "label": "Correo corporativo",
+            "placeholder": "Ej. juan@mineguard.com",
+            "required": "El correo es obligatorio.",
+            "invalid": "Ingresa un correo válido."
+          },
+          "license": {
+            "label": "N.º de Licencia",
+            "placeholder": "Ej. A3C-8841",
+            "required": "La licencia es obligatoria."
+          },
+          "shift": {
+            "label": "Turno",
+            "morning": "Mañana",
+            "afternoon": "Tarde",
+            "night": "Noche"
+          },
+          "cancel": "Cancelar",
+          "submitCreate": "Registrar conductor",
+          "submitEdit": "Guardar cambios"
         }
       }
     }

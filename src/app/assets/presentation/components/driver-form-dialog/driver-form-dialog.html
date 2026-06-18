@@ -3,16 +3,17 @@
     <mat-progress-bar mode="indeterminate" class="dialog-progress"></mat-progress-bar>
   }
 
+  <!-- Header -->
   <div class="dialog-header">
     <div class="dialog-icon">
       <mat-icon>person</mat-icon>
     </div>
     <div>
       <h2 mat-dialog-title class="dialog-title">
-        {{ isEdit ? 'Editar Conductor' : 'Registrar Conductor' }}
+        {{ (isEdit ? 'assets.fleet.drivers.form.titleEdit' : 'assets.fleet.drivers.form.titleCreate') | translate }}
       </h2>
       <p class="dialog-subtitle">
-        {{ isEdit ? 'Modifica los datos del conductor seleccionado.' : 'Completa los campos para incorporar un nuevo conductor al directorio.' }}
+        {{ (isEdit ? 'assets.fleet.drivers.form.subtitleEdit' : 'assets.fleet.drivers.form.subtitleCreate') | translate }}
       </p>
     </div>
     <button mat-icon-button class="close-btn" (click)="cancel()" [disabled]="loading()">
@@ -23,62 +24,64 @@
   <mat-dialog-content>
     <form [formGroup]="form" class="dialog-form">
 
+      <!-- Auto-credentials banner (creation only) -->
+      @if (!isEdit) {
+        <div class="auto-credentials-banner">
+          <mat-icon class="banner-icon">info</mat-icon>
+          <span>{{ 'iam.autoCredentialsBanner' | translate }}</span>
+        </div>
+      }
+
+      <!-- Full name -->
       <mat-form-field appearance="outline" class="field-full">
-        <mat-label>Nombre completo</mat-label>
-        <input matInput formControlName="fullName" placeholder="Ej. Juan Pérez López" />
+        <mat-label>{{ 'assets.fleet.drivers.form.fullName.label' | translate }}</mat-label>
+        <mat-icon matPrefix>badge</mat-icon>
+        <input matInput formControlName="fullName"
+          [placeholder]="'assets.fleet.drivers.form.fullName.placeholder' | translate" />
         @if (form.controls.fullName.hasError('required') && form.controls.fullName.touched) {
-          <mat-error>El nombre es obligatorio</mat-error>
+          <mat-error>{{ 'assets.fleet.drivers.form.fullName.required' | translate }}</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Email -->
+      <mat-form-field appearance="outline" class="field-full">
+        <mat-label>{{ 'assets.fleet.drivers.form.email.label' | translate }}</mat-label>
+        <mat-icon matPrefix>mail</mat-icon>
+        <input matInput type="email" formControlName="email"
+          [placeholder]="'assets.fleet.drivers.form.email.placeholder' | translate" />
+        @if (form.controls.email.hasError('required') && form.controls.email.touched) {
+          <mat-error>{{ 'assets.fleet.drivers.form.email.required' | translate }}</mat-error>
+        }
+        @if (form.controls.email.hasError('email') && form.controls.email.touched) {
+          <mat-error>{{ 'assets.fleet.drivers.form.email.invalid' | translate }}</mat-error>
         }
       </mat-form-field>
 
       <div class="form-row">
+        <!-- License -->
         <mat-form-field appearance="outline" class="field-half">
-          <mat-label>Usuario</mat-label>
-          <input matInput formControlName="username" placeholder="Ej. juan.perez" />
-          @if (form.controls.username.hasError('required') && form.controls.username.touched) {
-            <mat-error>El usuario es obligatorio</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="field-half">
-          <mat-label>Correo electrónico</mat-label>
-          <input matInput type="email" formControlName="email" placeholder="Ej. juan@mineguard.com" />
-          @if (form.controls.email.hasError('required') && form.controls.email.touched) {
-            <mat-error>El correo es obligatorio</mat-error>
-          }
-          @if (form.controls.email.hasError('email') && form.controls.email.touched) {
-            <mat-error>Ingresa un correo válido</mat-error>
-          }
-        </mat-form-field>
-      </div>
-
-      <div class="form-row">
-        <mat-form-field appearance="outline" class="field-half">
-          <mat-label>N.º de Licencia</mat-label>
-          <input matInput formControlName="licenseNumber" placeholder="Ej. A3C-8841" />
+          <mat-label>{{ 'assets.fleet.drivers.form.license.label' | translate }}</mat-label>
+          <mat-icon matPrefix>card_membership</mat-icon>
+          <input matInput formControlName="licenseNumber"
+            [placeholder]="'assets.fleet.drivers.form.license.placeholder' | translate" />
           @if (form.controls.licenseNumber.hasError('required') && form.controls.licenseNumber.touched) {
-            <mat-error>La licencia es obligatoria</mat-error>
+            <mat-error>{{ 'assets.fleet.drivers.form.license.required' | translate }}</mat-error>
           }
         </mat-form-field>
 
+        <!-- Work shift -->
         <mat-form-field appearance="outline" class="field-half">
-          <mat-label>Turno</mat-label>
+          <mat-label>{{ 'assets.fleet.drivers.form.shift.label' | translate }}</mat-label>
+          <mat-icon matPrefix>schedule</mat-icon>
           <mat-select formControlName="workShift">
             @for (opt of workShiftOptions; track opt.value) {
-              <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+              <mat-option [value]="opt.value">{{ opt.labelKey | translate }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
       </div>
 
-      <!-- Auto-password notice (creation only) -->
-      @if (!isEdit) {
-        <div class="auto-password-notice">
-          <mat-icon class="notice-icon">mark_email_read</mat-icon>
-          <span>El sistema generará y enviará una contraseña temporal al correo del conductor.</span>
-        </div>
-      }
-
+      <!-- Error banner -->
       @if (errorMsg()) {
         <div class="error-banner">
           <mat-icon>error_outline</mat-icon>
@@ -91,11 +94,11 @@
 
   <mat-dialog-actions align="end">
     <button mat-button class="btn-cancel" (click)="cancel()" [disabled]="loading()">
-      Cancelar
+      {{ 'assets.fleet.drivers.form.cancel' | translate }}
     </button>
     <button mat-flat-button class="btn-submit" (click)="submit()" [disabled]="loading()">
       <mat-icon>{{ isEdit ? 'save' : 'person_add' }}</mat-icon>
-      {{ isEdit ? 'Guardar cambios' : 'Registrar conductor' }}
+      {{ (isEdit ? 'assets.fleet.drivers.form.submitEdit' : 'assets.fleet.drivers.form.submitCreate') | translate }}
     </button>
   </mat-dialog-actions>
 </div>

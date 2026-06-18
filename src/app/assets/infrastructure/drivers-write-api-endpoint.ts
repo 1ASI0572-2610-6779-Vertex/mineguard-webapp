@@ -7,19 +7,18 @@ import { SaveDriverCommand } from '../domain/model/save-driver.command';
 import { DriverResource } from './driver-response';
 
 interface DriverWriteBody {
-  username: string;
-  email: string;
-  fullName: string;
-  idCompany: number;
+  email:         string;
+  fullName:      string;
+  idCompany:     number;
   licenseNumber: string;
-  workShift: string;
+  workShift:     string;
 }
 
 const endpointUrl = `${environment.platformProviderApiBaseUrl}${environment.platformProviderDriversEndpointPath}`;
 
 /**
  * HTTP endpoint client for driver write operations (POST /drivers, PUT /drivers/{id}).
- * Password is omitted — the backend auto-generates a temporary one on creation.
+ * Username and password are omitted — the backend auto-generates credentials on creation.
  */
 export class DriversWriteApiEndpoint extends ErrorHandlingEnabledBaseType {
   constructor(private http: HttpClient) {
@@ -48,7 +47,6 @@ export class DriversWriteApiEndpoint extends ErrorHandlingEnabledBaseType {
 
   private toBody(command: SaveDriverCommand): DriverWriteBody {
     return {
-      username:      command.username,
       email:         command.email,
       fullName:      command.fullName,
       idCompany:     command.idCompany,

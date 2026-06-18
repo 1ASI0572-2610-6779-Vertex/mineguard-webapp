@@ -1,15 +1,11 @@
 /**
- * HTTP request payload for POST /supervisors.
- * Mirrors the exact body required by the backend contract.
- */
-/**
  * HTTP request body for POST /supervisors.
- * Password omitted — backend generates it automatically.
+ * Username and password are omitted — the backend generates them automatically
+ * and delivers credentials via corporate email.
  */
 export interface CreateSupervisorRequest {
-  username: string;
-  email: string;
-  fullName: string;
-  idCompany: number;
+  email:       string;
+  fullName:    string;
+  idCompany:   number;
   corporateId: string;
 }
