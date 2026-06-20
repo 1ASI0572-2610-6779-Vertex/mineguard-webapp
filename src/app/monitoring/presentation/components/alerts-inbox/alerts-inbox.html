@@ -42,12 +42,12 @@
         class="filter-pill filter-pill--sm"
         [class.filter-pill--active]="priorityFilter() === pill.key"
         [class.filter-pill--critical]="pill.key === 'critical' && priorityFilter() === 'critical'"
-        [class.filter-pill--warning]="pill.key === 'warning' && priorityFilter() === 'warning'"
+        [class.filter-pill--warning]="pill.key === 'high' && priorityFilter() === 'high'"
         (click)="priorityFilter.set(pill.key)">
         @if (pill.key === 'critical') {
           <mat-icon class="pill-icon">crisis_alert</mat-icon>
-        } @else if (pill.key === 'warning') {
-          <mat-icon class="pill-icon">warning</mat-icon>
+        } @else if (pill.key === 'high') {
+          <mat-icon class="pill-icon">trending_up</mat-icon>
         }
         {{ pill.label }}
         @if (pill.key !== 'all') {
@@ -63,7 +63,7 @@
       <li
         class="alert-card"
         [class.alert-selected]="selectedAlertId === alert.id"
-        [class.alert-resolved]="alert.status !== 'active'"
+        [class.alert-resolved]="alert.status !== 'open'"
         [class.alert-pulsing]="isPulsing(alert)"
         [style.animation-delay]="(i * 40) + 'ms'"
         (click)="selectAlert(alert.id)">
@@ -71,9 +71,9 @@
         <!-- Top row: type label + elapsed -->
         <div class="alert-row-top">
           <span class="type-label"
-            [class.type-collision]="alert.type === 'collision'"
-            [class.type-imminent]="alert.type === 'imminent_collision'"
-            [class.type-fatigue]="alert.type === 'fatigue'">
+            [class.type-collision]="alert.type === 'proximity_collision'"
+            [class.type-imminent]="alert.type === 'restricted_zone_entry'"
+            [class.type-fatigue]="alert.type === 'fatigue_risk'">
             <mat-icon class="type-icon">{{ typeIcon(alert.type) }}</mat-icon>
             {{ 'monitoring.alerts.type.' + alert.type | translate }}
           </span>
@@ -90,9 +90,9 @@
           <span class="alert-code">{{ alert.code }}</span>
           <span class="priority-badge"
             [class.priority-badge--critical]="alert.priority === 'critical'"
-            [class.priority-badge--warning]="alert.priority === 'warning'">
+            [class.priority-badge--warning]="alert.priority === 'high'">
             <mat-icon class="priority-icon">
-              {{ alert.priority === 'critical' ? 'crisis_alert' : 'warning' }}
+              {{ alert.priority === 'critical' ? 'crisis_alert' : 'trending_up' }}
             </mat-icon>
             {{ 'monitoring.alerts.priorityLabel.' + alert.priority | translate }}
           </span>

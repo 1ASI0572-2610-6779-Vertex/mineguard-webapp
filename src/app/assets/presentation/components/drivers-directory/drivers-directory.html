@@ -39,13 +39,13 @@
         <!-- Shift status badge -->
         <div class="status-cell">
           @switch (driver.shiftStatus) {
-            @case ('on_shift') {
+            @case ('active') {
               <span class="badge badge-on-shift">
                 <span class="badge-dot"></span>
                 {{ 'assets.fleet.drivers.status.onShift' | translate }}
               </span>
             }
-            @case ('off_shift') {
+            @case ('on_leave') {
               <span class="badge badge-off-shift">
                 {{ 'assets.fleet.drivers.status.offShift' | translate }}
               </span>

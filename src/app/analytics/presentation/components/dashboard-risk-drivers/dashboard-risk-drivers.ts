@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, Input, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
@@ -19,12 +19,17 @@ import { DashboardRiskDriver } from '../../../domain/model/dashboard-risk-driver
 })
 export class DashboardRiskDrivers {
   @Input({ required: true }) riskDrivers: DashboardRiskDriver[] = [];
+  @Output() readonly driverSelected = new EventEmitter<number>();
 
   private router = inject(Router);
 
   /** Risk bar width as percentage of max score (100). */
   barWidth(score: number): string {
     return `${Math.min(score, 100)}%`;
+  }
+
+  selectDriver(driver: DashboardRiskDriver): void {
+    this.driverSelected.emit(driver.driverId);
   }
 
   /** Navigates to the reports page to view the full driver risk report. */

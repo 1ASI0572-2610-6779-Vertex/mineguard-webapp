@@ -265,18 +265,29 @@
         "title": "Bandeja de incidentes"
       },
       "type": {
-        "collision": "Alerta de Colisión",
-        "imminent_collision": "Colisión Inminente",
-        "fatigue": "Alerta de Fatiga"
+        "proximity_collision": "Colisión por Proximidad",
+        "restricted_zone_entry": "Zona Restringida",
+        "high_heart_rate": "Frecuencia Cardiaca Alta",
+        "fatigue_risk": "Riesgo de Fatiga",
+        "connection_lost": "Conexión Perdida"
       },
       "typeFull": {
-        "collision": "Alerta de Colisión",
-        "imminent_collision": "Alerta de Colisión Inminente",
-        "fatigue": "Alerta de Fatiga"
+        "proximity_collision": "Alerta de Colisión por Proximidad",
+        "restricted_zone_entry": "Alerta de Ingreso a Zona Restringida",
+        "high_heart_rate": "Alerta de Frecuencia Cardiaca Alta",
+        "fatigue_risk": "Alerta de Riesgo de Fatiga",
+        "connection_lost": "Alerta de Conexión Perdida"
       },
       "priorityLabel": {
-        "critical": "Prioridad Crítica",
-        "warning": "Prioridad Advertencia"
+        "low": "Prioridad Baja",
+        "medium": "Prioridad Media",
+        "high": "Prioridad Alta",
+        "critical": "Prioridad Crítica"
+      },
+      "status": {
+        "open": "Abierta",
+        "reviewed": "Revisada",
+        "resolved": "Resuelta"
       },
       "elapsed": {
         "minutes": "Hace {{count}} min",
@@ -368,7 +379,8 @@
           "actions": "Acciones"
         },
         "status": {
-          "operational": "Operativo",
+          "available": "Disponible",
+          "inUse": "En Uso",
           "maintenance": "Mantenimiento"
         },
         "action": {

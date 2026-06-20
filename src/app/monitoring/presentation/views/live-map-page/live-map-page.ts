@@ -25,13 +25,14 @@ export class LiveMapPage implements OnInit, OnDestroy {
   readonly routeOverlays  = this.store.routeOverlays;
 
   readonly hoveredVehicleId = signal<number | null>(null);
+  readonly selectedTripId   = signal<number | null>(null);
 
   readonly isLoading = computed(
     () => this.vehicles().length === 0 && !this.fleetSummary(),
   );
 
   readonly operationalCount = computed(
-    () => this.vehicles().filter((v) => v.status === 'operational').length,
+    () => this.vehicles().filter((v) => v.status === 'in_transit').length,
   );
   readonly maintenanceCount = computed(
     () => this.vehicles().filter((v) => v.status === 'maintenance').length,
@@ -48,9 +49,14 @@ export class LiveMapPage implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.store.startLiveMapPolling();
     this.store.loadFleetSummary();
-    this.store.loadCardiacReadings();
     this.store.loadAlerts();
     this.store.loadRoutes();
+  }
+
+  selectVehicle(activeTripId: number | null): void {
+    if (activeTripId == null) return;
+    this.selectedTripId.set(activeTripId);
+    this.store.loadCardiacReadings(activeTripId);
   }
 
   ngOnDestroy(): void {
@@ -64,9 +70,11 @@ export class LiveMapPage implements OnInit, OnDestroy {
   }
 
   alertTypeIcon(type: string): string {
-    if (type === 'fatigue') return 'bedtime';
-    if (type === 'imminent_collision') return 'warning';
-    return 'car_crash';
+    if (type === 'fatigue_risk') return 'bedtime';
+    if (type === 'high_heart_rate') return 'favorite';
+    if (type === 'restricted_zone_entry') return 'do_not_enter';
+    if (type === 'connection_lost') return 'signal_wifi_off';
+    return 'car_crash'; // proximity_collision
   }
 
   goToAlerts(): void {

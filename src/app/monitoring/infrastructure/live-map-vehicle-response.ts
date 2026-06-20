@@ -55,6 +55,13 @@ export interface LiveMapVehicleResource extends BaseResource {
    * Nombre completo del operador o conductor asignado actualmente al vehículo.
    */
   driverName: string;
+
+  /**
+   * @property {number | null} activeTripId
+   * ID del viaje activo asignado a este vehículo. Null si el vehículo no tiene
+   * un viaje activo en curso. Requerido por GET /api/v1/trips/{tripId}/cardiac-readings.
+   */
+  activeTripId: number | null;
 }
 
 /**

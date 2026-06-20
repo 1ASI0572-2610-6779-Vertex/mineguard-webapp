@@ -32,7 +32,7 @@ export class AlertDetail {
 
   readonly canClassify = computed(() => {
     const alert = this.alertSignal();
-    return !!alert && alert.status === 'active';
+    return !!alert && alert.status === 'open';
   });
 
   /** The backend sends occurredAt as a pre-formatted string — render it directly. */
@@ -45,7 +45,7 @@ export class AlertDetail {
 
   markFalseAlarm(): void {
     if (!this.canClassify()) return;
-    this.classify.emit({ status: 'false_alarm', notes: this.notes() });
+    this.classify.emit({ status: 'reviewed', notes: this.notes() });
     this.snackBar.open('Alerta marcada como falsa alarma', 'OK', {
       duration: 3500,
       panelClass: ['mg-snack', 'mg-snack--neutral'],

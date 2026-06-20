@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { AnalyticsStore } from '../../../application/analytics.store';
 import { AdminNotice } from '../../../domain/model/admin-notice.entity';
 
 @Component({
@@ -20,6 +21,7 @@ export class AdminNotices {
   }
 
   private snackBar = inject(MatSnackBar);
+  private store    = inject(AnalyticsStore);
 
   readonly allNotices = signal<AdminNotice[]>([]);
   private readonly dismissedIds = signal<Set<number>>(new Set());
@@ -52,6 +54,8 @@ export class AdminNotices {
       next.add(notice.id);
       return next;
     });
+    // POST /api/v1/admin/notices/{noticeId}/dispatches — registra el re-envío en el backend
+    this.store.dispatchNotice(notice.id);
     this.snackBar.open('Aviso marcado como leído', 'OK', {
       duration: 3000,
       panelClass: ['mg-snack', 'mg-snack--success'],

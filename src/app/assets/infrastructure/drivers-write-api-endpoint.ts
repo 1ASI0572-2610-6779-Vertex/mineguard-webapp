@@ -17,8 +17,8 @@ interface DriverWriteBody {
 const endpointUrl = `${environment.platformProviderApiBaseUrl}${environment.platformProviderDriversEndpointPath}`;
 
 /**
- * HTTP endpoint client for driver write operations (POST /drivers, PUT /drivers/{id}).
- * Username and password are omitted — the backend auto-generates credentials on creation.
+ * HTTP endpoint client for POST /api/v1/drivers and PUT /api/v1/drivers/{id}.
+ * idCompany is resolved server-side from the JWT; username/password are auto-generated.
  */
 export class DriversWriteApiEndpoint extends ErrorHandlingEnabledBaseType {
   constructor(private http: HttpClient) {

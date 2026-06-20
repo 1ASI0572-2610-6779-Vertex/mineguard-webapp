@@ -7,7 +7,7 @@ import { ErrorHandlingEnabledBaseType } from '../../shared/infrastructure/error-
 const endpointUrl = `${environment.platformProviderApiBaseUrl}${environment.platformProviderChangePasswordEndpointPath}`;
 
 /**
- * HTTP endpoint client for PUT /authentication/change-password.
+ * HTTP endpoint client for PATCH /api/v1/users/me/password.
  * Used exclusively during the forced-password-change flow triggered
  * when the backend sets requiresPasswordChange: true at sign-in.
  */
@@ -18,7 +18,7 @@ export class ChangePasswordApiEndpoint extends ErrorHandlingEnabledBaseType {
 
   changePassword(newPassword: string): Observable<void> {
     return this.http
-      .put<void>(endpointUrl, { newPassword })
+      .patch<void>(endpointUrl, { newPassword })
       .pipe(catchError(this.handleError('Failed to change password')));
   }
 }

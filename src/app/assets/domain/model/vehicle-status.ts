@@ -1,9 +1,5 @@
 /**
- * All operational statuses a vehicle can have, as defined by GET /vehiclesInventory.
+ * All operational statuses a vehicle can have, as returned by GET /api/v1/vehicles?view=inventory.
+ * Values match the API v2 contract (all lowercase).
  */
-export type VehicleStatus =
-  | 'operational'
-  | 'maintenance'
-  | 'alert'
-  | 'inactive'
-  | 'restricted_route';
+export type VehicleStatus = 'available' | 'in_use' | 'maintenance';

@@ -11,7 +11,7 @@
   <!-- Driver list -->
   <ul class="risk-list" role="list">
     @for (driver of riskDrivers; track driver.id; let i = $index) {
-      <li class="risk-item" [style.animation-delay]="(i * 50) + 'ms'">
+      <li class="risk-item" [style.animation-delay]="(i * 50) + 'ms'" (click)="selectDriver(driver)" style="cursor:pointer">
 
         <!-- Rank badge -->
         <div class="rank-badge"

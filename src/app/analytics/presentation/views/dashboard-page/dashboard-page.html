@@ -45,6 +45,7 @@
 
       <app-dashboard-risk-drivers
         [riskDrivers]="riskDrivers()"
+        (driverSelected)="onDriverSelected($event)"
       ></app-dashboard-risk-drivers>
     </div>
 

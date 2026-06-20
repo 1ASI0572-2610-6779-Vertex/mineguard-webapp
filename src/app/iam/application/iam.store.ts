@@ -22,6 +22,7 @@ interface PersistedSession {
   username: string;
   role: string;
   token: string;
+  companyId: number | null;
 }
 
 const SESSION_STORAGE_KEY = 'mineguard.session';
@@ -83,6 +84,9 @@ export class IamStore {
    */
   private readonly currentTokenSignal = signal<string | null>(null);
 
+  /** companyId decoded from the JWT payload at sign-in time. */
+  private readonly currentCompanyIdSignal = signal<number | null>(null);
+
   /**
    * Signal containing all users in the system (for queries/search).
    * @private
@@ -139,6 +143,9 @@ export class IamStore {
     this.isSignedIn() ? this.currentTokenSignal() : null,
   );
 
+  /** companyId from the JWT payload. Used by write operations that require tenant scoping. */
+  readonly currentCompanyId = this.currentCompanyIdSignal.asReadonly();
+
   /**
    * Readonly signal for the list of users retrieved by user queries.
    */
@@ -188,10 +195,11 @@ export class IamStore {
     this.iamApi.signIn(signInCommand).subscribe({
       next: (signInResource) => {
         const session: PersistedSession = {
-          id: signInResource.id,
-          username: signInResource.username,
-          role: signInResource.role,
-          token: signInResource.token,
+          id:        signInResource.id,
+          username:  signInResource.username,
+          role:      signInResource.role,
+          token:     signInResource.token,
+          companyId: this.decodeCompanyIdFromJwt(signInResource.token),
         };
         this.savePersistedSession(session);
         this.applySession(session);
@@ -361,12 +369,32 @@ export class IamStore {
         typeof session.role === 'string' &&
         typeof session.token === 'string'
       ) {
+        // companyId may be absent in sessions persisted before this change —
+        // fall back to decoding it from the stored JWT.
+        if (session.companyId == null) {
+          session.companyId = this.decodeCompanyIdFromJwt(session.token);
+        }
         return session as PersistedSession;
       }
       this.clearPersistedSession();
       return null;
     } catch {
       this.clearPersistedSession();
+      return null;
+    }
+  }
+
+  /**
+   * Decodes the `companyId` claim from a JWT payload.
+   * Returns null if the token is malformed or the claim is missing.
+   * @private
+   */
+  private decodeCompanyIdFromJwt(token: string): number | null {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1])) as Record<string, unknown>;
+      const id = payload['companyId'];
+      return typeof id === 'number' ? id : null;
+    } catch {
       return null;
     }
   }
@@ -397,6 +425,7 @@ export class IamStore {
     this.currentUserIdSignal.set(session.id);
     this.currentRoleSignal.set(session.role);
     this.currentTokenSignal.set(session.token);
+    this.currentCompanyIdSignal.set(session.companyId ?? null);
   }
 
   /**
@@ -409,5 +438,6 @@ export class IamStore {
     this.currentUserIdSignal.set(null);
     this.currentRoleSignal.set(null);
     this.currentTokenSignal.set(null);
+    this.currentCompanyIdSignal.set(null);
   }
 }

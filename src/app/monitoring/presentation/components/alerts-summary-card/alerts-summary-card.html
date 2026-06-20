@@ -14,7 +14,7 @@
       <li class="alert-row" [style.animation-delay]="(i * 50) + 'ms'">
         <div class="alert-icon-wrapper">
           <mat-icon class="alert-icon">
-            {{ alert.type === 'fatigue' ? 'bedtime' : alert.type === 'imminent_collision' ? 'warning' : 'car_crash' }}
+            {{ alert.type === 'fatigue_risk' ? 'bedtime' : alert.type === 'high_heart_rate' ? 'favorite' : 'car_crash' }}
           </mat-icon>
         </div>
         

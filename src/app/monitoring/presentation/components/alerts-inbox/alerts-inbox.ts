@@ -4,8 +4,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { Alert } from '../../../domain/model/alert.entity';
 
-type StatusFilter = 'all' | 'active' | 'resolved' | 'false_alarm';
-type PriorityFilter = 'all' | 'critical' | 'warning';
+type StatusFilter = 'all' | 'open' | 'reviewed' | 'resolved';
+type PriorityFilter = 'all' | 'critical' | 'high';
 type SortMode = 'date-desc' | 'date-asc' | 'priority';
 
 @Component({
@@ -29,27 +29,27 @@ export class AlertsInbox {
   readonly sortMode = signal<SortMode>('date-desc');
 
   readonly statusPills: { key: StatusFilter; label: string }[] = [
-    { key: 'all', label: 'Todas' },
-    { key: 'active', label: 'Activas' },
+    { key: 'all',      label: 'Todas' },
+    { key: 'open',     label: 'Abiertas' },
+    { key: 'reviewed', label: 'Revisadas' },
     { key: 'resolved', label: 'Resueltas' },
-    { key: 'false_alarm', label: 'Falsa Alarma' },
   ];
 
   readonly priorityPills: { key: PriorityFilter; label: string }[] = [
-    { key: 'all', label: 'Todas' },
+    { key: 'all',      label: 'Todas' },
     { key: 'critical', label: 'Crítico' },
-    { key: 'warning', label: 'Advertencia' },
+    { key: 'high',     label: 'Alta' },
   ];
 
   readonly statusCounts = computed(() => {
     const all = this.alertsSignal();
     return {
-      all: all.length,
-      active: all.filter((a) => a.status === 'active').length,
+      all:      all.length,
+      open:     all.filter((a) => a.status === 'open').length,
+      reviewed: all.filter((a) => a.status === 'reviewed').length,
       resolved: all.filter((a) => a.status === 'resolved').length,
-      false_alarm: all.filter((a) => a.status === 'false_alarm').length,
       critical: all.filter((a) => a.priority === 'critical').length,
-      warning: all.filter((a) => a.priority === 'warning').length,
+      high:     all.filter((a) => a.priority === 'high').length,
     };
   });
 
@@ -75,13 +75,15 @@ export class AlertsInbox {
   });
 
   isPulsing(alert: Alert): boolean {
-    return alert.priority === 'critical' && alert.status === 'active';
+    return alert.priority === 'critical' && alert.status === 'open';
   }
 
   typeIcon(type: string): string {
-    if (type === 'fatigue') return 'bedtime';
-    if (type === 'imminent_collision') return 'warning';
-    return 'car_crash';
+    if (type === 'fatigue_risk') return 'bedtime';
+    if (type === 'high_heart_rate') return 'favorite';
+    if (type === 'restricted_zone_entry') return 'do_not_enter';
+    if (type === 'connection_lost') return 'signal_wifi_off';
+    return 'car_crash'; // proximity_collision
   }
 
   elapsedFor(isoTimestamp: string): { value: number; unit: 'minutes' | 'hours' | 'days' } {

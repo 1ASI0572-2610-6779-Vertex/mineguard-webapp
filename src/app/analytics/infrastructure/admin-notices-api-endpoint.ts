@@ -1,4 +1,6 @@
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { BaseApiEndpoint } from '../../shared/infrastructure/base-api-endpoint';
 import { environment } from '../../../environments/environment';
@@ -19,5 +21,12 @@ export class AdminNoticesApiEndpoint extends BaseApiEndpoint<
 > {
   constructor(http: HttpClient) {
     super(http, endpointUrl, new AdminNoticeAssembler());
+  }
+
+  // POST /api/v1/admin/notices/{noticeId}/dispatches
+  postDispatch(noticeId: number): Observable<void> {
+    return this.http.post<void>(`${endpointUrl}/${noticeId}/dispatches`, {}).pipe(
+      catchError(this.handleError(`Failed to dispatch notice ${noticeId}`)),
+    );
   }
 }

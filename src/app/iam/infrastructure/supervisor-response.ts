@@ -3,15 +3,18 @@ import { AccessStatus } from '../domain/model/access-status';
 
 /**
  * Supervisor resource as it appears on the wire.
+ *
+ * GET /api/v1/supervisors response: id, fullName, corporateId, email, accessStatus.
+ * username and idCompany are PUT request body fields only — not returned by the server.
  */
 export interface SupervisorResource extends BaseResource {
   id: number;
-  username: string;
   fullName: string;
   corporateId: string;
   email: string;
   accessStatus: AccessStatus;
-  idCompany: number;
+  username?: string;
+  idCompany?: number;
 }
 
 /**

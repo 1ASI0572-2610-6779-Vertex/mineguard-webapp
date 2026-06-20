@@ -4,28 +4,28 @@
     <!-- Header -->
     <header class="detail-header"
       [class.detail-header--critical]="alert.priority === 'critical'"
-      [class.detail-header--warning]="alert.priority === 'warning'">
+      [class.detail-header--warning]="alert.priority === 'high'">
       <div class="title-block">
         <div class="code-row">
           <h2 class="code">{{ alert.code }}</h2>
           <span class="priority-badge"
             [class.priority-badge--critical]="alert.priority === 'critical'"
-            [class.priority-badge--warning]="alert.priority === 'warning'">
+            [class.priority-badge--warning]="alert.priority === 'high'">
             <mat-icon class="priority-icon">
-              {{ alert.priority === 'critical' ? 'crisis_alert' : 'warning' }}
+              {{ alert.priority === 'critical' ? 'crisis_alert' : 'trending_up' }}
             </mat-icon>
             {{ 'monitoring.alerts.priorityLabel.' + alert.priority | translate }}
           </span>
           <span class="status-chip"
-            [class.status-chip--active]="alert.status === 'active'"
+            [class.status-chip--active]="alert.status === 'open'"
             [class.status-chip--resolved]="alert.status === 'resolved'"
-            [class.status-chip--false]="alert.status === 'false_alarm'">
-            {{ alert.status === 'active' ? 'Activa' : alert.status === 'resolved' ? 'Resuelta' : 'Falsa Alarma' }}
+            [class.status-chip--false]="alert.status === 'reviewed'">
+            {{ alert.status === 'open' ? 'Abierta' : alert.status === 'resolved' ? 'Resuelta' : 'Revisada' }}
           </span>
         </div>
         <p class="type-subtitle">
           <mat-icon class="type-icon">
-            {{ alert.type === 'fatigue' ? 'bedtime' : alert.type === 'imminent_collision' ? 'warning' : 'car_crash' }}
+            {{ alert.type === 'fatigue_risk' ? 'bedtime' : alert.type === 'high_heart_rate' ? 'favorite' : 'car_crash' }}
           </mat-icon>
           {{ 'monitoring.alerts.typeFull.' + alert.type | translate }}
         </p>
@@ -58,8 +58,8 @@
       </div>
     </section>
 
-    <!-- Response action block (active only) -->
-    @if (alert.status === 'active') {
+    <!-- Response action block (open alerts only) -->
+    @if (alert.status === 'open') {
       <section class="response-block">
         <div class="response-header">
           <mat-icon class="response-icon">video_camera_front</mat-icon>

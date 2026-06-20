@@ -19,9 +19,9 @@ export class ReportsApiEndpoint extends BaseApiEndpoint<
     super(http, endpointUrl, new ReportAssembler());
   }
 
-  /** GET /reports/{id}/pdf — download binary PDF report. */
+  /** GET /reports/{id}?format=pdf — download binary PDF report. */
   downloadPdf(id: number): Observable<Blob> {
-    return this.http.get(`${endpointUrl}/${id}/pdf`, { responseType: 'blob' }).pipe(
+    return this.http.get(`${endpointUrl}/${id}`, { params: { format: 'pdf' }, responseType: 'blob' }).pipe(
       catchError(this.handleError(`Failed to download PDF for report ${id}`)),
     );
   }

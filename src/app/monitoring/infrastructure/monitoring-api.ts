@@ -46,6 +46,10 @@ export class MonitoringApi extends BaseApi {
     return this.alertsEndpoint.update(alert, alert.id);
   }
 
+  postAlertAction(alertId: number, action: 'markReviewed' | 'escalate' | 'resolve'): Observable<Alert> {
+    return this.alertsEndpoint.postAction(alertId, action);
+  }
+
   getLiveMapVehicles(): Observable<LiveMapVehicle[]> {
     return this.liveMapVehiclesEndpoint.getAll();
   }
@@ -54,7 +58,7 @@ export class MonitoringApi extends BaseApi {
     return this.fleetSummaryEndpoint.getAll();
   }
 
-  getCardiacReadings(): Observable<CardiacReading[]> {
-    return this.cardiacReadingsEndpoint.getAll();
+  getCardiacReadings(tripId: number): Observable<CardiacReading[]> {
+    return this.cardiacReadingsEndpoint.getByTripId(tripId);
   }
 }

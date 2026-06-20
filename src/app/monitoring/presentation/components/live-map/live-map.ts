@@ -10,7 +10,6 @@ import {
   effect,
   signal,
 } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
 import * as L from 'leaflet';
 
 import { LiveMapVehicle } from '../../../domain/model/live-map-vehicle.entity';
@@ -24,15 +23,15 @@ export interface RouteOverlay {
 }
 
 const VEHICLE_COLORS: Record<VehicleOperationalStatus, string> = {
-  operational: '#16a34a',
+  in_transit:  '#16a34a',
   maintenance: '#f59e0b',
-  alert: '#dc2626',
+  alert:       '#dc2626',
 };
 
 @Component({
   selector: 'app-live-map',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [],
   templateUrl: './live-map.html',
   styleUrl: './live-map.css',
 })
@@ -64,7 +63,7 @@ export class LiveMap implements AfterViewInit, OnDestroy {
   @Output() readonly vehicleHover = new EventEmitter<number | null>();
 
   get operationalCount(): number {
-    return this.vehiclesSignal().filter((v) => v.status === 'operational').length;
+    return this.vehiclesSignal().filter((v) => v.status === 'in_transit').length;
   }
 
   get alertCount(): number {
