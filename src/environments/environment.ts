@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  platformProviderApiBaseUrl: 'https://your-production-host.com/api/v1',
+  platformProviderApiBaseUrl: 'https://mineguard-webservice.onrender.com/api/v1',
 
   // IAM
   platformProviderSignInEndpointPath:          '/sessions',
