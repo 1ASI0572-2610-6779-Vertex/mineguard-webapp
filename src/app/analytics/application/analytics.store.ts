@@ -96,8 +96,8 @@ export class AnalyticsStore {
     });
   }
 
-  loadPerformanceMetrics(): void {
-    this.analyticsApi.getPerformanceMetrics().subscribe({
+  loadPerformanceMetrics(driverId: number): void {
+    this.analyticsApi.getPerformanceMetrics(driverId).subscribe({
       next: (metrics) => this.performanceMetricsSignal.set(metrics),
       error: (err) => this.handleFailure(err, 'Failed to load performance metrics'),
     });
@@ -153,6 +153,30 @@ export class AnalyticsStore {
     this.analyticsApi.getAdminNotices().subscribe({
       next: (notices) => this.adminNoticesSignal.set(notices),
       error: (err) => this.handleFailure(err, 'Failed to load admin notices'),
+    });
+  }
+
+  // POST /api/v1/admin/notices/{noticeId}/dispatches
+  dispatchNotice(noticeId: number): void {
+    this.analyticsApi.postNoticeDispatch(noticeId).subscribe({
+      error: (err) => this.handleFailure(err, `Failed to dispatch notice ${noticeId}`),
+    });
+  }
+
+  /**
+   * Downloads GET /reports/{id}/pdf and triggers a browser file-save dialog.
+   */
+  downloadReportPdf(id: number): void {
+    this.analyticsApi.downloadReportPdf(id).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `mineguard-report-${id}.pdf`;
+        anchor.click();
+        URL.revokeObjectURL(url);
+      },
+      error: (err) => this.handleFailure(err, `Failed to download report ${id}`),
     });
   }
 

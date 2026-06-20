@@ -16,6 +16,7 @@ export class LiveMapVehicle implements BaseEntity {
   private _longitude: number;
   private _status: VehicleOperationalStatus;
   private _driverName: string;
+  private _activeTripId: number | null;
 
   constructor(props: {
     id: number;
@@ -25,6 +26,7 @@ export class LiveMapVehicle implements BaseEntity {
     longitude: number;
     status: VehicleOperationalStatus;
     driverName: string;
+    activeTripId: number | null;
   }) {
     this._id = props.id;
     this._code = props.code;
@@ -33,6 +35,7 @@ export class LiveMapVehicle implements BaseEntity {
     this._longitude = props.longitude;
     this._status = props.status;
     this._driverName = props.driverName;
+    this._activeTripId = props.activeTripId;
   }
 
   get id(): number {
@@ -89,5 +92,13 @@ export class LiveMapVehicle implements BaseEntity {
 
   set driverName(value: string) {
     this._driverName = value;
+  }
+
+  get activeTripId(): number | null {
+    return this._activeTripId;
+  }
+
+  set activeTripId(value: number | null) {
+    this._activeTripId = value;
   }
 }

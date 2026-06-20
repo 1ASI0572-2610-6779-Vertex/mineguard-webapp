@@ -8,18 +8,9 @@
  * coupling the API contract to domain model changes.
  */
 export interface SignUpRequest {
-  /**
-   * The username or corporate ID for the new user account.
-   * This must be unique within the system.
-   */
   username: string;
-
-  /**
-   * The raw password for the new user account.
-   *
-   * @remarks
-   * This is the plaintext password as provided by the user during registration.
-   * The API endpoint is responsible for secure password handling.
-   */
   password: string;
+  email: string;
+  fullName: string;
+  roles: string[];
 }

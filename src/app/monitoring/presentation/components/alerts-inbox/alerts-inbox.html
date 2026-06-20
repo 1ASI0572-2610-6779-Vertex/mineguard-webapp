@@ -1,21 +1,80 @@
 <section class="alerts-inbox">
-  <h2 class="inbox-title">{{ 'monitoring.alerts.inbox.title' | translate }}</h2>
 
+  <!-- Header -->
+  <header class="inbox-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <mat-icon>notifications_active</mat-icon>
+      </div>
+      <div class="title-block">
+        <h2 class="inbox-title">Bandeja de Incidentes</h2>
+        <p class="inbox-subtitle">{{ filteredAlerts().length }} de {{ statusCounts().all }} alertas</p>
+      </div>
+    </div>
+    <select class="sort-select" [value]="sortMode()" (change)="sortMode.set($any($event.target).value)">
+      <option value="date-desc">Más recientes</option>
+      <option value="date-asc">Más antiguas</option>
+      <option value="priority">Por prioridad</option>
+    </select>
+  </header>
+
+  <!-- Status filter pills -->
+  <div class="filter-group">
+    @for (pill of statusPills; track pill.key) {
+      <button
+        class="filter-pill"
+        [class.filter-pill--active]="statusFilter() === pill.key"
+        (click)="statusFilter.set(pill.key)">
+        {{ pill.label }}
+        @if (pill.key !== 'all') {
+          <span class="pill-count">{{ statusCounts()[pill.key] }}</span>
+        } @else {
+          <span class="pill-count">{{ statusCounts().all }}</span>
+        }
+      </button>
+    }
+  </div>
+
+  <!-- Priority filter pills -->
+  <div class="filter-group filter-group--secondary">
+    @for (pill of priorityPills; track pill.key) {
+      <button
+        class="filter-pill filter-pill--sm"
+        [class.filter-pill--active]="priorityFilter() === pill.key"
+        [class.filter-pill--critical]="pill.key === 'critical' && priorityFilter() === 'critical'"
+        [class.filter-pill--warning]="pill.key === 'high' && priorityFilter() === 'high'"
+        (click)="priorityFilter.set(pill.key)">
+        @if (pill.key === 'critical') {
+          <mat-icon class="pill-icon">crisis_alert</mat-icon>
+        } @else if (pill.key === 'high') {
+          <mat-icon class="pill-icon">trending_up</mat-icon>
+        }
+        {{ pill.label }}
+        @if (pill.key !== 'all') {
+          <span class="pill-count">{{ statusCounts()[pill.key] }}</span>
+        }
+      </button>
+    }
+  </div>
+
+  <!-- Alert list -->
   <ul class="alert-list">
-    @for (alert of alerts; track alert.id) {
+    @for (alert of filteredAlerts(); track alert.id; let i = $index) {
       <li
         class="alert-card"
         [class.alert-selected]="selectedAlertId === alert.id"
-        [class.alert-resolved]="alert.status !== 'active'"
-        (click)="selectAlert(alert.id)"
-      >
+        [class.alert-resolved]="alert.status !== 'open'"
+        [class.alert-pulsing]="isPulsing(alert)"
+        [style.animation-delay]="(i * 40) + 'ms'"
+        (click)="selectAlert(alert.id)">
+
+        <!-- Top row: type label + elapsed -->
         <div class="alert-row-top">
-          <span
-            class="type-label"
-            [class.type-collision]="alert.type === 'collision'"
-            [class.type-imminent]="alert.type === 'imminent_collision'"
-            [class.type-fatigue]="alert.type === 'fatigue'"
-          >
+          <span class="type-label"
+            [class.type-collision]="alert.type === 'proximity_collision'"
+            [class.type-imminent]="alert.type === 'restricted_zone_entry'"
+            [class.type-fatigue]="alert.type === 'fatigue_risk'">
+            <mat-icon class="type-icon">{{ typeIcon(alert.type) }}</mat-icon>
             {{ 'monitoring.alerts.type.' + alert.type | translate }}
           </span>
           <span class="elapsed">
@@ -26,8 +85,28 @@
         <h3 class="alert-title">{{ alert.title }}</h3>
         <p class="alert-description">{{ alert.description }}</p>
 
-        <span class="alert-code">{{ alert.code }}</span>
+        <!-- Bottom row: code + priority badge -->
+        <div class="alert-row-bottom">
+          <span class="alert-code">{{ alert.code }}</span>
+          <span class="priority-badge"
+            [class.priority-badge--critical]="alert.priority === 'critical'"
+            [class.priority-badge--warning]="alert.priority === 'high'">
+            <mat-icon class="priority-icon">
+              {{ alert.priority === 'critical' ? 'crisis_alert' : 'trending_up' }}
+            </mat-icon>
+            {{ 'monitoring.alerts.priorityLabel.' + alert.priority | translate }}
+          </span>
+        </div>
+
+      </li>
+    }
+
+    @if (filteredAlerts().length === 0) {
+      <li class="empty-state">
+        <mat-icon class="empty-icon">inbox</mat-icon>
+        <span class="empty-text">No hay alertas que coincidan con los filtros seleccionados</span>
       </li>
     }
   </ul>
+
 </section>

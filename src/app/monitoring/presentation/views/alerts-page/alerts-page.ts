@@ -1,4 +1,5 @@
 import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { MonitoringStore } from '../../../application/monitoring.store';
@@ -7,18 +8,10 @@ import { ClassifyAlertCommand } from '../../../domain/model/classify-alert.comma
 import { AlertDetail } from '../../components/alert-detail/alert-detail';
 import { AlertsInbox } from '../../components/alerts-inbox/alerts-inbox';
 
-/**
- * Supervisor "Gestión de Alertas" view ({@link supervisor3.png} wireframe).
- *
- * @remarks
- * Two-column layout: alerts inbox on the left, selected alert detail on the
- * right. Selection state is local to this component; classification actions
- * delegate to {@link MonitoringStore}.
- */
 @Component({
   selector: 'app-alerts-page',
   standalone: true,
-  imports: [AlertsInbox, AlertDetail, TranslatePipe],
+  imports: [AlertsInbox, AlertDetail, MatIconModule, TranslatePipe],
   templateUrl: './alerts-page.html',
   styleUrl: './alerts-page.css',
 })

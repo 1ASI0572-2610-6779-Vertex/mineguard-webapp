@@ -8,6 +8,4 @@ export interface AnalyticsFatigueBarResource extends BaseResource {
   width: number;
 }
 
-export interface AnalyticsFatigueBarsResponse extends BaseResponse {
-  analyticsFatigueBars: AnalyticsFatigueBarResource[];
-}
+export interface AnalyticsFatigueBarsResponse extends BaseResponse {}

@@ -7,6 +7,8 @@ import { CreateSupervisorCommand } from '../domain/model/create-supervisor.comma
 import { SignInCommand } from '../domain/model/sign-in.command';
 import { SignUpCommand } from '../domain/model/sign-up.command';
 import { Supervisor } from '../domain/model/supervisor.entity';
+import { ChangePasswordApiEndpoint } from './change-password-api-endpoint';
+import { ForgotPasswordApiEndpoint } from './forgot-password-api-endpoint';
 import { SignInApiEndpoint } from './sign-in-api-endpoint';
 import { SignInAssembler } from './sign-in-assembler';
 import { SignInResource } from './sign-in-response';
@@ -31,18 +33,10 @@ export class IamApi extends BaseApi {
    * @private
    */
   private readonly signUpEndpoint: SignUpApiEndpoint;
-
-  /**
-   * Endpoint client for sign-in operations.
-   * @private
-   */
   private readonly signInEndpoint: SignInApiEndpoint;
-
-  /**
-   * Endpoint client for supervisor administration.
-   * @private
-   */
   private readonly supervisorsEndpoint: SupervisorsApiEndpoint;
+  private readonly changePasswordEndpoint: ChangePasswordApiEndpoint;
+  private readonly forgotPasswordEndpoint: ForgotPasswordApiEndpoint;
 
   /**
    * Creates an instance of IamApi.
@@ -54,6 +48,8 @@ export class IamApi extends BaseApi {
     this.signUpEndpoint = new SignUpApiEndpoint(http, new SignUpAssembler());
     this.signInEndpoint = new SignInApiEndpoint(http, new SignInAssembler());
     this.supervisorsEndpoint = new SupervisorsApiEndpoint(http);
+    this.changePasswordEndpoint = new ChangePasswordApiEndpoint(http);
+    this.forgotPasswordEndpoint = new ForgotPasswordApiEndpoint(http);
   }
 
   /**
@@ -89,5 +85,15 @@ export class IamApi extends BaseApi {
    */
   updateSupervisor(supervisor: Supervisor): Observable<Supervisor> {
     return this.supervisorsEndpoint.update(supervisor, supervisor.id);
+  }
+
+  /** Sends PUT /authentication/change-password with the new plain-text password. */
+  changePassword(newPassword: string): Observable<void> {
+    return this.changePasswordEndpoint.changePassword(newPassword);
+  }
+
+  /** Sends POST /authentication/forgot-password with the corporate email. */
+  forgotPassword(email: string): Observable<void> {
+    return this.forgotPasswordEndpoint.forgotPassword(email);
   }
 }

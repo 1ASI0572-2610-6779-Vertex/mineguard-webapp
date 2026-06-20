@@ -1,58 +1,119 @@
-<div class="sign-in-page">
-  <form class="sign-in-card" [formGroup]="form" (ngSubmit)="performSignIn()">
-    <header class="sign-in-header">
-      <img class="brand-logo" src="/mineguard-brand-logo.png" alt="MineGuard logo" />
-      <h1>{{ 'iam.signIn.title' | translate }}</h1>
-      <p>{{ 'iam.signIn.subtitle' | translate }}</p>
+<div class="auth-shell">
+  <div class="auth-card">
+
+    <!-- ── Card top bar: logo + lang switcher ── -->
+    <div class="si-topbar">
+      <div class="si-brand-id">
+        <div class="si-logo-wrap">
+          <img src="/mineguard-logo2.png" alt="MineGuard" class="si-logo" />
+        </div>
+        <span class="si-wordmark">MineGuard</span>
+      </div>
+
+      <div class="si-lang" role="group" [attr.aria-label]="'iam.signIn.langSwitcher.ariaLabel' | translate">
+        <button
+          class="si-lang-btn"
+          [class.si-lang-btn--active]="currentLang() === 'es'"
+          type="button"
+          (click)="switchLang('es')"
+          [attr.aria-pressed]="currentLang() === 'es'">
+          ES
+        </button>
+        <button
+          class="si-lang-btn"
+          [class.si-lang-btn--active]="currentLang() === 'en'"
+          type="button"
+          (click)="switchLang('en')"
+          [attr.aria-pressed]="currentLang() === 'en'">
+          EN
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Header ── -->
+    <header class="auth-header">
+      <p class="auth-eyebrow">{{ 'iam.signIn.eyebrow' | translate }}</p>
+      <h1 class="auth-title">{{ 'iam.signIn.title' | translate }}</h1>
+      <p class="auth-subtitle">{{ 'iam.signIn.subtitle' | translate }}</p>
     </header>
 
-    <div class="field">
-      <label for="username">{{ 'iam.signIn.username.label' | translate }}</label>
-      <mat-form-field appearance="outline">
-        <input
-          matInput
-          id="username"
-          name="username"
-          autocomplete="username"
-          formControlName="username"
-          [placeholder]="'iam.signIn.username.placeholder' | translate"
-        />
-        @if (isInvalidControl(form, 'username')) {
-          <mat-error>{{ errorMessagesForControl(form, 'username') }}</mat-error>
-        }
-      </mat-form-field>
-    </div>
+    <!-- ── Form ── -->
+    <form class="si-form" [formGroup]="form" (ngSubmit)="performSignIn()" novalidate autocomplete="on">
 
-    <div class="field">
-      <div class="field-row">
-        <label for="password">{{ 'iam.signIn.password.label' | translate }}</label>
-        <a class="trouble-link">{{ 'iam.signIn.troubleLink' | translate }}</a>
+      <!-- Username -->
+      <div class="auth-field-wrap">
+        <label class="auth-label" for="si-username">{{ 'iam.signIn.username.label' | translate }}</label>
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-icon matPrefix>person_outline</mat-icon>
+          <input
+            matInput
+            id="si-username"
+            name="username"
+            autocomplete="username"
+            formControlName="username"
+            [placeholder]="'iam.signIn.username.placeholder' | translate" />
+          @if (form.controls.username.invalid && form.controls.username.touched) {
+            <mat-error>{{ 'iam.signIn.username.required' | translate }}</mat-error>
+          }
+        </mat-form-field>
       </div>
-      <mat-form-field appearance="outline">
-        <input
-          matInput
-          id="password"
-          name="password"
-          type="password"
-          autocomplete="current-password"
-          formControlName="password"
-        />
-        @if (isInvalidControl(form, 'password')) {
-          <mat-error>{{ errorMessagesForControl(form, 'password') }}</mat-error>
+
+      <!-- Password -->
+      <div class="auth-field-wrap">
+        <label class="auth-label" for="si-password">{{ 'iam.signIn.password.label' | translate }}</label>
+        <mat-form-field appearance="outline" class="auth-field">
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <input
+            matInput
+            id="si-password"
+            name="password"
+            [type]="hidePassword() ? 'password' : 'text'"
+            autocomplete="current-password"
+            formControlName="password" />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            [attr.aria-label]="'iam.signIn.password.toggle' | translate"
+            (click)="hidePassword.set(!hidePassword())">
+            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (form.controls.password.invalid && form.controls.password.touched) {
+            <mat-error>{{ 'iam.signIn.password.required' | translate }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <!-- Forgot password -->
+      <div class="si-forgot-row">
+        <a class="auth-back-link si-forgot-link" [routerLink]="['/iam/forgot-password']" tabindex="0">
+          {{ 'iam.signIn.forgotPassword' | translate }}
+        </a>
+      </div>
+
+      <!-- Submit -->
+      <button mat-flat-button type="submit" class="auth-submit" [disabled]="submitting()">
+        @if (submitting()) {
+          <mat-spinner diameter="20" class="auth-spinner"></mat-spinner>
+          <span>{{ 'iam.signIn.submitting' | translate }}</span>
+        } @else {
+          <ng-container>
+            <mat-icon>login</mat-icon>
+            <span>{{ 'iam.signIn.submit' | translate }}</span>
+          </ng-container>
         }
-      </mat-form-field>
-    </div>
+      </button>
 
-    <button mat-flat-button color="primary" class="submit-btn" type="submit">
-      {{ 'iam.signIn.submit' | translate }}
-    </button>
-  </form>
+    </form>
 
-  <footer class="sign-in-footer">
-    <p class="security-note">
-      <span class="lock-icon">🔒</span>
-      {{ 'iam.signIn.securityNote' | translate }}
-    </p>
-    <p class="copyright">{{ 'iam.signIn.copyright' | translate }}</p>
-  </footer>
+    <!-- ── Footer ── -->
+    <footer class="auth-footer">
+      <div class="auth-security">
+        <mat-icon>shield</mat-icon>
+        <span>{{ 'iam.signIn.securityNote' | translate }}</span>
+      </div>
+      <p class="auth-copyright">{{ 'iam.signIn.copyright' | translate }}</p>
+    </footer>
+
+  </div>
 </div>

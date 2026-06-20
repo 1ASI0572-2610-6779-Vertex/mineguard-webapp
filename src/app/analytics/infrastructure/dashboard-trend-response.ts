@@ -7,6 +7,4 @@ export interface DashboardTrendResource extends BaseResource {
   incidents: number;
 }
 
-export interface DashboardTrendResponse extends BaseResponse {
-  dashboardTrend: DashboardTrendResource[];
-}
+export interface DashboardTrendResponse extends BaseResponse {}

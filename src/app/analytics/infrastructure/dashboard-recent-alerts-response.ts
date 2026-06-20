@@ -13,6 +13,4 @@ export interface DashboardRecentAlertResource extends BaseResource {
   status: string;
 }
 
-export interface DashboardRecentAlertsResponse extends BaseResponse {
-  dashboardRecentAlerts: DashboardRecentAlertResource[];
-}
+export interface DashboardRecentAlertsResponse extends BaseResponse {}

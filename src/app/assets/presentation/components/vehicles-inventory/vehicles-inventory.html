@@ -1,75 +1,91 @@
 <div class="vehicles-inventory">
-  <div class="column-labels">
+  <!-- Column headers -->
+  <div class="col-headers" role="rowgroup">
     <span>{{ 'assets.fleet.vehicles.column.identifier' | translate }}</span>
     <span>{{ 'assets.fleet.vehicles.column.status' | translate }}</span>
     <span>{{ 'assets.fleet.vehicles.column.assignment' | translate }}</span>
-    <span class="actions-col">{{ 'assets.fleet.vehicles.column.actions' | translate }}</span>
+    <span class="col-right">{{ 'assets.fleet.vehicles.column.actions' | translate }}</span>
   </div>
 
-  <ul class="vehicles-list">
-    @for (vehicle of vehicles; track vehicle.id) {
-      <li class="vehicle-row">
+  <ul class="vehicles-list" role="list">
+    @for (vehicle of vehicles; track vehicle.id; let i = $index) {
+      <li class="vehicle-row" [style.animation-delay]="(i * 40) + 'ms'" role="listitem">
+
+        <!-- Identity -->
         <div class="vehicle-identity">
-          <div class="icon-wrap">
-            <mat-icon class="vehicle-icon">local_shipping</mat-icon>
+          <div class="v-icon-wrap" [class.v-icon-maintenance]="vehicle.status === 'maintenance'">
+            <mat-icon>local_shipping</mat-icon>
           </div>
           <div class="identity-text">
-            <strong>{{ vehicle.code }} ({{ vehicle.model }})</strong>
-            <span>{{ vehicle.category }}</span>
+            <strong class="v-code">{{ vehicle.code }}</strong>
+            <span class="v-model">{{ vehicle.model }} · {{ vehicle.category }}</span>
           </div>
         </div>
 
+        <!-- Status badge -->
         <div class="status-cell">
           @switch (vehicle.status) {
-            @case ('operational') {
-              <span class="badge badge-operational">
-                {{ 'assets.fleet.vehicles.status.operational' | translate }}
+            @case ('available') {
+              <span class="badge badge-success">
+                <span class="badge-dot"></span>
+                {{ 'assets.fleet.vehicles.status.available' | translate }}
+              </span>
+            }
+            @case ('in_use') {
+              <span class="badge badge-info">
+                <mat-icon class="badge-icon">directions_car</mat-icon>
+                {{ 'assets.fleet.vehicles.status.inUse' | translate }}
               </span>
             }
             @case ('maintenance') {
-              <span class="badge badge-maintenance">
-                <mat-icon class="badge-icon">build_circle</mat-icon>
+              <span class="badge badge-warning">
+                <mat-icon class="badge-icon">build</mat-icon>
                 {{ 'assets.fleet.vehicles.status.maintenance' | translate }}
               </span>
             }
           }
         </div>
 
+        <!-- Assignment -->
         <div class="assignment-cell">
           @if (vehicle.assignedDriverName) {
-            <strong>{{ vehicle.assignedDriverName }}</strong>
+            <span class="driver-name">{{ vehicle.assignedDriverName }}</span>
             @if (vehicle.shiftLabel) {
-              <span class="shift-label">{{ vehicle.shiftLabel }}</span>
+              <span class="shift-chip">{{ vehicle.shiftLabel }}</span>
             }
           } @else {
-            <em class="blocked-for-use">
+            <span class="unassigned">
+              <mat-icon class="unassigned-icon">person_off</mat-icon>
               {{ 'assets.fleet.vehicles.blockedForUse' | translate }}
-            </em>
+            </span>
           }
         </div>
 
+        <!-- Actions -->
         <div class="actions-cell">
-          <button
-            mat-icon-button
-            class="edit-btn"
-            [title]="'assets.fleet.vehicles.action.edit' | translate"
-          >
+          <button mat-icon-button class="icon-btn" (click)="openEdit(vehicle)"
+            [title]="'assets.fleet.vehicles.action.edit' | translate">
             <mat-icon>edit</mat-icon>
           </button>
 
           @switch (vehicle.status) {
-            @case ('operational') {
-              <button mat-stroked-button class="action-btn" (click)="sendToMaintenance(vehicle)">
+            @case ('available') {
+              <button mat-stroked-button class="action-btn btn-warning"
+                (click)="sendToMaintenance(vehicle)">
+                <mat-icon>build</mat-icon>
                 {{ 'assets.fleet.vehicles.action.sendToWorkshop' | translate }}
               </button>
             }
             @case ('maintenance') {
-              <button mat-stroked-button class="action-btn action-positive" (click)="markOperational(vehicle)">
+              <button mat-stroked-button class="action-btn btn-success"
+                (click)="markOperational(vehicle)">
+                <mat-icon>check_circle</mat-icon>
                 {{ 'assets.fleet.vehicles.action.markOperational' | translate }}
               </button>
             }
           }
         </div>
+
       </li>
     }
   </ul>

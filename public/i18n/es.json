@@ -8,6 +8,7 @@
     "userManagement": "Gestión de Usuarios",
     "auditAndAssets": "Auditoría y Activos",
     "fleetAndDrivers": "Flota y Conductores",
+    "routeDesign": "Diseño de ruta",
     "alerts": "Gestión de Alertas",
     "liveMap": "Mapa en Vivo"
   },
@@ -51,19 +52,71 @@
   },
   "iam": {
     "signIn": {
-      "title": "Portal de Operaciones",
-      "subtitle": "Centro de Control MineGuard",
+      "eyebrow": "Plataforma Enterprise",
+      "title": "Acceso Operativo",
+      "subtitle": "Ingresa tus credenciales corporativas para continuar.",
+      "brand": {
+        "tagline": "Monitoreo industrial en tiempo real para operaciones mineras de alta exigencia.",
+        "feature1": "Autenticación segura con JWT",
+        "feature2": "Monitoreo continuo de flota y personal",
+        "feature3": "Analítica operativa avanzada",
+        "securityBadge": "Conexión cifrada SSL/TLS"
+      },
       "username": {
-        "label": "ID Corporativo",
-        "placeholder": "Ej. SUP-001"
+        "label": "ID de Usuario",
+        "placeholder": "Ej. ADM-001 o SUP-001",
+        "required": "El ID de usuario es obligatorio."
       },
       "password": {
-        "label": "Contraseña"
+        "label": "Contraseña",
+        "toggle": "Alternar visibilidad",
+        "required": "La contraseña es obligatoria."
       },
+      "forgotPassword": "¿Olvidaste tu contraseña?",
       "troubleLink": "¿Problemas de acceso?",
-      "submit": "Iniciar Sesión",
+      "submit": "Ingresar al sistema",
+      "submitting": "Verificando...",
       "securityNote": "Acceso restringido. Toda actividad está siendo monitoreada.",
-      "copyright": "© 2026 MineGuard Systems v2.4.1"
+      "copyright": "© 2026 MineGuard Systems v2.4.1",
+      "langSwitcher": {
+        "ariaLabel": "Cambiar idioma"
+      }
+    },
+    "forgotPassword": {
+      "eyebrow": "Recuperación de acceso",
+      "title": "¿Olvidaste tu contraseña?",
+      "subtitle": "Ingresa tu correo corporativo. Si existe en el sistema, recibirás un enlace de recuperación.",
+      "email": {
+        "label": "Correo corporativo",
+        "placeholder": "supervisor@empresa.com",
+        "required": "El correo es obligatorio.",
+        "invalid": "Ingresa un correo válido."
+      },
+      "submit": "Enviar enlace de recuperación",
+      "submitting": "Enviando...",
+      "successTitle": "Solicitud enviada",
+      "successBody": "Si el correo existe en el sistema, recibirás un enlace de recuperación en los próximos minutos.",
+      "backToLogin": "Volver al inicio de sesión"
+    },
+    "changePassword": {
+      "eyebrow": "Seguridad obligatoria",
+      "title": "Establece tu contraseña",
+      "subtitle": "Por seguridad, debes crear una contraseña personal antes de continuar. La contraseña temporal ya no es válida.",
+      "newPassword": {
+        "label": "Nueva contraseña",
+        "placeholder": "Mínimo 8 caracteres",
+        "required": "La contraseña es obligatoria.",
+        "minlength": "Debe tener al menos 8 caracteres."
+      },
+      "confirmPassword": {
+        "label": "Confirmar contraseña",
+        "placeholder": "Repite la contraseña nueva",
+        "mismatch": "Las contraseñas no coinciden."
+      },
+      "hint": "Mínimo 8 caracteres. No reutilices la contraseña temporal.",
+      "submit": "Confirmar y continuar",
+      "submitting": "Guardando...",
+      "errorGeneric": "No se pudo actualizar la contraseña. Inténtalo de nuevo."
     },
     "supervisors": {
       "title": "Gestión de Usuarios",
@@ -71,19 +124,27 @@
       "newSupervisor": {
         "title": "Nuevo Supervisor",
         "fullName": {
-          "label": "Nombre Completo",
-          "placeholder": "Ej. Ana Torres"
+          "label": "Nombre completo",
+          "placeholder": "Ej. Carlos Mendoza Ríos",
+          "required": "El nombre es obligatorio."
         },
         "corporateId": {
-          "label": "ID Corporativo (Único)",
-          "placeholder": "Ej. SUP-025"
+          "label": "ID Corporativo (único)",
+          "placeholder": "Ej. SUP-0042",
+          "required": "El ID corporativo es obligatorio."
         },
         "email": {
-          "label": "Correo Corporativo",
-          "placeholder": "ana.torres@mineguard.com"
+          "label": "Correo corporativo",
+          "placeholder": "correo@empresa.com",
+          "required": "El correo es obligatorio.",
+          "invalid": "Formato de correo no válido."
         },
-        "submit": "Crear y Enviar Accesos",
-        "hint": "El sistema generará una clave temporal y forzará su cambio en el primer ingreso"
+        "submit": "Crear y enviar acceso",
+        "hint": "El sistema generará una clave temporal y forzará su cambio en el primer ingreso",
+        "subtitle": "Registra una cuenta de acceso operativo",
+        "cancel": "Cancelar",
+        "submitting": "Creando...",
+        "successSnack": "Supervisor creado. Las credenciales serán enviadas al correo corporativo."
       },
       "directory": {
         "title": "Directorio de Supervisores",
@@ -104,7 +165,8 @@
           "historyPreserved": "Historial conservado"
         }
       }
-    }
+    },
+    "autoCredentialsBanner": "Las credenciales de acceso (ID de Usuario y Contraseña) serán generadas automáticamente por el sistema y enviadas al correo corporativo del empleado."
   },
   "reports": {
     "title": "Reportes y Analítica",
@@ -203,18 +265,29 @@
         "title": "Bandeja de incidentes"
       },
       "type": {
-        "collision": "Alerta de Colisión",
-        "imminent_collision": "Colisión Inminente",
-        "fatigue": "Alerta de Fatiga"
+        "proximity_collision": "Colisión por Proximidad",
+        "restricted_zone_entry": "Zona Restringida",
+        "high_heart_rate": "Frecuencia Cardiaca Alta",
+        "fatigue_risk": "Riesgo de Fatiga",
+        "connection_lost": "Conexión Perdida"
       },
       "typeFull": {
-        "collision": "Alerta de Colisión",
-        "imminent_collision": "Alerta de Colisión Inminente",
-        "fatigue": "Alerta de Fatiga"
+        "proximity_collision": "Alerta de Colisión por Proximidad",
+        "restricted_zone_entry": "Alerta de Ingreso a Zona Restringida",
+        "high_heart_rate": "Alerta de Frecuencia Cardiaca Alta",
+        "fatigue_risk": "Alerta de Riesgo de Fatiga",
+        "connection_lost": "Alerta de Conexión Perdida"
       },
       "priorityLabel": {
-        "critical": "Prioridad Crítica",
-        "warning": "Prioridad Advertencia"
+        "low": "Prioridad Baja",
+        "medium": "Prioridad Media",
+        "high": "Prioridad Alta",
+        "critical": "Prioridad Crítica"
+      },
+      "status": {
+        "open": "Abierta",
+        "reviewed": "Revisada",
+        "resolved": "Resuelta"
       },
       "elapsed": {
         "minutes": "Hace {{count}} min",
@@ -306,7 +379,8 @@
           "actions": "Acciones"
         },
         "status": {
-          "operational": "Operativo",
+          "available": "Disponible",
+          "inUse": "En Uso",
           "maintenance": "Mantenimiento"
         },
         "action": {
@@ -334,9 +408,77 @@
           "edit": "Editar",
           "revoke": "Revocar acceso",
           "historyPreserved": "Historial conservado en analytics"
+        },
+        "form": {
+          "titleCreate": "Registrar Conductor",
+          "titleEdit": "Editar Conductor",
+          "subtitleCreate": "Completa los campos para incorporar un nuevo conductor al directorio.",
+          "subtitleEdit": "Modifica los datos del conductor seleccionado.",
+          "fullName": {
+            "label": "Nombre completo",
+            "placeholder": "Ej. Juan Pérez López",
+            "required": "El nombre es obligatorio."
+          },
+          "email": {
+            "label": "Correo corporativo",
+            "placeholder": "Ej. juan@mineguard.com",
+            "required": "El correo es obligatorio.",
+            "invalid": "Ingresa un correo válido."
+          },
+          "license": {
+            "label": "N.º de Licencia",
+            "placeholder": "Ej. A3C-8841",
+            "required": "La licencia es obligatoria."
+          },
+          "shift": {
+            "label": "Turno",
+            "morning": "Mañana",
+            "afternoon": "Tarde",
+            "night": "Noche"
+          },
+          "cancel": "Cancelar",
+          "submitCreate": "Registrar conductor",
+          "submitEdit": "Guardar cambios"
         }
       }
     }
+  },
+  "serviceDesign": {
+    "title": "Diseño de Servicio",
+    "subtitle": "Gestión de rutas y turnos",
+    "map": {
+      "planned": "Planificada",
+      "active": "Activa"
+    },
+    "tabs": {
+      "routes": "Rutas",
+      "shifts": "Turnos"
+    },
+    "routes": {
+      "newRoute": "Nueva Ruta",
+      "active": "ACTIVAS",
+      "planned": "PLANIFICADAS",
+      "empty": "No hay rutas creadas aún"
+    }
+  },
+  "routeForm": {
+    "title": "Nueva Ruta",
+    "nameLabel": "Nombre de la ruta",
+    "namePlaceholder": "Ej: Ruta Norte - Extracción",
+    "shiftLabel": "Turno",
+    "waypointsTitle": "WAYPOINTS",
+    "wpLabel": "Etiqueta",
+    "wpLat": "Lat",
+    "wpLng": "Lng",
+    "addWaypoint": "Agregar waypoint",
+    "cancel": "Cancelar",
+    "submit": "Crear Ruta"
+  },
+  "routeCard": {
+    "vehicles": "vehículo(s)",
+    "waypoints": "waypoints",
+    "activate": "Activar",
+    "suspend": "Suspender"
   },
   "dashboard": {
     "stats": {

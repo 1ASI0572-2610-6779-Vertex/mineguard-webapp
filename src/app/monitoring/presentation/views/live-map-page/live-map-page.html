@@ -1,30 +1,150 @@
 <div class="live-map-page">
-  <header class="page-header">
-    <h1>{{ 'monitoring.liveMap.title' | translate }}</h1>
-    <p>{{ 'monitoring.liveMap.subtitle' | translate }}</p>
-  </header>
 
-  <div class="page-grid">
-    <app-live-map [vehicles]="vehicles()"></app-live-map>
+  <!-- Full-bleed map -->
+  <div class="map-wrapper">
+    <app-live-map
+      [vehicles]="vehicles()"
+      [routeOverlays]="routeOverlays()"
+      [hoveredVehicleId]="hoveredVehicleId()"
+      (vehicleHover)="hoveredVehicleId.set($event)"
+    ></app-live-map>
+  </div>
 
-    <aside class="sidebar">
-      <input
-        class="sidebar-search"
-        type="search"
-        [placeholder]="'monitoring.liveMap.searchPlaceholder' | translate"
-      />
+  <!-- Floating telemetry panel -->
+  <aside class="telemetry-panel">
 
-      @if (fleetSummary(); as summary) {
-        <app-fleet-summary-card [summary]="summary"></app-fleet-summary-card>
+    <!-- Panel header -->
+    <div class="tp-header">
+      <div class="tp-header-left">
+        <div class="tp-header-icon">
+          <mat-icon>sensors</mat-icon>
+        </div>
+        <div>
+          <h2 class="tp-title">{{ 'monitoring.liveMap.title' | translate }}</h2>
+          <p class="tp-subtitle">{{ lastUpdated() }}</p>
+        </div>
+      </div>
+      <div class="tp-live-badge">
+        <span class="live-dot"></span>
+        EN VIVO
+      </div>
+    </div>
+
+    <!-- Fleet counters -->
+    @if (fleetSummary(); as s) {
+      <div class="tp-fleet-counters">
+        <div class="fleet-counter fleet-counter--success">
+          <span class="fc-value">{{ s.operational }}</span>
+          <span class="fc-label">Operativos</span>
+        </div>
+        <div class="fleet-counter fleet-counter--warning">
+          <span class="fc-value">{{ s.maintenance }}</span>
+          <span class="fc-label">Mantenimiento</span>
+        </div>
+        <div class="fleet-counter fleet-counter--danger">
+          <span class="fc-value">{{ s.alert }}</span>
+          <span class="fc-label">Alerta</span>
+        </div>
+      </div>
+
+      <!-- Operational progress bar -->
+      <div class="tp-ops-bar-wrap">
+        <div class="tp-ops-bar">
+          <div class="tp-ops-fill" [style.width]="s.operationalPercent + '%'"></div>
+        </div>
+        <span class="tp-ops-label">{{ s.operationalPercent }}% operativa</span>
+      </div>
+    } @else if (isLoading()) {
+      <div class="tp-fleet-counters">
+        @for (i of [1,2,3]; track i) {
+          <div class="fleet-counter skeleton"></div>
+        }
+      </div>
+    }
+
+    <!-- Section: Active vehicles -->
+    <div class="tp-section-label">
+      <mat-icon class="tsl-icon">directions_car</mat-icon>
+      Unidades en campo
+      <span class="tsl-count">{{ vehicles().length }}</span>
+    </div>
+
+    <ul class="tp-vehicle-list">
+      @for (v of vehicles(); track v.id; let i = $index) {
+        <li
+          class="tp-vehicle"
+          [class.tp-vehicle--hovered]="hoveredVehicleId() === v.id"
+          [class.tp-vehicle--selected]="v.activeTripId != null && selectedTripId() === v.activeTripId"
+          [class.tp-vehicle--alert]="v.status === 'alert'"
+          [style.animation-delay]="(i * 40) + 'ms'"
+          (mouseenter)="hoveredVehicleId.set(v.id)"
+          (mouseleave)="hoveredVehicleId.set(null)"
+          (click)="selectVehicle(v.activeTripId)">
+
+          <span class="v-status-dot"
+            [class.v-status-dot--operational]="v.status === 'in_transit'"
+            [class.v-status-dot--maintenance]="v.status === 'maintenance'"
+            [class.v-status-dot--alert]="v.status === 'alert'">
+          </span>
+
+          <div class="v-info">
+            <strong class="v-code">{{ v.code }}</strong>
+            <span class="v-driver">{{ v.driverName }}</span>
+          </div>
+
+          <div class="v-right">
+            <mat-icon class="v-type-icon">{{ vehicleTypeIcon(v.vehicleType) }}</mat-icon>
+            <span class="v-type-label">{{ v.vehicleType }}</span>
+          </div>
+        </li>
       }
 
-      <app-alerts-summary-card [alerts]="criticalAlerts()"></app-alerts-summary-card>
+      @if (isLoading()) {
+        @for (i of [1,2,3,4]; track i) {
+          <li class="tp-vehicle skeleton"></li>
+        }
+      }
 
-      <app-cardiac-monitor-card [readings]="cardiacReadings()"></app-cardiac-monitor-card>
+      @if (!isLoading() && !vehicles().length) {
+        <li class="tp-empty">
+          <mat-icon>directions_car</mat-icon>
+          <span>Sin vehículos en campo</span>
+        </li>
+      }
+    </ul>
 
-      <button mat-stroked-button class="report-cta">
-        {{ 'monitoring.liveMap.reportCta' | translate }}
+    <!-- Section: Critical alerts -->
+    @if (criticalAlerts().length) {
+      <div class="tp-section-label tp-section-label--alert">
+        <mat-icon class="tsl-icon">crisis_alert</mat-icon>
+        Alertas críticas
+        <span class="tsl-count tsl-count--danger">{{ criticalAlerts().length }}</span>
+      </div>
+
+      <ul class="tp-alert-list">
+        @for (alert of criticalAlerts(); track alert.id; let i = $index) {
+          <li class="tp-alert" [style.animation-delay]="(i * 40) + 'ms'">
+            <div class="ta-icon-wrap">
+              <mat-icon class="ta-icon">{{ alertTypeIcon(alert.type) }}</mat-icon>
+            </div>
+            <div class="ta-info">
+              <strong class="ta-code">{{ alert.code }}</strong>
+              <span class="ta-title">{{ alert.title }}</span>
+            </div>
+            <span class="ta-pulse-dot"></span>
+          </li>
+        }
+      </ul>
+    }
+
+    <!-- Panel footer CTA -->
+    <div class="tp-footer">
+      <button mat-stroked-button class="tp-cta-btn" (click)="goToAlerts()">
+        <mat-icon>assignment</mat-icon>
+        Gestionar alertas
       </button>
-    </aside>
-  </div>
+    </div>
+
+  </aside>
+
 </div>

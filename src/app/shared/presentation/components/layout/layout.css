@@ -1,213 +1,479 @@
-* {
-  box-sizing: border-box;
-  padding: 0;
+/* ═══════════════════════════════════════════════════════════════
+   LAYOUT — MineGuard Application Shell
+   Sidebar  → var(--color-neutral-black)    #141414
+   Header   → var(--color-neutral-white)    #FFFFFF
+   Content  → var(--color-neutral-gray-100) #F4F4F5
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Design tokens ─────────────────────────────────────────────── */
+:host {
+  --sidenav-expanded:  250px;
+  --sidenav-mini:      70px;
+  --ease-sidebar:      cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-sidebar:       0.28s;
+}
+
+/* ── BASE ──────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── SCROLLBAR ─────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+
+/* ── FULL-VIEWPORT CONTAINER ───────────────────────────────────── */
+.app-shell,
+mat-sidenav-container {
+  position: absolute;
+  inset: 0;
   margin: 0;
+  padding: 0;
 }
 
-*::-webkit-scrollbar {
-  background: transparent;
-  width: 0;
-}
-
-/* ──────────────── SIDENAV ──────────────── */
-mat-sidenav {
-  width: 220px !important;
-  background-color: #1a1a2e !important;
+/* ══════════════════════════════════════════════════════════════════
+   SIDEBAR — host element
+   [style.width] binding drives width; CSS transition animates it.
+   ::ng-deep makes the Material content margin follow with the same
+   transition so the content "pushes" rather than jumps.
+   ══════════════════════════════════════════════════════════════════ */
+mat-sidenav,
+.app-sidenav {
+  background-color: var(--color-neutral-black) !important;
   border-right: none !important;
-  border-radius: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  /* Animate the width set by [style.width] binding */
+  transition: width var(--dur-sidebar) var(--ease-sidebar) !important;
+  will-change: width;
+}
+
+/* ── Material inner container — must be flex column for footer-to-bottom ── */
+/* Material wraps sidenav content in .mat-drawer-inner-container; without
+   this fix, flex layout on the host doesn't reach our direct children.    */
+::ng-deep .app-sidenav .mat-drawer-inner-container {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Content area expands smoothly when autosize recalculates margin */
+::ng-deep .mat-sidenav-content,
+::ng-deep mat-sidenav-content {
+  transition: margin-left var(--dur-sidebar) var(--ease-sidebar) !important;
+}
+
+/* ── BRAND ROW ─────────────────────────────────────────────────── */
+.sidenav-brand {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  padding: 0 20px;
+  height: 64px;               /* matches header height → perfect alignment */
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
-.sidenav-header {
-  padding: 20px 16px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  margin-bottom: 8px;
-}
-
-.logo-mineguard {
-  height: 36px;
-}
-
-.sidenav-section-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: rgba(255, 255, 255, 0.35);
-  padding: 8px 20px 4px;
-  text-transform: uppercase;
-}
-
-mat-nav-list {
-  flex: 1;
-}
-
-mat-list-item {
-  height: 48px !important;
-  border-radius: 0 !important;
-  color: rgba(255, 255, 255, 0.65) !important;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-mat-list-item img {
-  margin-right: 10px;
-}
-
-mat-list-item span {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-mat-list-item mat-icon {
-  color: rgba(255, 255, 255, 0.65) !important;
-  font-size: 20px;
-  margin-right: 4px;
-}
-
-mat-list-item:hover {
-  background-color: rgba(255, 255, 255, 0.07) !important;
-}
-
-.active-option {
-  background-color: rgba(255, 255, 255, 0.12) !important;
-  border-left: 3px solid #00c2b2;
-}
-
-.active-option span {
-  color: #ffffff !important;
-  font-weight: 700;
-}
-
-.active-option mat-icon {
-  color: #ffffff !important;
-}
-
-/* Sidenav footer */
-.sidenav-footer {
+.brand-logo-container {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  min-width: 0;
 }
 
-.user-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #00c2b2;
-  color: #fff;
-  font-size: 13px;
+.brand-logo {
+  height: 28px;
+  width:  28px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+.brand-name {
+  font-size: 15px;
   font-weight: 700;
+  color: var(--color-neutral-white);
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  overflow: hidden;
+  /* Fade-out when collapsing */
+  opacity: 1;
+  max-width: 160px;
+  transition:
+    opacity  var(--dur-sidebar) var(--ease-sidebar),
+    max-width var(--dur-sidebar) var(--ease-sidebar);
+}
+
+/* ── NAVIGATION ────────────────────────────────────────────────── */
+.sidenav-nav {
+  flex: 1;           /* fills available height → pushes user footer down */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px 0;
+}
+
+.sidenav-nav::-webkit-scrollbar { width: 3px; }
+
+.nav-section-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.24);
+  padding: 0 20px 10px;
+  text-transform: uppercase;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity var(--dur-sidebar) var(--ease-sidebar);
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0 8px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-item { display: block; }
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 12px;
+  height: 44px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  outline: none;
+  transition:
+    background-color 0.16s ease,
+    color            0.16s ease,
+    padding          var(--dur-sidebar) var(--ease-sidebar);
+}
+
+.nav-link:focus-visible {
+  outline: 2px solid var(--color-accent-main);
+  outline-offset: 1px;
+}
+
+/* Icon slot */
+.nav-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  width: 22px;
+  height: 22px;
 }
 
-.user-info {
+.nav-icon mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  color: inherit;
+}
+
+.nav-icon img { opacity: 0.60; transition: opacity 0.16s ease; }
+
+/* Label slot */
+.nav-label {
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  white-space: nowrap;
+  overflow: hidden;
+  line-height: 1;
+  opacity: 1;
+  max-width: 200px;
+  transition:
+    opacity   var(--dur-sidebar) var(--ease-sidebar),
+    max-width var(--dur-sidebar) var(--ease-sidebar);
+}
+
+/* Hover */
+.nav-link:hover { background-color: rgba(255,255,255,0.05); color: rgba(255,255,255,0.85); }
+.nav-link:hover .nav-icon img { opacity: 0.82; }
+
+/* Active */
+.nav-link--active {
+  background-color: rgba(31,65,175,0.20) !important;
+  color: var(--color-neutral-white) !important;
+  border-left: 3px solid var(--color-accent-main);
+  border-radius: 0 8px 8px 0;
+  padding-left: 9px;
+}
+
+.nav-link--active .nav-icon mat-icon { color: var(--color-accent-main); }
+.nav-link--active .nav-icon img      { opacity: 1; }
+.nav-link--active .nav-label         { font-weight: 600; }
+
+/* ── USER FOOTER — pinned to bottom ────────────────────────────── */
+.sidenav-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.22);
+  flex-shrink: 0;
+  overflow: hidden;
+  /* margin-top: auto already handled by .sidenav-nav { flex: 1 } */
+  transition: padding var(--dur-sidebar) var(--ease-sidebar);
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 50%;
+  background: var(--color-accent-main);
+  color: var(--color-neutral-white);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: default;
+}
+
+.user-details {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 2px;
   overflow: hidden;
+  opacity: 1;
+  max-width: 160px;
+  transition:
+    opacity   var(--dur-sidebar) var(--ease-sidebar),
+    max-width var(--dur-sidebar) var(--ease-sidebar);
 }
 
 .user-name {
   font-size: 13px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-neutral-white);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.3;
 }
 
 .user-role {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255,255,255,0.36);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.logout-btn {
+  flex-shrink: 0;
+  opacity: 1;
+  max-width: 40px;
+  overflow: hidden;
+  transition:
+    opacity   var(--dur-sidebar) var(--ease-sidebar),
+    max-width var(--dur-sidebar) var(--ease-sidebar);
+}
+
+.logout-btn mat-icon {
+  color: rgba(255,255,255,0.38) !important;
+  font-size: 18px;
+  transition: color 0.16s ease;
+}
+
+.logout-btn:hover mat-icon { color: var(--color-danger-main) !important; }
+
+/* ══════════════════════════════════════════════════════════════════
+   COLLAPSED STATE — mini-variant (icons + logo + avatar only)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Fade out text — max-width trick keeps transition smooth (display:none kills it) */
+.sidenav-collapsed .brand-name,
+.sidenav-collapsed .nav-label,
+.sidenav-collapsed .nav-section-label,
+.sidenav-collapsed .user-details {
+  opacity: 0;
+  max-width: 0;
+  pointer-events: none;
+}
+
+/* Hide logout button when collapsed (avatar tooltip is enough) */
+.sidenav-collapsed .logout-btn {
+  opacity: 0;
+  max-width: 0;
+  pointer-events: none;
+}
+
+/* Center brand */
+.sidenav-collapsed .sidenav-brand {
+  justify-content: center;
+  padding: 0;
+}
+
+.sidenav-collapsed .brand-logo-container {
+  justify-content: center;
+}
+
+/* Center nav items */
+.sidenav-collapsed .nav-list {
+  padding: 0 4px;
+}
+
+.sidenav-collapsed .nav-link {
+  justify-content: center;
+  padding: 0;
+  gap: 0;
+}
+
+/* Keep active accent bar visible in collapsed state */
+.sidenav-collapsed .nav-link--active {
+  padding-left: 0;
+}
+
+/* Center user footer */
+.sidenav-collapsed .sidenav-user {
+  justify-content: center;
+  padding: 14px 0;
+  gap: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MAIN BODY (right column)
+   ══════════════════════════════════════════════════════════════════ */
+mat-sidenav-content,
+.app-body {
+  background: var(--color-neutral-gray-100) !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* ── TOP HEADER ────────────────────────────────────────────────── */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 64px;
+  padding: 0 24px;
+  background: var(--color-neutral-white);
+  border-bottom: 1px solid var(--color-neutral-gray-300);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.menu-btn mat-icon {
+  color: var(--color-neutral-black) !important;
+  transition: transform var(--dur-sidebar) var(--ease-sidebar);
+}
+
+.header-title {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.header-page-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-neutral-black);
+  margin: 0;
+  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.logout-btn mat-icon {
-  color: rgba(255, 255, 255, 0.5) !important;
-  font-size: 18px;
-}
-
-.logout-btn:hover mat-icon {
-  color: #ff6b6b !important;
-}
-
-/* ──────────────── TOOLBAR ──────────────── */
-.main-toolbar {
-  background: #ffffff !important;
-  border-bottom: 1px solid #e8e8e8 !important;
-  height: 64px !important;
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-}
-
-.menu-btn mat-icon {
-  color: #333 !important;
-}
-
-.toolbar-title h1 {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1a1a2e;
-  line-height: 1.2;
-}
-
-.toolbar-subtitle {
-  font-size: 12px;
-  color: #888;
+.header-subtitle {
+  font-size: 11px;
+  color: #9ca3af;
   font-weight: 400;
+  line-height: 1.2;
+  display: block;
 }
 
-.mat-spacer {
-  flex: 1 1 auto;
-}
-
-.sensor-status {
+.header-right {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: #444;
-  background: #f5f5f5;
-  padding: 5px 12px;
-  border-radius: 20px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Sensor pill */
+.sensor-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #374151;
+  background: var(--color-neutral-gray-100);
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--color-neutral-gray-300);
+  white-space: nowrap;
 }
 
 .sensor-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #00c2b2;
-  box-shadow: 0 0 6px rgba(0, 194, 178, 0.6);
+  background: var(--color-success-main);
+  box-shadow: 0 0 0 3px var(--color-success-surface);
+  flex-shrink: 0;
+  animation: pulse 2.4s ease infinite;
 }
 
-.notif-btn mat-icon {
-  color: #444 !important;
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 3px var(--color-success-surface); }
+  50%       { box-shadow: 0 0 0 5px rgba(34,197,94,0.15); }
 }
 
-/* ──────────────── CONTENT ──────────────── */
-mat-sidenav-content {
-  background: #f7f8fa !important;
-}
+.notif-btn mat-icon { color: #6b7280 !important; transition: color 0.16s ease; }
+.notif-btn:hover mat-icon { color: var(--color-neutral-black) !important; }
 
-.content {
-  min-height: calc(100vh - 64px);
-  padding: 24px;
-  max-width: 1520px;
+/* ── PAGE CONTENT ──────────────────────────────────────────────── */
+.app-content {
+  flex: 1;
+  padding: 28px 32px;
+  max-width: 1600px;
+  width: 100%;
   margin: 0 auto;
-  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* ── RESPONSIVE — mobile ───────────────────────────────────────── */
+@media (max-width: 1280px) {
+  .app-content     { padding: 20px 20px; }
+  .sensor-pill     { display: none; }
+  .header-subtitle { display: none; }
+}
+
+@media (max-width: 600px) {
+  .app-content { padding: 16px 12px; }
 }

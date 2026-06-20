@@ -9,8 +9,8 @@ export class AnalyticsHistoryRowAssembler
   implements
     BaseAssembler<AnalyticsHistoryRow, AnalyticsHistoryRowResource, AnalyticsHistoryRowsResponse>
 {
-  toEntitiesFromResponse(response: AnalyticsHistoryRowsResponse): AnalyticsHistoryRow[] {
-    return response.analyticsHistoryRows.map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: AnalyticsHistoryRowsResponse): AnalyticsHistoryRow[] {
+    return [];
   }
 
   toEntityFromResource(resource: AnalyticsHistoryRowResource): AnalyticsHistoryRow {

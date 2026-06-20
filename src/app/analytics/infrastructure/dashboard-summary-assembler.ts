@@ -5,8 +5,8 @@ import { DashboardSummaryResource, DashboardSummaryResponse } from './dashboard-
 export class DashboardSummaryAssembler
   implements BaseAssembler<DashboardSummary, DashboardSummaryResource, DashboardSummaryResponse>
 {
-  toEntitiesFromResponse(response: DashboardSummaryResponse): DashboardSummary[] {
-    return response.dashboardSummary.map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: DashboardSummaryResponse): DashboardSummary[] {
+    return [];
   }
 
   toEntityFromResource(resource: DashboardSummaryResource): DashboardSummary {

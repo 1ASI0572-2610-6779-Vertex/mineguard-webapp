@@ -1,5 +1,5 @@
 /**
- * Operational status a vehicle can be in, as displayed in the
- * "Inventario de Vehículos" supervisor view.
+ * All operational statuses a vehicle can have, as returned by GET /api/v1/vehicles?view=inventory.
+ * Values match the API v2 contract (all lowercase).
  */
-export type VehicleStatus = 'operational' | 'maintenance';
+export type VehicleStatus = 'available' | 'in_use' | 'maintenance';

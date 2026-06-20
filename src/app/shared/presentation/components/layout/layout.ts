@@ -1,6 +1,6 @@
-import { NgClass } from '@angular/common';
+// Removed unused NgClass import
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, OnInit, ViewChild, computed, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -17,30 +17,13 @@ interface MenuOption {
   icon: string;
   path: string;
   title: string;
-  /**
-   * Optional role allow-list. When present, the option is shown only to users
-   * whose `IamStore.currentRole()` is in the list. Omit for options visible
-   * to every authenticated user.
-   */
   roles?: string[];
 }
 
-/**
- * Main shell component that hosts top-level navigation and routed content.
- *
- * @remarks
- * Routes under `/iam/` (sign-in, sign-up) render with a clean full-page shell
- * (no sidebar, no toolbar). Every other route uses the operations chrome.
- *
- * The sidebar menu is filtered by the active user role: admins see admin-only
- * entries, supervisors see supervisor-only entries, and shared entries (no
- * `roles` restriction) appear for both.
- */
 @Component({
   selector: 'app-layout',
   standalone: true,
   imports: [
-    NgClass,
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
@@ -58,22 +41,15 @@ interface MenuOption {
 export class Layout implements OnInit {
   @ViewChild(MatSidenav) sidenav!: MatSidenav;
 
-  /**
-   * Whether the operations shell (sidenav + toolbar) is visible.
-   * Routes under `/iam/` opt out of the shell to render full-page auth views.
-   */
   readonly showShell = signal<boolean>(true);
-
-  /**
-   * Translation key of the currently active menu option.
-   */
   activeOption = signal<string>('option.dashboard');
+
+  /** Tracks whether the sidenav is open (used for mobile overlay mode). */
   isSidenavOpen = true;
 
-  /**
-   * Master list of menu options. The template renders only those entries the
-   * current user is authorized to see; see {@link visibleOptions}.
-   */
+  /** Mini-variant collapsed state — only active when sidenav.mode === 'side'. */
+  isCollapsed = false;
+
   readonly options: MenuOption[] = [
     {
       icon: 'monitor_heart',
@@ -100,6 +76,12 @@ export class Layout implements OnInit {
       roles: ['Supervisor'],
     },
     {
+      icon: 'alt_route',
+      path: '/service/planning',
+      title: 'option.routeDesign',
+      roles: ['Supervisor'],
+    },
+    {
       icon: 'map',
       path: '/monitoring/live-map',
       title: 'option.liveMap',
@@ -123,41 +105,38 @@ export class Layout implements OnInit {
       title: 'option.reports',
       roles: ['Supervisor'],
     },
-    { icon: 'home', path: '/home', title: 'option.home' },
   ];
 
   private observer = inject(BreakpointObserver);
   private router = inject(Router);
   private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
   protected store = inject(IamStore);
 
-  /**
-   * Menu options filtered by the active user role.
-   * Options without a `roles` restriction are visible to every authenticated user.
-   */
+  constructor() {
+    // Re-configure sidenav mode whenever the shell becomes visible after login.
+    // ngAfterViewInit already ran (sidenav was undefined then), so we must
+    // re-trigger synchronously once the @if block renders the mat-sidenav.
+    effect(() => {
+      if (this.showShell()) {
+        Promise.resolve().then(() => this.reconfigureSidenav());
+      }
+    });
+  }
+
   readonly visibleOptions = computed(() => {
     const role = this.store.currentRole();
     return this.options.filter((option) => !option.roles || (!!role && option.roles.includes(role)));
   });
 
-  /**
-   * Display name shown in the sidenav footer.
-   * Falls back to the i18n placeholder when no user is signed in.
-   */
   readonly displayName = computed(
     () => this.store.currentUsername() ?? this.translate.instant('layout.user.placeholder.name'),
   );
 
-  /**
-   * Display role shown in the sidenav footer.
-   */
   readonly displayRole = computed(
     () => this.store.currentRole() ?? this.translate.instant('layout.user.placeholder.role'),
   );
 
-  /**
-   * Two-letter avatar initials computed from the active username.
-   */
   readonly avatarInitials = computed(() => {
     const name = this.store.currentUsername() ?? 'JP';
     const parts = name.split(/[\s._-]+/).filter(Boolean);
@@ -176,10 +155,13 @@ export class Layout implements OnInit {
       if (!this.sidenav) return;
 
       if (response.matches) {
+        // Mobile: overlay mode — sidenav fully closes, mini-variant irrelevant
         this.sidenav.mode = 'over';
         this.sidenav.close();
         this.isSidenavOpen = false;
+        this.isCollapsed = false;
       } else {
+        // Desktop: side mode — sidenav always docked, collapse controls width
         this.sidenav.mode = 'side';
         this.sidenav.open();
         this.isSidenavOpen = true;
@@ -197,9 +179,18 @@ export class Layout implements OnInit {
       });
   }
 
-  toggleSidenav(): void {
-    this.isSidenavOpen = !this.isSidenavOpen;
-    this.sidenav?.toggle();
+  /**
+   * Header menu button handler.
+   * - Mobile (over mode): opens/closes the sidenav overlay.
+   * - Desktop (side mode): toggles the mini-variant collapsed state.
+   */
+  toggleMenu(): void {
+    if (this.sidenav?.mode === 'over') {
+      this.isSidenavOpen = !this.isSidenavOpen;
+      this.sidenav.toggle();
+    } else {
+      this.isCollapsed = !this.isCollapsed;
+    }
   }
 
   setActiveOption(option: string): void {
@@ -210,12 +201,27 @@ export class Layout implements OnInit {
     this.store.signOut(this.router);
   }
 
-  /**
-   * Explicit allow-list of routes that render full-page (no sidebar, no toolbar).
-   * Only sign-in needs the bare shell; every other route — including admin
-   * IAM views like `/iam/supervisors` — must stay inside the operations chrome.
-   */
-  private static readonly NO_SHELL_ROUTES: readonly string[] = ['/iam/sign-in'];
+  private reconfigureSidenav(): void {
+    if (!this.sidenav) return;
+    const isNarrow = this.observer.isMatched('(max-width: 1280px)');
+    if (isNarrow) {
+      this.sidenav.mode = 'over';
+      this.sidenav.close();
+      this.isSidenavOpen = false;
+      this.isCollapsed = false;
+    } else {
+      this.sidenav.mode = 'side';
+      this.sidenav.open();
+      this.isSidenavOpen = true;
+    }
+    this.cdr.detectChanges();
+  }
+
+  private static readonly NO_SHELL_ROUTES: readonly string[] = [
+    '/iam/sign-in',
+    '/iam/change-password',
+    '/iam/forgot-password',
+  ];
 
   private updateShellVisibility(url: string): void {
     const pathOnly = url.split('?')[0].split(';')[0];

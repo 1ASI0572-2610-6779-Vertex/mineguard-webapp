@@ -9,8 +9,8 @@ export class DashboardRiskDriversAssembler
   implements
     BaseAssembler<DashboardRiskDriver, DashboardRiskDriverResource, DashboardRiskDriversResponse>
 {
-  toEntitiesFromResponse(response: DashboardRiskDriversResponse): DashboardRiskDriver[] {
-    return response.dashboardRiskDrivers.map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: DashboardRiskDriversResponse): DashboardRiskDriver[] {
+    return [];
   }
 
   toEntityFromResource(resource: DashboardRiskDriverResource): DashboardRiskDriver {

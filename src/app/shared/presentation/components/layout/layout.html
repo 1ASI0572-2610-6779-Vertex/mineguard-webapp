@@ -1,34 +1,61 @@
 @if (showShell()) {
-  <mat-sidenav-container [ngClass]="{ 'sidenav-open': isSidenavOpen, 'sidenav-closed': !isSidenavOpen }">
-    <mat-sidenav #sidenav opened>
-      <div class="sidenav-header">
-        <img class="logo-mineguard" src="/mineguard-logo.jpeg" alt="Logo" />
+  <mat-sidenav-container class="app-shell" autosize>
+
+    <!-- ── SIDEBAR ───────────────────────────────────────────────────── -->
+    <mat-sidenav
+      #sidenav
+      opened
+      mode="side"
+      class="app-sidenav"
+      [class.sidenav-collapsed]="isCollapsed"
+      [style.width]="isCollapsed ? '70px' : '250px'">
+
+      <!-- Brand -->
+      <div class="sidenav-brand">
+        <div class="brand-logo-container">
+          <img class="brand-logo" src="/mineguard-logo2.png" alt="MineGuard" />
+          <span class="brand-name">MineGuard</span>
+        </div>
       </div>
 
-      <div class="sidenav-section-label">{{ 'layout.section.operations' | translate }}</div>
+      <!-- Navigation -->
+      <nav class="sidenav-nav" aria-label="Main navigation">
+        <p class="nav-section-label">{{ 'layout.section.operations' | translate }}</p>
 
-      <mat-nav-list>
-        @for (option of visibleOptions(); track option.path) {
-          <mat-list-item
-            (click)="setActiveOption(option.title); sidenav.mode === 'over' && sidenav.toggle()"
-            [routerLink]="option.path"
-            routerLinkActive="active-option"
-            [ngClass]="{ 'active-option': activeOption() === option.title }">
+        <ul class="nav-list" role="menubar">
+          @for (option of visibleOptions(); track option.path) {
+            <li class="nav-item" role="none">
+              <a
+                class="nav-link"
+                role="menuitem"
+                [routerLink]="option.path"
+                routerLinkActive="nav-link--active"
+                [class.nav-link--active]="activeOption() === option.title"
+                [attr.aria-label]="option.title | translate"
+                [attr.title]="isCollapsed ? (option.title | translate) : null"
+                (click)="setActiveOption(option.title); sidenav.mode === 'over' && sidenav.toggle()">
 
-            @if (option.icon.startsWith('http')) {
-              <img [src]="option.icon" alt="icon" width="20px" height="20px" />
-            } @else {
-              <mat-icon matListItemIcon>{{ option.icon }}</mat-icon>
-            }
+                <span class="nav-icon">
+                  @if (option.icon.startsWith('http')) {
+                    <img [src]="option.icon" alt="" width="20" height="20" />
+                  } @else {
+                    <mat-icon aria-hidden="true">{{ option.icon }}</mat-icon>
+                  }
+                </span>
 
-            <span>{{ option.title | translate }}</span>
-          </mat-list-item>
-        }
-      </mat-nav-list>
+                <span class="nav-label">{{ option.title | translate }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      </nav>
 
-      <div class="sidenav-footer">
-        <div class="user-avatar">{{ avatarInitials() }}</div>
-        <div class="user-info">
+      <!-- User footer — pinned to bottom via flex -->
+      <div class="sidenav-user">
+        <div class="user-avatar" [attr.title]="isCollapsed ? displayName() : null" aria-hidden="true">
+          {{ avatarInitials() }}
+        </div>
+        <div class="user-details">
           <span class="user-name">{{ displayName() }}</span>
           <span class="user-role">{{ displayRole() }}</span>
         </div>
@@ -36,46 +63,52 @@
           mat-icon-button
           class="logout-btn"
           [title]="'auth.logout' | translate"
-          (click)="performSignOut()"
-        >
+          (click)="performSignOut()">
           <mat-icon>logout</mat-icon>
         </button>
       </div>
+
     </mat-sidenav>
 
-    <mat-sidenav-content>
-      <mat-toolbar class="main-toolbar">
-        <button mat-icon-button class="menu-btn" (click)="toggleSidenav()">
-          @if (sidenav.opened) {
-            <mat-icon>close</mat-icon>
-          } @else {
-            <mat-icon>menu</mat-icon>
-          }
-        </button>
+    <!-- ── MAIN AREA ─────────────────────────────────────────────────── -->
+    <mat-sidenav-content class="app-body">
 
-        <div class="toolbar-title">
-          <h1>{{ activeOption() | translate }}</h1>
-          <span class="toolbar-subtitle">{{ 'toolbar.subtitle' | translate }}</span>
+      <!-- Top bar -->
+      <header class="app-header">
+        <div class="header-left">
+          <button
+            mat-icon-button
+            class="menu-btn"
+            (click)="toggleMenu()"
+            [attr.aria-label]="isCollapsed ? 'Expand navigation' : 'Collapse navigation'">
+            <mat-icon>{{ isCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
+          </button>
+
+          <div class="header-title">
+            <h1 class="header-page-name">{{ activeOption() | translate }}</h1>
+            <span class="header-subtitle">{{ 'toolbar.subtitle' | translate }}</span>
+          </div>
         </div>
 
-        <span class="mat-spacer"></span>
-
-        <div class="sensor-status">
-          <span class="sensor-dot"></span>
-          <span>{{ 'layout.sensors' | translate: { active: 142, total: 142 } }}</span>
+        <div class="header-right">
+          <div class="sensor-pill">
+            <span class="sensor-dot" aria-hidden="true"></span>
+            <span>{{ 'layout.sensors' | translate: { active: 142, total: 142 } }}</span>
+          </div>
+          <button mat-icon-button class="notif-btn" aria-label="Notifications">
+            <mat-icon>notifications</mat-icon>
+          </button>
+          <app-language-switcher></app-language-switcher>
         </div>
+      </header>
 
-        <button mat-icon-button class="notif-btn">
-          <mat-icon>notifications</mat-icon>
-        </button>
-
-        <app-language-switcher></app-language-switcher>
-      </mat-toolbar>
-
-      <div class="content">
+      <!-- Routed page content -->
+      <main class="app-content">
         <router-outlet></router-outlet>
-      </div>
+      </main>
+
     </mat-sidenav-content>
+
   </mat-sidenav-container>
 } @else {
   <router-outlet></router-outlet>

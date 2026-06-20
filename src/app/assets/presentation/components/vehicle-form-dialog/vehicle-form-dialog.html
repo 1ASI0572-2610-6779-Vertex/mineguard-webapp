@@ -1,0 +1,94 @@
+<div class="dialog-shell">
+  <!-- Progress bar -->
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" class="dialog-progress"></mat-progress-bar>
+  }
+
+  <!-- Header -->
+  <div class="dialog-header">
+    <div class="dialog-icon">
+      <mat-icon>local_shipping</mat-icon>
+    </div>
+    <div>
+      <h2 mat-dialog-title class="dialog-title">
+        {{ isEdit ? 'Editar Vehículo' : 'Registrar Vehículo' }}
+      </h2>
+      <p class="dialog-subtitle">
+        {{ isEdit ? 'Modifica los datos del vehículo seleccionado.' : 'Completa los campos para agregar un nuevo vehículo a la flota.' }}
+      </p>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="cancel()" [disabled]="loading()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Form body -->
+  <mat-dialog-content>
+    <form [formGroup]="form" class="dialog-form">
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="field-half">
+          <mat-label>Código</mat-label>
+          <input matInput formControlName="code" placeholder="Ej. VH-001" />
+          @if (form.controls.code.hasError('required') && form.controls.code.touched) {
+            <mat-error>El código es obligatorio</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field-half">
+          <mat-label>Modelo</mat-label>
+          <input matInput formControlName="model" placeholder="Ej. Volvo FH 500" />
+          @if (form.controls.model.hasError('required') && form.controls.model.touched) {
+            <mat-error>El modelo es obligatorio</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="field-half">
+          <mat-label>Categoría</mat-label>
+          <input matInput formControlName="category" placeholder="Ej. Camión de carga" />
+          @if (form.controls.category.hasError('required') && form.controls.category.touched) {
+            <mat-error>La categoría es obligatoria</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field-half">
+          <mat-label>Estado operativo</mat-label>
+          <mat-select formControlName="status">
+            @for (opt of statusOptions; track opt.value) {
+              <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="field-full">
+        <mat-label>Conductor asignado (opcional)</mat-label>
+        <input matInput formControlName="assignedDriverName" placeholder="Nombre completo del conductor" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="field-full">
+        <mat-label>Turno (opcional)</mat-label>
+        <input matInput formControlName="shiftLabel" placeholder="Ej. Turno Mañana" />
+      </mat-form-field>
+
+      @if (errorMsg()) {
+        <div class="error-banner">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMsg() }}</span>
+        </div>
+      }
+    </form>
+  </mat-dialog-content>
+
+  <!-- Actions -->
+  <mat-dialog-actions align="end">
+    <button mat-button class="btn-cancel" (click)="cancel()" [disabled]="loading()">
+      Cancelar
+    </button>
+    <button mat-flat-button class="btn-submit" (click)="submit()" [disabled]="loading()">
+      <mat-icon>{{ isEdit ? 'save' : 'add_circle' }}</mat-icon>
+      {{ isEdit ? 'Guardar cambios' : 'Registrar vehículo' }}
+    </button>
+  </mat-dialog-actions>
+</div>

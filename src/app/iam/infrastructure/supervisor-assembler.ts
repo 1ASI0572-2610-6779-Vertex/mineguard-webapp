@@ -4,43 +4,48 @@ import { Supervisor } from '../domain/model/supervisor.entity';
 import { CreateSupervisorRequest } from './create-supervisor.request';
 import { SupervisorResource, SupervisorsResponse } from './supervisor-response';
 
-/**
- * Converts between {@link Supervisor} domain entities and infrastructure
- * resources, and between {@link CreateSupervisorCommand} domain commands and
- * HTTP request payloads.
- */
 export class SupervisorAssembler
   implements BaseAssembler<Supervisor, SupervisorResource, SupervisorsResponse>
 {
   toEntityFromResource(resource: SupervisorResource): Supervisor {
     return new Supervisor({
-      id: resource.id,
-      fullName: resource.fullName,
-      corporateId: resource.corporateId,
-      email: resource.email,
+      id:           resource.id,
+      fullName:     resource.fullName,
+      corporateId:  resource.corporateId,
+      email:        resource.email,
       accessStatus: resource.accessStatus,
+      // username and idCompany are not returned by GET /api/v1/supervisors
+      username:  resource.username  ?? '',
+      idCompany: resource.idCompany ?? 1,
     });
   }
 
+  /**
+   * Builds the PUT /api/v1/supervisors/{id} body.
+   * password is omitted — the backend treats a missing password as "no change".
+   */
   toResourceFromEntity(entity: Supervisor): SupervisorResource {
     return {
-      id: entity.id,
-      fullName: entity.fullName,
-      corporateId: entity.corporateId,
-      email: entity.email,
+      id:           entity.id,
+      fullName:     entity.fullName,
+      corporateId:  entity.corporateId,
+      email:        entity.email,
       accessStatus: entity.accessStatus,
+      username:     entity.username  || undefined,
+      idCompany:    entity.idCompany || undefined,
     };
   }
 
-  toEntitiesFromResponse(response: SupervisorsResponse): Supervisor[] {
-    return (response.supervisors ?? []).map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: SupervisorsResponse): Supervisor[] {
+    return [];
   }
 
   toRequestFromCommand(command: CreateSupervisorCommand): CreateSupervisorRequest {
     return {
-      fullName: command.fullName,
+      email:       command.email,
+      fullName:    command.fullName,
+      idCompany:   command.idCompany,
       corporateId: command.corporateId,
-      email: command.email,
     };
   }
 }

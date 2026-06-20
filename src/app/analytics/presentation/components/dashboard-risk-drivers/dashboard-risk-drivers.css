@@ -1,94 +1,191 @@
-.risk-card {
-  background: white;
-  border-radius: 14px;
-  padding: 22px;
+/* ── Entry animation ────────────────────────────────────────────── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.risk-title {
+@keyframes barGrow {
+  from { width: 0; }
+}
+
+/* ── Card ───────────────────────────────────────────────────────── */
+.risk-card {
+  background: var(--color-neutral-white);
+  border-radius: 14px;
+  padding: 20px 22px;
+  border: 1px solid var(--color-neutral-gray-300);
+  box-shadow: 0 1px 3px rgba(20, 20, 20, 0.04);
+  animation: fadeSlideUp 0.32s ease 0.14s both;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+.risk-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 18px;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-neutral-gray-100);
 }
 
-.risk-title h2 {
+.header-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--color-danger-surface);
+  color: var(--color-danger-main);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.header-icon mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.risk-header h2 {
   font-size: 14px;
-  margin: 0;
   font-weight: 800;
+  color: var(--color-neutral-black);
+  margin: 0;
 }
 
+/* ── List ───────────────────────────────────────────────────────── */
 .risk-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
+/* ── Item ───────────────────────────────────────────────────────── */
 .risk-item {
   display: grid;
-  grid-template-columns: 36px 1fr auto;
-  align-items: center;
+  grid-template-columns: 30px 1fr;
+  align-items: start;
   gap: 12px;
-  background: #f8fafc;
   padding: 12px;
   border-radius: 10px;
+  background: var(--color-neutral-gray-100);
+  border: 1px solid transparent;
+  animation: fadeSlideUp 0.3s ease both;
+  transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
-.rank {
+.risk-item:hover {
+  background: var(--color-neutral-white);
+  border-color: var(--color-neutral-gray-300);
+  box-shadow: 0 2px 8px rgba(20, 20, 20, 0.06);
+}
+
+/* ── Rank badge ─────────────────────────────────────────────────── */
+.rank-badge {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: white;
+  background: var(--color-neutral-gray-300);
+  color: #6b7280;
   display: grid;
   place-items: center;
+  font-size: 11px;
   font-weight: 800;
-  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
-.rank-red {
-  background: #dc2626;
-  color: white;
-}
+.rank-badge--first  { background: var(--color-danger-main);   color: var(--color-neutral-white); }
+.rank-badge--second { background: var(--color-warning-main);  color: var(--color-neutral-black); }
+.rank-badge--third  { background: var(--color-accent-surface); color: var(--color-accent-main); }
 
-.rank-orange {
-  background: #f59e0b;
-  color: white;
-}
-
+/* ── Driver info ────────────────────────────────────────────────── */
 .driver-info {
   display: flex;
   flex-direction: column;
+  gap: 5px;
 }
 
-.driver-info strong {
-  font-size: 12px;
+.driver-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
-.driver-info span {
-  font-size: 10px;
-  color: #555;
+.driver-name {
+  font-size: 12.5px;
   font-weight: 700;
+  color: var(--color-neutral-black);
+  line-height: 1.2;
 }
 
-.points {
-  font-size: 12px;
+.vehicle-type {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.points.high {
-  color: #dc2626;
-}
-
-.points.medium {
-  color: #f59e0b;
-}
-
-.report-btn {
-  margin-top: 20px;
-  width: 100%;
-  border: none;
-  border-radius: 8px;
-  background: #eff6ff;
-  color: #1d4ed8;
+/* ── Score badge ────────────────────────────────────────────────── */
+.score-badge {
+  font-size: 11px;
   font-weight: 800;
-  padding: 12px;
-  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 100px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.score-badge--high   { background: var(--color-danger-surface);  color: var(--color-danger-main); }
+.score-badge--medium { background: var(--color-warning-surface); color: #92400e; }
+.score-badge--low    { background: var(--color-success-surface); color: #15803d; }
+
+/* ── Risk bar ───────────────────────────────────────────────────── */
+.risk-bar-track {
+  height: 4px;
+  background: var(--color-neutral-gray-300);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.risk-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  animation: barGrow 0.6s ease both;
+  transition: width 0.4s ease;
+}
+
+.risk-bar-fill--high   { background: var(--color-danger-main); }
+.risk-bar-fill--medium { background: var(--color-warning-main); }
+.risk-bar-fill--low    { background: var(--color-success-main); }
+
+/* ── CTA button ─────────────────────────────────────────────────── */
+.full-report-btn {
+  width: 100%;
+  border-color: var(--color-accent-main) !important;
+  color: var(--color-accent-main) !important;
+  font-weight: 700 !important;
+  font-size: 12.5px !important;
+  border-radius: 9px !important;
+  height: 38px !important;
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.18s ease !important;
+}
+
+.full-report-btn:hover {
+  background: var(--color-accent-surface) !important;
+}
+
+.full-report-btn mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
 }

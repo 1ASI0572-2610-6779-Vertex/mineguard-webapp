@@ -13,12 +13,8 @@ export class AnalyticsIncidentDistributionAssembler
       AnalyticsIncidentDistributionResponse
     >
 {
-  toEntitiesFromResponse(
-    response: AnalyticsIncidentDistributionResponse
-  ): AnalyticsIncidentDistribution[] {
-    return response.analyticsIncidentDistribution.map((resource) =>
-      this.toEntityFromResource(resource)
-    );
+  toEntitiesFromResponse(_: AnalyticsIncidentDistributionResponse): AnalyticsIncidentDistribution[] {
+    return [];
   }
 
   toEntityFromResource(

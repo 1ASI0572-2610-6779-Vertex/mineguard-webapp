@@ -9,4 +9,4 @@ export interface FleetSummaryResource extends BaseResource {
   operationalPercent: number;
 }
 
-export interface FleetSummaryResponse extends BaseResponse, FleetSummaryResource {}
+export interface FleetSummaryResponse extends BaseResponse {}

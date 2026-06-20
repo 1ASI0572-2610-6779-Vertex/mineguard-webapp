@@ -1,47 +1,85 @@
-<section class="catalog-summary">
-  <header class="catalog-header">
-    <mat-icon class="header-icon">inventory_2</mat-icon>
-    <h2>{{ 'assets.catalog.title' | translate }}</h2>
-  </header>
+<section class="cs-card">
 
-  <ul class="metric-list">
-    <li class="metric-item">
-      <div class="metric-icon icon-drivers">
+  <!-- Header -->
+  <div class="cs-header">
+    <div class="cs-header-icon">
+      <mat-icon>inventory_2</mat-icon>
+    </div>
+    <div>
+      <h2 class="cs-title">{{ 'assets.catalog.title' | translate }}</h2>
+      <p class="cs-subtitle">Inventario del sistema</p>
+    </div>
+  </div>
+
+  <!-- Metrics -->
+  <ul class="cs-list">
+
+    <!-- Drivers -->
+    <li class="cs-item">
+      <div class="cs-icon cs-icon--drivers">
         <mat-icon>groups</mat-icon>
       </div>
-      <div class="metric-text">
-        <h3>{{ 'assets.catalog.drivers.label' | translate }}</h3>
-        <p class="sub">
+      <div class="cs-text">
+        <h3 class="cs-label">{{ 'assets.catalog.drivers.label' | translate }}</h3>
+        <p class="cs-sub">
           {{ 'assets.catalog.drivers.sub' | translate: { count: summary.driversInactive } }}
         </p>
       </div>
-      <span class="metric-count">{{ summary.driversTotal }}</span>
+      <div class="cs-right">
+        <span class="cs-count">{{ summary.driversTotal }}</span>
+        @if (summary.driversInactive > 0) {
+          <span class="cs-attention cs-attention--warning">
+            <mat-icon class="cs-att-icon">warning</mat-icon>
+            {{ summary.driversInactive }}
+          </span>
+        }
+      </div>
     </li>
 
-    <li class="metric-item">
-      <div class="metric-icon icon-vehicles">
+    <!-- Vehicles -->
+    <li class="cs-item">
+      <div class="cs-icon cs-icon--vehicles">
         <mat-icon>local_shipping</mat-icon>
       </div>
-      <div class="metric-text">
-        <h3>{{ 'assets.catalog.vehicles.label' | translate }}</h3>
-        <p class="sub">
+      <div class="cs-text">
+        <h3 class="cs-label">{{ 'assets.catalog.vehicles.label' | translate }}</h3>
+        <p class="cs-sub">
           {{ 'assets.catalog.vehicles.sub' | translate: { count: summary.vehiclesMaintenance } }}
         </p>
       </div>
-      <span class="metric-count">{{ summary.vehiclesTotal }}</span>
+      <div class="cs-right">
+        <span class="cs-count">{{ summary.vehiclesTotal }}</span>
+        @if (summary.vehiclesMaintenance > 0) {
+          <span class="cs-attention cs-attention--warning">
+            <mat-icon class="cs-att-icon">build</mat-icon>
+            {{ summary.vehiclesMaintenance }}
+          </span>
+        }
+      </div>
     </li>
 
-    <li class="metric-item">
-      <div class="metric-icon icon-supervisors">
+    <!-- Supervisors -->
+    <li class="cs-item">
+      <div class="cs-icon cs-icon--supervisors">
         <mat-icon>shield_person</mat-icon>
       </div>
-      <div class="metric-text">
-        <h3>{{ 'assets.catalog.supervisors.label' | translate }}</h3>
-        <p class="sub">
+      <div class="cs-text">
+        <h3 class="cs-label">{{ 'assets.catalog.supervisors.label' | translate }}</h3>
+        <p class="cs-sub">
           {{ 'assets.catalog.supervisors.sub' | translate: { count: summary.supervisorsLocked } }}
         </p>
       </div>
-      <span class="metric-count">{{ summary.supervisorsTotal }}</span>
+      <div class="cs-right">
+        <span class="cs-count">{{ summary.supervisorsTotal }}</span>
+        @if (summary.supervisorsLocked > 0) {
+          <span class="cs-attention cs-attention--danger">
+            <mat-icon class="cs-att-icon">lock</mat-icon>
+            {{ summary.supervisorsLocked }}
+          </span>
+        }
+      </div>
     </li>
+
   </ul>
+
 </section>

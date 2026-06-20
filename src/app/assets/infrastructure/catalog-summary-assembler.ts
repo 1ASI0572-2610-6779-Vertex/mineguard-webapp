@@ -33,7 +33,7 @@ export class CatalogSummaryAssembler
     };
   }
 
-  toEntitiesFromResponse(response: CatalogSummaryResponse): CatalogSummary[] {
-    return [this.toEntityFromResource(response)];
+  toEntitiesFromResponse(_: CatalogSummaryResponse): CatalogSummary[] {
+    return [];
   }
 }

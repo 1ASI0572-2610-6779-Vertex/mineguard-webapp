@@ -29,7 +29,7 @@ export class VehicleAssembler
     };
   }
 
-  toEntitiesFromResponse(response: VehiclesResponse): Vehicle[] {
-    return (response.vehicles ?? []).map((resource) => this.toEntityFromResource(resource));
+  toEntitiesFromResponse(_: VehiclesResponse): Vehicle[] {
+    return [];
   }
 }

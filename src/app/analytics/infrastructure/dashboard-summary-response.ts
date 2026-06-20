@@ -10,6 +10,4 @@ export interface DashboardSummaryResource extends BaseResource {
   totalDrivers: number;
 }
 
-export interface DashboardSummaryResponse extends BaseResponse {
-  dashboardSummary: DashboardSummaryResource[];
-}
+export interface DashboardSummaryResponse extends BaseResponse {}

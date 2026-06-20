@@ -1,5 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 
+import { IamStore } from '../../../../iam/application/iam.store';
 import { AnalyticsStore } from '../../../application/analytics.store';
 import { DashboardTrend } from '../../../domain/model/dashboard-trend.entity';
 import { DashboardRecentAlerts } from '../../components/dashboard-recent-alerts/dashboard-recent-alerts';
@@ -14,17 +16,65 @@ import { DashboardTrend as DashboardTrendComponent } from '../../components/dash
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [DashboardStats, DashboardTrendComponent, DashboardRiskDrivers, DashboardRecentAlerts],
+  imports: [
+    MatIconModule,
+    DashboardStats,
+    DashboardTrendComponent,
+    DashboardRiskDrivers,
+    DashboardRecentAlerts,
+  ],
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.css',
 })
 export class DashboardPage {
   private store = inject(AnalyticsStore);
+  private iamStore = inject(IamStore);
+
+  readonly displayName = this.iamStore.currentUsername;
+  readonly displayRole = this.iamStore.currentRole;
 
   readonly summary = this.store.dashboardSummary;
   readonly trend = this.store.dashboardTrend;
-  readonly riskDrivers = this.store.riskDrivers;
+  readonly riskDrivers          = this.store.riskDrivers;
+  readonly performanceMetrics   = this.store.performanceMetrics;
   readonly recentAlerts = this.store.recentAlerts;
+
+  readonly todayLabel = new Date().toLocaleDateString('es-PE', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  /** Derived operation status based on criticalAlerts count */
+  readonly operationStatus = computed(() => {
+    const s = this.summary();
+    if (!s) return 'loading';
+    if (s.criticalAlerts > 5) return 'critical';
+    if (s.criticalAlerts > 0) return 'warning';
+    return 'normal';
+  });
+
+  readonly operationStatusLabel = computed(() => {
+    switch (this.operationStatus()) {
+      case 'critical': return 'OPERACIÓN CRÍTICA';
+      case 'warning':  return 'ATENCIÓN REQUERIDA';
+      case 'normal':   return 'OPERACIÓN NORMAL';
+      default:         return 'CARGANDO...';
+    }
+  });
+
+  readonly operationStatusIcon = computed(() => {
+    switch (this.operationStatus()) {
+      case 'critical': return 'crisis_alert';
+      case 'warning':  return 'warning';
+      default:         return 'check_circle';
+    }
+  });
+
+  onDriverSelected(driverId: number): void {
+    this.store.loadPerformanceMetrics(driverId);
+  }
 
   readonly alertTrendPath = computed(() => this.buildPath(this.trend(), 'alerts'));
   readonly incidentTrendPath = computed(() => this.buildPath(this.trend(), 'incidents'));

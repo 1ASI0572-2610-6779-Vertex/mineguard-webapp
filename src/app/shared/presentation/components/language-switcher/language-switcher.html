@@ -1,13 +1,18 @@
-<mat-button-toggle-group [value]="currentLang"
-                         appearance="standard"
-                         aria-label="Preferred Language"
-                         name="language">
-  <ng-container *ngFor="let language of languages">
-    <mat-button-toggle (click)="useLanguage(language)"
-                       [aria-label]="language"
-                       [value]="language"
-                       class="language-toggle">
-      {{ language.toUpperCase() }}
-    </mat-button-toggle>
-  </ng-container>
-</mat-button-toggle-group>
+<div class="lang-switcher" role="group" aria-label="Language selection">
+  <mat-button-toggle-group
+    [value]="currentLang"
+    appearance="standard"
+    aria-label="Preferred language"
+    name="language"
+    class="lang-toggle-group">
+    <ng-container *ngFor="let language of languages">
+      <mat-button-toggle
+        [value]="language"
+        [aria-label]="language"
+        (click)="useLanguage(language)"
+        class="lang-toggle">
+        {{ language.toUpperCase() }}
+      </mat-button-toggle>
+    </ng-container>
+  </mat-button-toggle-group>
+</div>

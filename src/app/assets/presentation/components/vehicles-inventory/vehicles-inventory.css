@@ -1,25 +1,28 @@
-.vehicles-inventory {
-  display: flex;
-  flex-direction: column;
+/* ── Entry animation ─────────────────────────────────────────────── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.column-labels {
+.vehicles-inventory { display: flex; flex-direction: column; }
+
+/* ── Column headers ──────────────────────────────────────────────── */
+.col-headers {
   display: grid;
-  grid-template-columns: 2fr 1fr 1.4fr 1.2fr;
-  gap: 14px;
-  padding: 0 4px 10px;
-  border-bottom: 1px solid #f1f5f9;
+  grid-template-columns: 2fr 1fr 1.5fr 1.4fr;
+  gap: 16px;
+  padding: 0 12px 10px;
+  border-bottom: 1px solid var(--color-neutral-gray-300);
   font-size: 10px;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
-  color: #888;
+  color: #9ca3af;
   font-weight: 700;
 }
 
-.actions-col {
-  text-align: right;
-}
+.col-right { text-align: right; }
 
+/* ── List ────────────────────────────────────────────────────────── */
 .vehicles-list {
   list-style: none;
   margin: 0;
@@ -28,137 +31,176 @@
   flex-direction: column;
 }
 
+/* ── Row ─────────────────────────────────────────────────────────── */
 .vehicle-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1.4fr 1.2fr;
+  grid-template-columns: 2fr 1fr 1.5fr 1.4fr;
   align-items: center;
-  gap: 14px;
-  padding: 14px 4px;
-  border-bottom: 1px solid #f1f5f9;
+  gap: 16px;
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--color-neutral-gray-100);
+  border-radius: 8px;
+  cursor: default;
+  transition: background-color 0.18s ease, box-shadow 0.18s ease;
+  animation: fadeSlideUp 0.28s ease both;
 }
 
-.vehicle-row:last-child {
-  border-bottom: none;
+.vehicle-row:last-child { border-bottom: none; }
+
+.vehicle-row:hover {
+  background-color: #f8fafc;
+  box-shadow: 0 1px 6px rgba(20, 20, 20, 0.05);
 }
 
-.vehicle-identity {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+/* ── Identity ────────────────────────────────────────────────────── */
+.vehicle-identity { display: flex; align-items: center; gap: 12px; }
 
-.icon-wrap {
-  width: 38px;
-  height: 38px;
+.v-icon-wrap {
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
-  background: #eef2ff;
-  color: #1d4ed8;
+  background: var(--color-accent-surface);
+  color: var(--color-accent-main);
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  transition: background-color 0.18s ease, color 0.18s ease;
 }
 
-.vehicle-icon {
-  font-size: 22px;
-  width: 22px;
-  height: 22px;
+.v-icon-maintenance {
+  background: var(--color-warning-surface);
+  color: var(--color-warning-main);
 }
 
-.identity-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.3;
+.v-icon-wrap mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+.identity-text { display: flex; flex-direction: column; gap: 2px; }
+
+.v-code {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-neutral-black);
+  line-height: 1.2;
 }
 
-.identity-text strong {
-  font-size: 13px;
-  color: #1a1a2e;
+.v-model {
+  font-size: 11.5px;
+  color: #6b7280;
+  line-height: 1.2;
 }
 
-.identity-text span {
-  font-size: 11px;
-  color: #777;
-}
-
+/* ── Status badges ───────────────────────────────────────────────── */
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  border-radius: 20px;
-  letter-spacing: 0.4px;
+  gap: 5px;
+  padding: 4px 11px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 100px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
 }
 
-.badge-operational {
-  background: #dcfce7;
-  color: #15803d;
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.badge-operational::before {
-  content: '●';
-  color: #16a34a;
+.badge-success {
+  background: var(--color-success-surface);
+  color: var(--color-success-main);
 }
 
-.badge-maintenance {
-  background: #fef3c7;
-  color: #b45309;
+.badge-success .badge-dot { background: var(--color-success-main); }
+
+.badge-warning {
+  background: var(--color-warning-surface);
+  color: #92400e;
 }
 
-.badge-icon {
-  font-size: 14px;
-  width: 14px;
-  height: 14px;
-}
+.badge-icon { font-size: 13px; width: 13px; height: 13px; }
 
+/* ── Assignment cell ─────────────────────────────────────────────── */
 .assignment-cell {
   display: flex;
   flex-direction: column;
+  gap: 3px;
+}
+
+.driver-name {
   font-size: 13px;
-  color: #1a1a2e;
-}
-
-.assignment-cell strong {
-  font-weight: 700;
-}
-
-.shift-label {
-  font-size: 10px;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  color: #777;
   font-weight: 600;
+  color: var(--color-neutral-black);
 }
 
-.blocked-for-use {
+.shift-chip {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #6b7280;
+  background: var(--color-neutral-gray-100);
+  border-radius: 4px;
+  padding: 2px 6px;
+  align-self: flex-start;
+}
+
+.unassigned {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 12px;
   color: #9ca3af;
   font-style: italic;
 }
 
+.unassigned-icon { font-size: 14px; width: 14px; height: 14px; }
+
+/* ── Actions ─────────────────────────────────────────────────────── */
 .actions-cell {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 6px;
 }
 
-.edit-btn mat-icon {
-  color: #555;
+.icon-btn mat-icon {
   font-size: 18px;
   width: 18px;
   height: 18px;
+  color: #9ca3af;
+  transition: color 0.16s ease;
 }
+
+.icon-btn:hover mat-icon { color: var(--color-accent-main); }
 
 .action-btn {
-  font-size: 12px !important;
+  font-size: 11.5px !important;
   font-weight: 700 !important;
   border-radius: 8px !important;
+  height: 32px !important;
+  padding: 0 12px !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 5px;
+  transition: opacity 0.16s ease !important;
 }
 
-.action-positive {
-  color: #15803d !important;
-  border-color: #86efac !important;
+.action-btn mat-icon { font-size: 14px; width: 14px; height: 14px; }
+
+.btn-warning {
+  color: #92400e !important;
+  border-color: var(--color-warning-main) !important;
 }
+
+.btn-warning:hover { background: var(--color-warning-surface) !important; }
+
+.btn-success {
+  color: #14532d !important;
+  border-color: var(--color-success-main) !important;
+}
+
+.btn-success:hover { background: var(--color-success-surface) !important; }

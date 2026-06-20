@@ -1,38 +1,62 @@
 <div class="risk-card">
-  <div class="risk-title">
-    <span>👥</span>
+
+  <!-- Header -->
+  <div class="risk-header">
+    <div class="header-icon">
+      <mat-icon>person_alert</mat-icon>
+    </div>
     <h2>{{ 'dashboard.riskDrivers.title' | translate }}</h2>
   </div>
 
-  <div class="risk-list">
-    @for (metric of riskDrivers; track metric.id; let i = $index) {
-      <div class="risk-item">
-        <div
-          class="rank"
-          [class.rank-red]="i === 0"
-          [class.rank-orange]="i === 1"
-        >
+  <!-- Driver list -->
+  <ul class="risk-list" role="list">
+    @for (driver of riskDrivers; track driver.id; let i = $index) {
+      <li class="risk-item" [style.animation-delay]="(i * 50) + 'ms'" (click)="selectDriver(driver)" style="cursor:pointer">
+
+        <!-- Rank badge -->
+        <div class="rank-badge"
+          [class.rank-badge--first]="i === 0"
+          [class.rank-badge--second]="i === 1"
+          [class.rank-badge--third]="i === 2">
           {{ i + 1 }}
         </div>
 
+        <!-- Driver info -->
         <div class="driver-info">
-          <strong>{{ metric.driverName }}</strong>
-          <span>{{ metric.vehicleType }}</span>
+          <div class="driver-name-row">
+            <strong class="driver-name">{{ driver.driverName }}</strong>
+            <span
+              class="score-badge"
+              [class.score-badge--high]="driver.riskScore >= 70"
+              [class.score-badge--medium]="driver.riskScore >= 50 && driver.riskScore < 70"
+              [class.score-badge--low]="driver.riskScore < 50">
+              {{ driver.riskScore | number: '1.0-0' }} {{ 'dashboard.riskDrivers.points' | translate }}
+            </span>
+          </div>
+          <span class="vehicle-type">{{ driver.vehicleType }}</span>
+          <!-- Risk progress bar -->
+          <div class="risk-bar-track">
+            <div
+              class="risk-bar-fill"
+              [style.width]="barWidth(driver.riskScore)"
+              [class.risk-bar-fill--high]="driver.riskScore >= 70"
+              [class.risk-bar-fill--medium]="driver.riskScore >= 50 && driver.riskScore < 70"
+              [class.risk-bar-fill--low]="driver.riskScore < 50">
+            </div>
+          </div>
         </div>
 
-        <strong
-          class="points"
-          [class.high]="metric.riskScore >= 70"
-          [class.medium]="metric.riskScore >= 50 && metric.riskScore < 70"
-        >
-          {{ metric.riskScore | number: '1.0-0' }}
-          {{ 'dashboard.riskDrivers.points' | translate }}
-        </strong>
-      </div>
+      </li>
     }
-  </div>
+  </ul>
 
-  <button class="report-btn">
+  <!-- CTA -->
+  <button
+    mat-stroked-button
+    class="full-report-btn"
+    (click)="goToFullReport()">
+    <mat-icon>open_in_new</mat-icon>
     {{ 'dashboard.riskDrivers.fullReport' | translate }}
   </button>
+
 </div>

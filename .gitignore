@@ -46,3 +46,6 @@ Thumbs.db
 # Project artifacts
 *.tgz
 *.iml
+# Claude
+/.claude/
+.claude/

@@ -1,14 +1,101 @@
-@import './material-theme.scss'; /* You can add global styles to this file, and also import other style files */
+@import './material-theme.scss';
 
-html, body {
-    height: 100%;
+/* ─────────────────────────────────────────────────────────────
+   DESIGN TOKENS — MineGuard Color System
+   ───────────────────────────────────────────────────────────── */
+:root {
+  /* Neutral */
+  --color-neutral-black:     #141414;
+  --color-neutral-white:     #FFFFFF;
+  --color-neutral-gray-100:  #F4F4F5;
+  --color-neutral-gray-300:  #D9D9D9;
+
+  /* Semantic — Danger */
+  --color-danger-main:       #BA1919;
+  --color-danger-surface:    #F6E3E3;
+
+  /* Semantic — Warning */
+  --color-warning-main:      #FEBA2B;
+  --color-warning-surface:   #FFF3D9;
+
+  /* Semantic — Info */
+  --color-info-main:         #257CF6;
+  --color-info-surface:      #E9F2FE;
+
+  /* Semantic — Accent (brand blue) */
+  --color-accent-main:       #1F41AF;
+  --color-accent-surface:    #E8ECF7;
+
+  /* Semantic — Success */
+  --color-success-main:      #22C55E;
+  --color-success-surface:   #C1EDD2;
+
+  /* Typography */
+  --font-base: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BASE RESET
+   ───────────────────────────────────────────────────────────── */
+html,
+body {
+  height: 100%;
 }
 
 body {
-    margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
+  margin: 0;
+  font-family: var(--font-base);
+  background: var(--color-neutral-gray-100);
+  color: var(--color-neutral-black);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   UTILITY — content page wrapper (used by home / about / 404)
+   ───────────────────────────────────────────────────────────── */
 .container-with-spacing {
-    margin: 10px; /* Applies margin to all sides */
+  padding: 8px 4px;
+}
+
+/* Contener z-indexes de Leaflet dentro del map container */
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 400 !important;
+}
+
+.leaflet-control {
+  z-index: 800 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   GLOBAL — MatDialog panel override
+   ───────────────────────────────────────────────────────────── */
+.mg-dialog-panel .mat-mdc-dialog-surface {
+  border-radius: 16px !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   GLOBAL — MatSnackBar custom panel classes
+   ───────────────────────────────────────────────────────────── */
+.mg-snack .mdc-snackbar__surface {
+  border-radius: 10px !important;
+}
+
+.mg-snack--success .mdc-snackbar__surface {
+  background: var(--color-success-main) !important;
+  color: #ffffff !important;
+}
+
+.mg-snack--neutral .mdc-snackbar__surface {
+  background: #374151 !important;
+  color: #ffffff !important;
+}
+
+.mg-snack--info .mdc-snackbar__surface {
+  background: var(--color-accent-main) !important;
+  color: #ffffff !important;
 }

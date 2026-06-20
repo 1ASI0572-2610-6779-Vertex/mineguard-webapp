@@ -80,8 +80,8 @@ export class AnalyticsApi extends BaseApi {
     return this.dashboardRecentAlertsEndpoint.getAll();
   }
 
-  getPerformanceMetrics(): Observable<PerformanceMetric[]> {
-    return this.performanceMetricsEndpoint.getAll();
+  getPerformanceMetrics(driverId: number): Observable<PerformanceMetric[]> {
+    return this.performanceMetricsEndpoint.getByDriverId(driverId);
   }
 
   getReports(): Observable<Report[]> {
@@ -110,5 +110,15 @@ export class AnalyticsApi extends BaseApi {
 
   getAdminNotices(): Observable<AdminNotice[]> {
     return this.adminNoticesEndpoint.getAll();
+  }
+
+  // POST /api/v1/admin/notices/{noticeId}/dispatches
+  postNoticeDispatch(noticeId: number): Observable<void> {
+    return this.adminNoticesEndpoint.postDispatch(noticeId);
+  }
+
+  /** GET /reports/{id}?format=pdf — download binary PDF report as Blob. */
+  downloadReportPdf(id: number): Observable<Blob> {
+    return this.reportsEndpoint.downloadPdf(id);
   }
 }

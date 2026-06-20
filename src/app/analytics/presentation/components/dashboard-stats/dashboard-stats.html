@@ -1,33 +1,47 @@
 <div class="stats-grid">
-  <div class="stat-card">
-    <div>
-      <h3>{{ 'dashboard.stats.criticalAlerts' | translate }}</h3>
-      <p>{{ summary.criticalAlerts }}</p>
+
+  <!-- Critical Alerts -->
+  <div class="stat-card stat-card--danger" style="animation-delay: 0ms">
+    <div class="stat-body">
+      <span class="stat-label">{{ 'dashboard.stats.criticalAlerts' | translate }}</span>
+      <span class="stat-value">{{ summary.criticalAlerts }}</span>
     </div>
-    <div class="icon red">⚠</div>
+    <div class="stat-icon stat-icon--danger">
+      <mat-icon>crisis_alert</mat-icon>
+    </div>
   </div>
 
-  <div class="stat-card">
-    <div>
-      <h3>{{ 'dashboard.stats.fatigueEvents' | translate }}</h3>
-      <p>{{ summary.fatigueEvents }}</p>
+  <!-- Fatigue Events -->
+  <div class="stat-card stat-card--warning" style="animation-delay: 60ms">
+    <div class="stat-body">
+      <span class="stat-label">{{ 'dashboard.stats.fatigueEvents' | translate }}</span>
+      <span class="stat-value">{{ summary.fatigueEvents }}</span>
     </div>
-    <div class="icon orange">⌁</div>
+    <div class="stat-icon stat-icon--warning">
+      <mat-icon>bedtime</mat-icon>
+    </div>
   </div>
 
-  <div class="stat-card">
-    <div>
-      <h3>{{ 'dashboard.stats.activeVehicles' | translate }}</h3>
-      <p>{{ summary.activeVehicles }}</p>
+  <!-- Active Vehicles -->
+  <div class="stat-card stat-card--info" style="animation-delay: 120ms">
+    <div class="stat-body">
+      <span class="stat-label">{{ 'dashboard.stats.activeVehicles' | translate }}</span>
+      <span class="stat-value">{{ summary.activeVehicles }}</span>
     </div>
-    <div class="icon blue">🚙</div>
+    <div class="stat-icon stat-icon--info">
+      <mat-icon>local_shipping</mat-icon>
+    </div>
   </div>
 
-  <div class="stat-card">
-    <div>
-      <h3>{{ 'dashboard.stats.fieldDrivers' | translate }}</h3>
-      <p>{{ summary.totalDrivers }}</p>
+  <!-- Field Drivers -->
+  <div class="stat-card stat-card--accent" style="animation-delay: 180ms">
+    <div class="stat-body">
+      <span class="stat-label">{{ 'dashboard.stats.fieldDrivers' | translate }}</span>
+      <span class="stat-value">{{ summary.totalDrivers }}</span>
     </div>
-    <div class="icon violet">👥</div>
+    <div class="stat-icon stat-icon--accent">
+      <mat-icon>people</mat-icon>
+    </div>
   </div>
+
 </div>

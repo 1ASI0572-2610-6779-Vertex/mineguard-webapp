@@ -1,42 +1,70 @@
 <section class="distribution-card">
+
+  <!-- Header -->
   <header class="card-header">
-    <div class="title-block">
-      <h2>{{ 'reports.incidentDistribution.title' | translate }}</h2>
-      <p class="subtitle">{{ 'reports.incidentDistribution.subtitle' | translate }}</p>
+    <div class="header-left">
+      <div class="header-icon">
+        <mat-icon>donut_large</mat-icon>
+      </div>
+      <div class="title-block">
+        <h2>{{ 'reports.incidentDistribution.title' | translate }}</h2>
+        <p class="subtitle">{{ 'reports.incidentDistribution.subtitle' | translate }}</p>
+      </div>
     </div>
-    <button mat-icon-button class="export-btn" [title]="'reports.export' | translate">
-      <mat-icon>download</mat-icon>
-    </button>
   </header>
 
+  <!-- Donut + legend -->
   <div class="donut-container">
-    <svg class="donut" viewBox="0 0 160 160">
-      <circle class="donut-bg" cx="80" cy="80" r="60" />
-      @for (segment of segments(); track segment.id) {
-        <circle
-          class="donut-segment"
-          [class]="segment.colorClass"
-          cx="80"
-          cy="80"
-          r="60"
-          [attr.stroke-dasharray]="segment.dashArray"
-          [attr.stroke-dashoffset]="segment.dashOffset"
-        />
-      }
-      <text class="donut-total" x="80" y="78" text-anchor="middle">{{ totalIncidents() }}</text>
-      <text class="donut-total-label" x="80" y="94" text-anchor="middle">
-        {{ 'reports.incidentDistribution.total' | translate }}
-      </text>
-    </svg>
 
-    <ul class="legend">
-      @for (segment of segments(); track segment.id) {
-        <li class="legend-item">
-          <span class="legend-dot" [class]="segment.colorClass"></span>
-          <span class="legend-label">{{ segment.label }}</span>
-          <span class="legend-count">{{ segment.count }}</span>
+    <!-- SVG donut -->
+    <div class="donut-wrap">
+      <svg class="donut" viewBox="0 0 160 160">
+        <!-- Background ring -->
+        <circle class="donut-bg" cx="80" cy="80" r="54" />
+
+        <!-- Coloured segments -->
+        @for (seg of segments(); track seg.id) {
+          <circle
+            class="donut-segment"
+            [class.donut-segment--dimmed]="isSegmentDimmed(seg.id)"
+            cx="80" cy="80" r="54"
+            [attr.stroke]="seg.cssColor"
+            [attr.stroke-dasharray]="seg.dashArray"
+            [attr.stroke-dashoffset]="seg.dashOffset"
+            (mouseenter)="hoveredId.set(seg.id)"
+            (mouseleave)="hoveredId.set(null)"
+          />
+        }
+
+        <!-- Centre label — shows hovered segment or total -->
+        @if (hoveredSegment(); as hs) {
+          <text class="donut-center-value" x="80" y="75" text-anchor="middle">{{ hs.count }}</text>
+          <text class="donut-center-label" x="80" y="91" text-anchor="middle">{{ hs.percent }}%</text>
+        } @else {
+          <text class="donut-center-value" x="80" y="75" text-anchor="middle">{{ totalIncidents() }}</text>
+          <text class="donut-center-label" x="80" y="91" text-anchor="middle">{{ 'reports.incidentDistribution.total' | translate }}</text>
+        }
+      </svg>
+    </div>
+
+    <!-- Legend -->
+    <ul class="legend" role="list">
+      @for (seg of segments(); track seg.id) {
+        <li
+          class="legend-item"
+          [class.legend-item--dimmed]="isSegmentDimmed(seg.id)"
+          [class.legend-item--active]="hoveredId() === seg.id"
+          (mouseenter)="hoveredId.set(seg.id)"
+          (mouseleave)="hoveredId.set(null)"
+          role="listitem">
+          <span class="legend-dot" [style.background]="seg.cssColor"></span>
+          <span class="legend-label">{{ seg.label }}</span>
+          <span class="legend-count">{{ seg.count }}</span>
+          <span class="legend-pct">{{ seg.percent }}%</span>
         </li>
       }
     </ul>
+
   </div>
+
 </section>
