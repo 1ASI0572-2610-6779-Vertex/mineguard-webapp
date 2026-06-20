@@ -9,30 +9,30 @@ export class SupervisorAssembler
 {
   toEntityFromResource(resource: SupervisorResource): Supervisor {
     return new Supervisor({
-      id: resource.id,
-      username: resource.username ?? '',
-      fullName: resource.fullName,
-      corporateId: resource.corporateId,
-      email: resource.email,
+      id:           resource.id,
+      fullName:     resource.fullName,
+      corporateId:  resource.corporateId,
+      email:        resource.email,
       accessStatus: resource.accessStatus,
+      // username and idCompany are not returned by GET /api/v1/supervisors
+      username:  resource.username  ?? '',
       idCompany: resource.idCompany ?? 1,
     });
   }
 
   /**
-   * Builds the PUT /supervisors/{id} body.
-   * Sends all contract fields; password is omitted on update (the backend
-   * treats a missing password as "no change").
+   * Builds the PUT /api/v1/supervisors/{id} body.
+   * password is omitted — the backend treats a missing password as "no change".
    */
   toResourceFromEntity(entity: Supervisor): SupervisorResource {
     return {
-      id: entity.id,
-      username: entity.username,
-      fullName: entity.fullName,
-      corporateId: entity.corporateId,
-      email: entity.email,
+      id:           entity.id,
+      fullName:     entity.fullName,
+      corporateId:  entity.corporateId,
+      email:        entity.email,
       accessStatus: entity.accessStatus,
-      idCompany: entity.idCompany,
+      username:     entity.username  || undefined,
+      idCompany:    entity.idCompany || undefined,
     };
   }
 

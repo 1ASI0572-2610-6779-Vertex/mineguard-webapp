@@ -96,8 +96,8 @@ export class AnalyticsStore {
     });
   }
 
-  loadPerformanceMetrics(): void {
-    this.analyticsApi.getPerformanceMetrics().subscribe({
+  loadPerformanceMetrics(driverId: number): void {
+    this.analyticsApi.getPerformanceMetrics(driverId).subscribe({
       next: (metrics) => this.performanceMetricsSignal.set(metrics),
       error: (err) => this.handleFailure(err, 'Failed to load performance metrics'),
     });
@@ -153,6 +153,13 @@ export class AnalyticsStore {
     this.analyticsApi.getAdminNotices().subscribe({
       next: (notices) => this.adminNoticesSignal.set(notices),
       error: (err) => this.handleFailure(err, 'Failed to load admin notices'),
+    });
+  }
+
+  // POST /api/v1/admin/notices/{noticeId}/dispatches
+  dispatchNotice(noticeId: number): void {
+    this.analyticsApi.postNoticeDispatch(noticeId).subscribe({
+      error: (err) => this.handleFailure(err, `Failed to dispatch notice ${noticeId}`),
     });
   }
 

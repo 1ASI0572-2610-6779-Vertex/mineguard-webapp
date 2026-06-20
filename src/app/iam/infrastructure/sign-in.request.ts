@@ -12,7 +12,7 @@
  *
  * @example
  * ```typescript
- * // HTTP POST /api/v1/authentication/sign-in
+ * // HTTP POST /api/v1/sessions
  * // Body:
  * {
  *   "username": "SUP-001",

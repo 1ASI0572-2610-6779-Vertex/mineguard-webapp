@@ -35,7 +35,8 @@ export class DashboardPage {
 
   readonly summary = this.store.dashboardSummary;
   readonly trend = this.store.dashboardTrend;
-  readonly riskDrivers = this.store.riskDrivers;
+  readonly riskDrivers          = this.store.riskDrivers;
+  readonly performanceMetrics   = this.store.performanceMetrics;
   readonly recentAlerts = this.store.recentAlerts;
 
   readonly todayLabel = new Date().toLocaleDateString('es-PE', {
@@ -70,6 +71,10 @@ export class DashboardPage {
       default:         return 'check_circle';
     }
   });
+
+  onDriverSelected(driverId: number): void {
+    this.store.loadPerformanceMetrics(driverId);
+  }
 
   readonly alertTrendPath = computed(() => this.buildPath(this.trend(), 'alerts'));
   readonly incidentTrendPath = computed(() => this.buildPath(this.trend(), 'incidents'));

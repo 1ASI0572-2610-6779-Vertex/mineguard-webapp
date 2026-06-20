@@ -35,6 +35,6 @@ export class VehiclesInventory {
   }
 
   markOperational(vehicle: Vehicle): void {
-    this.store.updateVehicleStatus(vehicle.id, 'operational');
+    this.store.updateVehicleStatus(vehicle.id, 'available');
   }
 }

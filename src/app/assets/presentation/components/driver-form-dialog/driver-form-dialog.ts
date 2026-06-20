@@ -9,6 +9,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { IamStore } from '../../../../iam/application/iam.store';
 import { AssetsStore } from '../../../application/assets.store';
 import { Driver } from '../../../domain/model/driver.entity';
 import { SaveDriverCommand } from '../../../domain/model/save-driver.command';
@@ -38,6 +39,7 @@ export class DriverFormDialog {
   private readonly fb        = inject(FormBuilder);
   private readonly dialogRef = inject(MatDialogRef<DriverFormDialog>);
   private readonly store     = inject(AssetsStore);
+  private readonly iamStore  = inject(IamStore);
   readonly data: DriverDialogData = inject(MAT_DIALOG_DATA) ?? {};
 
   readonly isEdit   = !!this.data.driver;
@@ -45,17 +47,16 @@ export class DriverFormDialog {
   readonly errorMsg = signal<string | null>(null);
 
   readonly workShiftOptions = [
-    { value: 'Morning',   labelKey: 'assets.fleet.drivers.shift.morning' },
-    { value: 'Afternoon', labelKey: 'assets.fleet.drivers.shift.afternoon' },
-    { value: 'Night',     labelKey: 'assets.fleet.drivers.shift.night' },
+    { value: 'MORNING',   labelKey: 'assets.fleet.drivers.form.shift.morning' },
+    { value: 'AFTERNOON', labelKey: 'assets.fleet.drivers.form.shift.afternoon' },
+    { value: 'NIGHT',     labelKey: 'assets.fleet.drivers.form.shift.night' },
   ];
 
   readonly form = this.fb.nonNullable.group({
     fullName:      [this.data.driver?.fullName ?? '', Validators.required],
     email:         ['', [Validators.required, Validators.email]],
     licenseNumber: [this.data.driver?.license ?? '', Validators.required],
-    workShift:     ['Morning', Validators.required],
-    idCompany:     [1, Validators.required],
+    workShift:     ['MORNING', Validators.required],
   });
 
   submit(): void {
@@ -66,9 +67,9 @@ export class DriverFormDialog {
       id:            this.data.driver?.id,
       fullName:      v.fullName,
       email:         v.email,
+      idCompany:     this.iamStore.currentCompanyId() ?? 1,
       licenseNumber: v.licenseNumber,
       workShift:     v.workShift,
-      idCompany:     v.idCompany,
     });
 
     this.loading.set(true);

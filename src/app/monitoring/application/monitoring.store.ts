@@ -51,7 +51,7 @@ export class MonitoringStore implements OnDestroy {
    */
   readonly criticalActiveAlerts = computed(() =>
     this.alertsSignal().filter(
-      (alert) => alert.status === 'active' && alert.priority === 'critical',
+      (alert) => alert.status === 'open' && alert.priority === 'critical',
     ),
   );
 
@@ -102,31 +102,16 @@ export class MonitoringStore implements OnDestroy {
   }
 
   /**
-   * Classifies an alert as resolved or false-alarm, persists the new status
-   * + resolution notes via the API, and replaces the entry in the local
-   * inbox signal on success.
+   * Classifies an alert via POST /api/v1/alerts/{alertId}/actions and
+   * replaces the entry in the local inbox signal on success.
    */
   classifyAlert(command: ClassifyAlertCommand): void {
-    const current = this.alertsSignal().find((a) => a.id === command.alertId);
-    if (!current) return;
+    if (!this.alertsSignal().find((a) => a.id === command.alertId)) return;
 
-    const updated = new Alert({
-      id: current.id,
-      code: current.code,
-      type: current.type,
-      priority: current.priority,
-      status: command.status,
-      occurredAt: current.occurredAt,
-      title: current.title,
-      description: current.description,
-      vehicleClassKey: current.vehicleClassKey,
-      vehicleCode: current.vehicleCode,
-      driverName: current.driverName,
-      resolutionNotes: command.notes,
-    });
+    const action = command.status === 'resolved' ? 'resolve' : 'markReviewed';
 
     this.errorSignal.set(null);
-    this.monitoringApi.updateAlert(updated).subscribe({
+    this.monitoringApi.postAlertAction(command.alertId, action).subscribe({
       next: (alert) => {
         this.alertsSignal.update((list) =>
           list.map((a) => (a.id === alert.id ? alert : a)),
@@ -194,11 +179,12 @@ export class MonitoringStore implements OnDestroy {
   }
 
   /**
-   * Loads the cardiac monitor readings on demand.
+   * Loads cardiac readings for a specific trip.
+   * TODO: Obtener tripId real del vehículo seleccionado
    */
-  loadCardiacReadings(): void {
+  loadCardiacReadings(tripId: number): void {
     this.errorSignal.set(null);
-    this.monitoringApi.getCardiacReadings().subscribe({
+    this.monitoringApi.getCardiacReadings(tripId).subscribe({
       next: (readings) => this.cardiacReadingsSignal.set(readings),
       error: (err) => {
         console.error('Failed to load cardiac readings:', err);

@@ -265,18 +265,29 @@
         "title": "Incident Inbox"
       },
       "type": {
-        "collision": "Collision Alert",
-        "imminent_collision": "Imminent Collision",
-        "fatigue": "Fatigue Alert"
+        "proximity_collision": "Proximity Collision",
+        "restricted_zone_entry": "Restricted Zone",
+        "high_heart_rate": "High Heart Rate",
+        "fatigue_risk": "Fatigue Risk",
+        "connection_lost": "Connection Lost"
       },
       "typeFull": {
-        "collision": "Collision Alert",
-        "imminent_collision": "Imminent Collision Alert",
-        "fatigue": "Fatigue Alert"
+        "proximity_collision": "Proximity Collision Alert",
+        "restricted_zone_entry": "Restricted Zone Entry Alert",
+        "high_heart_rate": "High Heart Rate Alert",
+        "fatigue_risk": "Fatigue Risk Alert",
+        "connection_lost": "Connection Lost Alert"
       },
       "priorityLabel": {
-        "critical": "Critical Priority",
-        "warning": "Warning Priority"
+        "low": "Low Priority",
+        "medium": "Medium Priority",
+        "high": "High Priority",
+        "critical": "Critical Priority"
+      },
+      "status": {
+        "open": "Open",
+        "reviewed": "Reviewed",
+        "resolved": "Resolved"
       },
       "elapsed": {
         "minutes": "{{count}} min ago",
@@ -368,7 +379,8 @@
           "actions": "Actions"
         },
         "status": {
-          "operational": "Operational",
+          "available": "Available",
+          "inUse": "In Use",
           "maintenance": "Maintenance"
         },
         "action": {
