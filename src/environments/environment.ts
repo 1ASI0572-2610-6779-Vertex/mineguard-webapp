@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+
   platformProviderApiBaseUrl: 'https://mineguard-webservice.onrender.com/api/v1',
 
   // IAM
@@ -24,6 +25,7 @@ export const environment = {
   platformProviderPerformanceMetricsEndpointPath: '/drivers',
 
   // Reports
+
   platformProviderReportsEndpointPath: '/reports',
 
   // Admin
