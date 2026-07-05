@@ -12,6 +12,7 @@ export class Driver implements BaseEntity {
   private _specialty: string;
   private _shiftStatus: DriverShiftStatus;
   private _lastAccess: string;
+  private _riskScore: number;
 
   constructor(props: {
     id: number;
@@ -21,6 +22,7 @@ export class Driver implements BaseEntity {
     specialty: string;
     shiftStatus: DriverShiftStatus;
     lastAccess: string;
+    riskScore?: number;
   }) {
     this._id = props.id;
     this._fullName = props.fullName;
@@ -29,6 +31,7 @@ export class Driver implements BaseEntity {
     this._specialty = props.specialty;
     this._shiftStatus = props.shiftStatus;
     this._lastAccess = props.lastAccess;
+    this._riskScore = props.riskScore ?? 0;
   }
 
   get id(): number {
@@ -85,5 +88,13 @@ export class Driver implements BaseEntity {
 
   set lastAccess(value: string) {
     this._lastAccess = value;
+  }
+
+  get riskScore(): number {
+    return this._riskScore;
+  }
+
+  set riskScore(value: number) {
+    this._riskScore = value;
   }
 }

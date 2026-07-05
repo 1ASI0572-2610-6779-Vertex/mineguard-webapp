@@ -1,0 +1,171 @@
+/* All .auth-* base styles come from auth-shell.css via styleUrls */
+
+/* Slightly wider card — the form has more fields + plan selector. */
+.rc-card {
+  max-width: 480px;
+}
+
+.rc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rc-back {
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+/* ── Plan selector ──────────────────────────────────────── */
+.rc-plans {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.rc-plan {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 10px 11px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.14s, box-shadow 0.14s, background 0.14s;
+}
+
+.rc-plan:hover:not(.rc-plan--active) {
+  border-color: var(--text-400);
+}
+
+.rc-plan--active {
+  border-color: var(--blue);
+  background: rgba(37, 120, 244, 0.04);
+  box-shadow: 0 0 0 3px rgba(37, 120, 244, 0.1);
+}
+
+.rc-plan-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  opacity: 0;
+  color: var(--blue);
+  transition: opacity 0.14s;
+}
+
+.rc-plan-check mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.rc-plan--active .rc-plan-check {
+  opacity: 1;
+}
+
+.rc-plan-name {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--text-900);
+}
+
+.rc-plan-desc {
+  font-size: 0.68rem;
+  color: var(--text-500);
+  line-height: 1.3;
+  min-height: 2.6em;
+}
+
+.rc-plan-price {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--blue);
+  margin-top: 2px;
+}
+
+.rc-plan-price small {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--text-400);
+  margin-left: 2px;
+}
+
+@media (max-width: 480px) {
+  .rc-plans {
+    grid-template-columns: 1fr;
+  }
+  .rc-plan-desc {
+    min-height: 0;
+  }
+}
+
+/* ── Generated credentials ──────────────────────────────── */
+.rc-creds {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rc-cred-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rc-cred-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-700);
+}
+
+.rc-cred-label mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+  color: var(--yellow-hover);
+}
+
+.rc-cred-value {
+  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  color: var(--text-900);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  word-break: break-all;
+}
+
+/* Highlight the API key — it is the critical, one-time value. */
+.rc-cred-row--key .rc-cred-value {
+  background: var(--amber-dim);
+  border-color: var(--amber-border);
+  font-weight: 600;
+}
+
+.rc-apikey-box {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.rc-apikey-value {
+  flex: 1;
+}
+
+.rc-copy-btn {
+  flex-shrink: 0;
+  align-self: center;
+  color: var(--text-500);
+}

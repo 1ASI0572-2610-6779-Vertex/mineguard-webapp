@@ -18,7 +18,7 @@
     @if (catalogSummary(); as s) {
       <app-catalog-summary [summary]="s"></app-catalog-summary>
     }
-    <app-audit-log [entries]="auditLog()"></app-audit-log>
+    <app-audit-log [entries]="auditLog()" (export)="onExportAuditLog($event)"></app-audit-log>
   </div>
 
 </div>

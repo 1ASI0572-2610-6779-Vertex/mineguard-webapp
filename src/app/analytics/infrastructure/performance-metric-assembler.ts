@@ -15,28 +15,28 @@ export class PerformanceMetricAssembler
   toEntityFromResource(resource: PerformanceMetricResource): PerformanceMetric {
     return new PerformanceMetric({
       id: resource.id,
-      driverId: resource.id_driver,
-      tripId: resource.id_trip,
-      vehicleId: resource.id_vehicle,
-      fatigueEvents: resource.fatigue_events,
-      alertsCount: resource.alerts_count,
-      averageHeartRate: resource.average_heart_rate,
-      riskScore: resource.risk_score,
-      calculatedAt: resource.calculated_at,
+      driverId: resource.driverId,
+      tripId: resource.tripId,
+      vehicleId: resource.vehicleId,
+      fatigueEvents: resource.fatigueEvents,
+      alertsCount: resource.alertsCount,
+      averageHeartRate: resource.averageHeartRate,
+      riskScore: resource.riskScore,
+      calculatedAt: resource.calculatedAt,
     });
   }
 
   toResourceFromEntity(entity: PerformanceMetric): PerformanceMetricResource {
     return {
       id: entity.id,
-      id_driver: entity.driverId,
-      id_trip: entity.tripId,
-      id_vehicle: entity.vehicleId,
-      fatigue_events: entity.fatigueEvents,
-      alerts_count: entity.alertsCount,
-      average_heart_rate: entity.averageHeartRate,
-      risk_score: entity.riskScore,
-      calculated_at: entity.calculatedAt,
+      driverId: entity.driverId,
+      tripId: entity.tripId,
+      vehicleId: entity.vehicleId,
+      fatigueEvents: entity.fatigueEvents,
+      alertsCount: entity.alertsCount,
+      averageHeartRate: entity.averageHeartRate,
+      riskScore: entity.riskScore,
+      calculatedAt: entity.calculatedAt,
     };
   }
 }

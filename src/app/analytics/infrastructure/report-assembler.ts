@@ -10,12 +10,12 @@ export class ReportAssembler implements BaseAssembler<Report, ReportResource, Re
   toEntityFromResource(resource: ReportResource): Report {
     return new Report({
       id: resource.id,
-      incidentId: resource.id_incident,
-      alertId: resource.id_alert,
-      userId: resource.id_user,
-      metricId: resource.id_metric,
-      reportType: resource.report_type,
-      createdAt: resource.created_at,
+      incidentId: resource.incidentId,
+      alertId: resource.alertId,
+      userId: resource.userId,
+      metricId: resource.metricId,
+      reportType: resource.reportType,
+      createdAt: resource.createdAt,
       description: resource.description,
     });
   }
@@ -23,12 +23,12 @@ export class ReportAssembler implements BaseAssembler<Report, ReportResource, Re
   toResourceFromEntity(entity: Report): ReportResource {
     return {
       id: entity.id,
-      id_incident: entity.incidentId,
-      id_alert: entity.alertId,
-      id_user: entity.userId,
-      id_metric: entity.metricId,
-      report_type: entity.reportType,
-      created_at: entity.createdAt,
+      incidentId: entity.incidentId,
+      alertId: entity.alertId,
+      userId: entity.userId,
+      metricId: entity.metricId,
+      reportType: entity.reportType,
+      createdAt: entity.createdAt,
       description: entity.description,
     };
   }

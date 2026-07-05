@@ -5,6 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { BaseApiEndpoint } from '../../shared/infrastructure/base-api-endpoint';
 import { Alert } from '../domain/model/alert.entity';
+import { AlertStatus } from '../domain/model/alert-status';
 import { AlertAssembler } from './alert-assembler';
 import { AlertResource, AlertsResponse } from './alert-response';
 
@@ -33,12 +34,24 @@ export class AlertsApiEndpoint extends BaseApiEndpoint<
     );
   }
 
-  postAction(alertId: number, action: 'markReviewed' | 'escalate' | 'resolve'): Observable<Alert> {
+  /**
+   * Classifies (closes/dismisses) an alert via `PATCH /alerts/{alertId}`.
+   *
+   * @remarks
+   * There is no separate "action" endpoint in the platform contract — the client
+   * sends the target `status` (e.g. `resolved` / `false_alarm`) directly as a
+   * partial update. A status change is automatically journaled as an audit entry
+   * server-side. `resolutionNotes` is sent when the supervisor added any.
+   */
+  classify(alertId: number, status: AlertStatus, notes: string): Observable<Alert> {
+    const body: { status: AlertStatus; resolutionNotes?: string } = { status };
+    if (notes) body.resolutionNotes = notes;
+
     return this.http
-      .post<AlertResource>(`${this.endpointUrl}/${alertId}/actions`, { action })
+      .patch<AlertResource>(`${this.endpointUrl}/${alertId}`, body)
       .pipe(
         map((r) => this.assembler.toEntityFromResource(r)),
-        catchError(this.handleError(`Failed to post action "${action}" for alert ${alertId}`)),
+        catchError(this.handleError(`Failed to classify alert ${alertId} as "${status}"`)),
       );
   }
 }

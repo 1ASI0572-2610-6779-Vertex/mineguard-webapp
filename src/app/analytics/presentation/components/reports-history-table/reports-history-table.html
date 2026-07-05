@@ -86,8 +86,9 @@
               <button
                 mat-stroked-button
                 class="view-btn"
-                (click)="onViewReport(row.id)"
-                [matTooltip]="'reports.history.viewReport' | translate">
+                (click)="onViewReport(row)"
+                [disabled]="!canDownload(row)"
+                [matTooltip]="(canDownload(row) ? 'reports.history.viewReport' : 'reports.history.noReport') | translate">
                 <mat-icon>picture_as_pdf</mat-icon>
                 {{ 'reports.history.viewReport' | translate }}
               </button>

@@ -35,7 +35,7 @@ export class LiveMapVehicleAssembler
       longitude:     resource.longitude,
       status:        resource.status,
       driverName:    resource.driverName,
-      activeTripId:  resource.activeTripId ?? null,
+      activeSessionId: resource.activeSessionId ?? null,
     });
   }
 
@@ -58,7 +58,7 @@ export class LiveMapVehicleAssembler
       longitude:    entity.longitude,
       status:       entity.status,
       driverName:   entity.driverName,
-      activeTripId: entity.activeTripId,
+      activeSessionId: entity.activeSessionId,
     };
   }
 

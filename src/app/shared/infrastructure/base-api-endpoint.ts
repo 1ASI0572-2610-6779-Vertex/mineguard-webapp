@@ -59,7 +59,9 @@ export abstract class BaseApiEndpoint<
 
   update(entity: TEntity, id: number): Observable<TEntity> {
     const resource = this.assembler.toResourceFromEntity(entity);
-    return this.http.put<TResource>(`${this.endpointUrl}/${id}`, resource).pipe(
+    // PATCH (partial update) per the platform REST contract — every editable
+    // field is independently optional and omitted fields keep their value.
+    return this.http.patch<TResource>(`${this.endpointUrl}/${id}`, resource).pipe(
       map((updated) => this.assembler.toEntityFromResource(updated)),
       catchError(this.handleError(`Failed to update entity with id ${id}`))
     );

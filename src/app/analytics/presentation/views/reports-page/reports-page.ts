@@ -8,7 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { AnalyticsStore } from '../../../application/analytics.store';
 import { ReportsFatigueBars } from '../../components/reports-fatigue-bars/reports-fatigue-bars';
-import { ReportsHistoryTable } from '../../components/reports-history-table/reports-history-table';
+import { ReportDownloadRequest, ReportsHistoryTable } from '../../components/reports-history-table/reports-history-table';
 import { ReportsIncidentDistribution } from '../../components/reports-incident-distribution/reports-incident-distribution';
 
 /**
@@ -64,8 +64,14 @@ export class ReportsPage implements OnInit {
     this.store.loadHistoryRows();
   }
 
-  onViewReport(id: number): void {
-    this.store.downloadReportPdf(id);
+  /**
+   * Downloads the incident's report via
+   * `GET /drivers/{driverId}/reports/{reportId}?format=pdf`. The history row now
+   * carries both ids from the backend; the table only emits this event when both
+   * are present (the export button is disabled otherwise).
+   */
+  onViewReport(request: ReportDownloadRequest): void {
+    this.store.downloadReport(request.driverId, request.reportId, 'pdf');
   }
 
   /** Generates and downloads a CSV of the currently filtered history rows. */

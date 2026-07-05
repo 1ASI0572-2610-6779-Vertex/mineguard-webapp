@@ -21,11 +21,11 @@ export class LiveMapPage implements OnInit, OnDestroy {
   readonly vehicles       = this.store.liveMapVehicles;
   readonly fleetSummary   = this.store.fleetSummary;
   readonly criticalAlerts = this.store.criticalActiveAlerts;
-  readonly cardiacReadings = this.store.cardiacReadings;
+  readonly cardiacReading = this.store.cardiacReading;
   readonly routeOverlays  = this.store.routeOverlays;
 
-  readonly hoveredVehicleId = signal<number | null>(null);
-  readonly selectedTripId   = signal<number | null>(null);
+  readonly hoveredVehicleId  = signal<number | null>(null);
+  readonly selectedSessionId = signal<number | null>(null);
 
   readonly isLoading = computed(
     () => this.vehicles().length === 0 && !this.fleetSummary(),
@@ -53,10 +53,10 @@ export class LiveMapPage implements OnInit, OnDestroy {
     this.store.loadRoutes();
   }
 
-  selectVehicle(activeTripId: number | null): void {
-    if (activeTripId == null) return;
-    this.selectedTripId.set(activeTripId);
-    this.store.loadCardiacReadings(activeTripId);
+  selectVehicle(activeSessionId: number | null): void {
+    if (activeSessionId == null) return;
+    this.selectedSessionId.set(activeSessionId);
+    this.store.loadCardiacReading(activeSessionId);
   }
 
   ngOnDestroy(): void {

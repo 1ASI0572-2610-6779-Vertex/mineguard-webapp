@@ -1,4 +1,5 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
+import { CompanyKpis } from '../../../shared/domain/model/company-kpis';
 
 /**
  * Aggregated fleet status counters surfaced by the supervisor live-map view.
@@ -77,5 +78,17 @@ export class FleetSummary implements BaseEntity {
 
   set operationalPercent(value: number) {
     this._operationalPercent = value;
+  }
+
+  /** Projects the shared tenant KPIs onto the fleet summary view model. */
+  static fromKpis(kpis: CompanyKpis): FleetSummary {
+    return new FleetSummary({
+      id: kpis.companyId,
+      operational: kpis.vehiclesOperational,
+      maintenance: kpis.vehiclesMaintenance,
+      alert: kpis.vehiclesAlert,
+      total: kpis.vehiclesTotal,
+      operationalPercent: kpis.vehiclesOperationalPercent,
+    });
   }
 }

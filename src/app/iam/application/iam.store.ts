@@ -4,10 +4,13 @@ import { Router } from '@angular/router';
 
 import { AccessStatus } from '../domain/model/access-status';
 import { CreateSupervisorCommand } from '../domain/model/create-supervisor.command';
+import { RegisterCompanyCommand } from '../domain/model/register-company.command';
 import { SignInCommand } from '../domain/model/sign-in.command';
 import { SignUpCommand } from '../domain/model/sign-up.command';
 import { Supervisor } from '../domain/model/supervisor.entity';
 import { User } from '../domain/model/user.entity';
+import { CompanyRegistrationResponse } from '../infrastructure/company-registration-response';
+import { SubscriptionPlan } from '../infrastructure/company-registration.request';
 import { IamApi } from '../infrastructure/iam-api';
 
 /**
@@ -23,6 +26,7 @@ interface PersistedSession {
   role: string;
   token: string;
   companyId: number | null;
+  subscriptionPlan: SubscriptionPlan | null;
 }
 
 const SESSION_STORAGE_KEY = 'mineguard.session';
@@ -87,6 +91,9 @@ export class IamStore {
   /** companyId decoded from the JWT payload at sign-in time. */
   private readonly currentCompanyIdSignal = signal<number | null>(null);
 
+  /** Subscription plan of the authenticated user's company (from sign-in). */
+  private readonly currentSubscriptionPlanSignal = signal<SubscriptionPlan | null>(null);
+
   /**
    * Signal containing all users in the system (for queries/search).
    * @private
@@ -146,6 +153,9 @@ export class IamStore {
   /** companyId from the JWT payload. Used by write operations that require tenant scoping. */
   readonly currentCompanyId = this.currentCompanyIdSignal.asReadonly();
 
+  /** Subscription plan of the current company (STARTER/STANDARD/ENTERPRISE). */
+  readonly currentSubscriptionPlan = this.currentSubscriptionPlanSignal.asReadonly();
+
   /**
    * Readonly signal for the list of users retrieved by user queries.
    */
@@ -199,7 +209,8 @@ export class IamStore {
           username:  signInResource.username,
           role:      signInResource.role,
           token:     signInResource.token,
-          companyId: this.decodeCompanyIdFromJwt(signInResource.token),
+          companyId: this.resolveCompanyId(signInResource.token, signInResource.username),
+          subscriptionPlan: signInResource.subscriptionPlan ?? 'STANDARD',
         };
         this.savePersistedSession(session);
         this.applySession(session);
@@ -263,6 +274,20 @@ export class IamStore {
         router.navigate(['/iam/sign-up']).then();
       },
     });
+  }
+
+  /**
+   * Registers a new company (tenant) through the IAM API.
+   *
+   * @remarks
+   * Returns the raw Observable so the caller manages its own loading/success/error
+   * state. On success the emitted {@link CompanyRegistrationResponse} carries the
+   * generated `adminUsername` and telemetry `apiKey` that must be shown to the
+   * user. Unlike sign-in, this does not mutate the authenticated session — the new
+   * admin still has to sign in afterwards with the emailed temporary password.
+   */
+  registerCompany(command: RegisterCompanyCommand): Observable<CompanyRegistrationResponse> {
+    return this.iamApi.registerCompany(command);
   }
 
   /**
@@ -369,10 +394,16 @@ export class IamStore {
         typeof session.role === 'string' &&
         typeof session.token === 'string'
       ) {
-        // companyId may be absent in sessions persisted before this change —
-        // fall back to decoding it from the stored JWT.
+        // Re-resolve companyId whenever it is missing (older sessions, or a JWT
+        // that simply does not carry the claim) — from the token first, then the
+        // structured username as a fallback.
         if (session.companyId == null) {
-          session.companyId = this.decodeCompanyIdFromJwt(session.token);
+          session.companyId = this.resolveCompanyId(session.token, session.username ?? '');
+        }
+        // subscriptionPlan may be absent in sessions persisted before this
+        // change — default to STANDARD (backend's own default).
+        if (session.subscriptionPlan == null) {
+          session.subscriptionPlan = 'STANDARD';
         }
         return session as PersistedSession;
       }
@@ -385,15 +416,85 @@ export class IamStore {
   }
 
   /**
+   * Resolves the authenticated tenant id from the best available source.
+   *
+   * @remarks
+   * The platform JWT does **not** currently carry a `companyId` claim (its
+   * payload is only `sub`/`iat`/`exp`), so decoding the token alone yields null
+   * and every tenant-scoped call — including the dashboard KPIs — never fires,
+   * leaving the control center stuck on "loading". As a fallback we parse the
+   * tenant id from the structured username (`admin-{companyId}-{seq}`,
+   * `SUP-{companyId}-{seq}`, `CDT-{companyId}-{seq}`). This is safe: the backend
+   * independently validates that the path `companyId` matches the JWT's real
+   * tenant and returns `404` (never another tenant's data) on any mismatch.
+   *
+   * When the backend starts embedding `companyId` in the JWT, that value wins
+   * automatically and the username fallback becomes a no-op.
+   * @private
+   */
+  private resolveCompanyId(token: string, username: string): number | null {
+    return this.decodeCompanyIdFromJwt(token) ?? this.parseCompanyIdFromUsername(username);
+  }
+
+  /**
+   * Extracts the tenant id embedded as the middle segment of a platform
+   * username (e.g. `SUP-1-001` → 1, `admin-42-01` → 42). Returns null when the
+   * username does not follow the `PREFIX-{companyId}-{seq}` shape.
+   * @private
+   */
+  private parseCompanyIdFromUsername(username: string): number | null {
+    const match = /^[A-Za-z]+-(\d+)-\d+$/.exec((username ?? '').trim());
+    return match ? Number(match[1]) : null;
+  }
+
+  /**
    * Decodes the `companyId` claim from a JWT payload.
-   * Returns null if the token is malformed or the claim is missing.
+   *
+   * @remarks
+   * JWTs are encoded with **base64url** (`-`/`_`, no padding), not standard
+   * base64 — decoding the payload with a bare `atob()` throws as soon as the
+   * segment contains a `-` or `_`. We normalise base64url → base64 first, and
+   * accept the claim as either a number or a numeric string. Returns null when
+   * the token carries no `companyId` claim (the current backend behaviour).
+   *
+   * @returns The tenant id, or null if the token is malformed or the claim is absent.
    * @private
    */
   private decodeCompanyIdFromJwt(token: string): number | null {
+    const payload = this.decodeJwtPayload(token);
+    if (!payload) return null;
+
+    // Primary claim is `companyId`; tolerate a snake_case variant defensively.
+    const raw = payload['companyId'] ?? payload['company_id'];
+    if (typeof raw === 'number' && Number.isFinite(raw)) return raw;
+    if (typeof raw === 'string' && raw.trim() !== '' && !Number.isNaN(Number(raw))) {
+      return Number(raw);
+    }
+    return null;
+  }
+
+  /**
+   * Safely decodes a JWT payload segment (base64url, UTF-8) into an object.
+   * Returns null on any malformed input instead of throwing.
+   * @private
+   */
+  private decodeJwtPayload(token: string): Record<string, unknown> | null {
     try {
-      const payload = JSON.parse(atob(token.split('.')[1])) as Record<string, unknown>;
-      const id = payload['companyId'];
-      return typeof id === 'number' ? id : null;
+      const segment = token.split('.')[1];
+      if (!segment) return null;
+
+      // base64url → base64, then restore padding to a multiple of 4.
+      const base64 = segment.replace(/-/g, '+').replace(/_/g, '/');
+      const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
+
+      // Decode bytes and re-interpret as UTF-8 (claims may contain non-ASCII).
+      const json = decodeURIComponent(
+        atob(padded)
+          .split('')
+          .map((char) => '%' + char.charCodeAt(0).toString(16).padStart(2, '0'))
+          .join(''),
+      );
+      return JSON.parse(json) as Record<string, unknown>;
     } catch {
       return null;
     }
@@ -426,6 +527,7 @@ export class IamStore {
     this.currentRoleSignal.set(session.role);
     this.currentTokenSignal.set(session.token);
     this.currentCompanyIdSignal.set(session.companyId ?? null);
+    this.currentSubscriptionPlanSignal.set(session.subscriptionPlan ?? null);
   }
 
   /**
@@ -439,5 +541,6 @@ export class IamStore {
     this.currentRoleSignal.set(null);
     this.currentTokenSignal.set(null);
     this.currentCompanyIdSignal.set(null);
+    this.currentSubscriptionPlanSignal.set(null);
   }
 }

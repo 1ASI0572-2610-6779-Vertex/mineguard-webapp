@@ -8,6 +8,12 @@ import { AnalyticsHistoryRow } from '../../../domain/model/analytics-history-row
 
 const PAGE_SIZE = 8;
 
+/** Payload emitted when the user requests the export of a history row's report. */
+export interface ReportDownloadRequest {
+  driverId: number;
+  reportId: number;
+}
+
 /**
  * "Historial de Eventos Críticos" table.
  * Supports free-text search (id / involved / location / incidentType),
@@ -21,7 +27,7 @@ const PAGE_SIZE = 8;
   styleUrl: './reports-history-table.css',
 })
 export class ReportsHistoryTable {
-  @Output() readonly viewReport = new EventEmitter<number>();
+  @Output() readonly viewReport = new EventEmitter<ReportDownloadRequest>();
 
   private readonly rowsSignal = signal<AnalyticsHistoryRow[]>([]);
 
@@ -78,8 +84,18 @@ export class ReportsHistoryTable {
     if (this.canGoNext()) this.currentPage.update((p) => p + 1);
   }
 
-  onViewReport(id: number): void {
-    this.viewReport.emit(id);
+  /**
+   * A row's report can be downloaded only when the backend resolved both the
+   * owning driver and a generated report for it. Either may be null (incident
+   * without a trip, or without a generated report yet).
+   */
+  canDownload(row: AnalyticsHistoryRow): boolean {
+    return row.driverId != null && row.reportId != null;
+  }
+
+  onViewReport(row: AnalyticsHistoryRow): void {
+    if (row.driverId == null || row.reportId == null) return;
+    this.viewReport.emit({ driverId: row.driverId, reportId: row.reportId });
   }
 
   criticalityIcon(level: string): string {

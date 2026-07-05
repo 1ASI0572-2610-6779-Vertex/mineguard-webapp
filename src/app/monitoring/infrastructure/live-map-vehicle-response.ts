@@ -57,11 +57,12 @@ export interface LiveMapVehicleResource extends BaseResource {
   driverName: string;
 
   /**
-   * @property {number | null} activeTripId
-   * ID del viaje activo asignado a este vehículo. Null si el vehículo no tiene
-   * un viaje activo en curso. Requerido por GET /api/v1/trips/{tripId}/cardiac-readings.
+   * @property {number | null} activeSessionId
+   * ID de la Driving Session activa de este vehículo. Null si no tiene un turno
+   * (check-in) en curso. Usado para GET /api/v1/driving-sessions/{sessionId}/cardiac-readings.
+   * Puede no venir en el payload de posiciones; en ese caso se resuelve como null.
    */
-  activeTripId: number | null;
+  activeSessionId: number | null;
 }
 
 /**

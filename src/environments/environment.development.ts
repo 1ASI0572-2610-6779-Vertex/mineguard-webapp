@@ -7,43 +7,42 @@ export const environment = {
   platformProviderSignInEndpointPath:          '/sessions',
   platformProviderSignUpEndpointPath:           '/users',
   platformProviderChangePasswordEndpointPath:   '/users/me/password',
-  platformProviderForgotPasswordEndpointPath:   '/users/password-resets',
+  platformProviderForgotPasswordEndpointPath:   '/password-resets',
   platformProviderSupervisorsEndpointPath:      '/supervisors',
+  platformProviderCompaniesEndpointPath:        '/companies',
 
-  // Dashboard
-  platformProviderDashboardSummaryEndpointPath:      '/dashboard/summary',
-  platformProviderDashboardTrendEndpointPath:         '/dashboard/trend',
-  platformProviderDashboardRiskDriversEndpointPath:   '/dashboard/risk-drivers',
-  platformProviderDashboardRecentAlertsEndpointPath:  '/dashboard/recent-alerts',
+  // Companies & Analytics — suffixes appended to /companies/{companyId}
+  platformProviderCompanyKpisEndpointPath:            '/kpis',
+  platformProviderCompanyAlertsTrendEndpointPath:     '/metrics/alerts-trend',
+  platformProviderCompanyFatigueEndpointPath:         '/metrics/fatigue',
+  platformProviderCompanyIncidentsEndpointPath:       '/metrics/incidents',
+  platformProviderCompanyHistoryEndpointPath:         '/history',
+  platformProviderCompanyInsightsEndpointPath:        '/insights',
+  platformProviderCompanyNoticesEndpointPath:         '/notices',
 
-  // Analytics
-  platformProviderAnalyticsFatigueBarsEndpointPath:           '/analytics/fatigue-levels',
-  platformProviderAnalyticsIncidentDistributionEndpointPath:  '/analytics/incident-distribution',
-  platformProviderAnalyticsHistoryRowsEndpointPath:           '/analytics/history',
-  platformProviderAnalyticsInsightsEndpointPath:              '/analytics/insights',
-  // Base path only — endpoint appends /{driverId}/performance-metrics
-  platformProviderPerformanceMetricsEndpointPath: '/drivers',
+  // Platform (cross-tenant, ADMIN)
+  platformProviderPlatformMetricsEndpointPath:        '/platform/metrics',
 
-
-  platformProviderReportsEndpointPath: '/reports',
-
-  // Admin
-  platformProviderAdminSummaryEndpointPath: '/admin/summary',
-  platformProviderAdminNoticesEndpointPath: '/admin/notices',
+  // Drivers-scoped analytics — endpoint appends /{driverId}/metrics or /{driverId}/reports/{reportId}
+  platformProviderPerformanceMetricsEndpointPath:     '/drivers',
+  platformProviderReportsEndpointPath:                '/reports',
+  // Dashboard risk drivers → GET /drivers?sort=-riskScore&limit
+  // Dashboard recent alerts → GET /alerts?view=operational&sort=-occurredAt&limit
+  // (both reuse the drivers/alerts endpoints above — no dedicated path)
 
   // Assets — endpoint appends ?view=inventory or ?view=directory
   platformProviderVehiclesInventoryEndpointPath: '/vehicles',
   platformProviderDriversDirectoryEndpointPath:  '/drivers',
   platformProviderDriversEndpointPath:           '/drivers',
-  platformProviderCatalogSummaryEndpointPath:    '/catalog/summary',
+  // Catalog summary is derived from GET /companies/{companyId}/kpis (no dedicated path)
 
   // Monitoring — endpoint appends ?view=operational
   platformProviderOperationalAlertsEndpointPath: '/alerts',
   platformProviderAuditLogEndpointPath:          '/audit-logs',
-  platformProviderLiveMapVehiclesEndpointPath:   '/vehicles/live-positions',
-  platformProviderFleetSummaryEndpointPath:      '/fleet/summary',
-  // Base path only — endpoint appends /{tripId}/cardiac-readings
-  platformProviderCardiacReadingsEndpointPath:   '/trips',
+  platformProviderLiveMapVehiclesEndpointPath:   '/vehicles/positions',
+  // Fleet summary is derived from GET /companies/{companyId}/kpis (no dedicated path)
+  // Base path only — endpoint appends /{sessionId}/cardiac-readings
+  platformProviderCardiacReadingsEndpointPath:   '/driving-sessions',
 
   // Service Design (no v2 API counterpart yet)
   platformProviderRoutesEndpointPath: '/routes',
