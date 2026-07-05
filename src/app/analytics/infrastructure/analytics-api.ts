@@ -12,7 +12,6 @@ import { AnalyticsIncidentDistribution } from '../domain/model/analytics-inciden
 import { AnalyticsInsight } from '../domain/model/analytics-insight.entity';
 import { DashboardRecentAlert } from '../domain/model/dashboard-recent-alert.entity';
 import { DashboardRiskDriver } from '../domain/model/dashboard-risk-driver.entity';
-import { DashboardSummary } from '../domain/model/dashboard-summary.entity';
 import { DashboardTrend } from '../domain/model/dashboard-trend.entity';
 import { PerformanceMetric } from '../domain/model/performance-metric.entity';
 import { Report } from '../domain/model/report.entity';
@@ -24,7 +23,6 @@ import { AnalyticsIncidentDistributionApiEndpoint } from './analytics-incident-d
 import { AnalyticsInsightsApiEndpoint } from './analytics-insights-api-endpoint';
 import { DashboardRecentAlertsApiEndpoint } from './dashboard-recent-alerts-api-endpoint';
 import { DashboardRiskDriversApiEndpoint } from './dashboard-risk-drivers-api-endpoint';
-import { DashboardSummaryApiEndpoint } from './dashboard-summary-api-endpoint';
 import { DashboardTrendApiEndpoint } from './dashboard-trend-api-endpoint';
 import { PerformanceMetricsApiEndpoint } from './performance-metrics-api-endpoint';
 import { ReportsApiEndpoint } from './reports-api-endpoint';
@@ -38,7 +36,6 @@ import { ReportsApiEndpoint } from './reports-api-endpoint';
 export class AnalyticsApi extends BaseApi {
   private readonly iamStore = inject(IamStore);
 
-  private readonly dashboardSummaryEndpoint: DashboardSummaryApiEndpoint;
   private readonly dashboardTrendEndpoint: DashboardTrendApiEndpoint;
   private readonly dashboardRiskDriversEndpoint: DashboardRiskDriversApiEndpoint;
   private readonly dashboardRecentAlertsEndpoint: DashboardRecentAlertsApiEndpoint;
@@ -53,7 +50,6 @@ export class AnalyticsApi extends BaseApi {
 
   constructor(http: HttpClient) {
     super();
-    this.dashboardSummaryEndpoint = new DashboardSummaryApiEndpoint(http);
     this.dashboardTrendEndpoint = new DashboardTrendApiEndpoint(http);
     this.dashboardRiskDriversEndpoint = new DashboardRiskDriversApiEndpoint(http);
     this.dashboardRecentAlertsEndpoint = new DashboardRecentAlertsApiEndpoint(http);
@@ -74,12 +70,6 @@ export class AnalyticsApi extends BaseApi {
    */
   private currentCompanyId(): number | null {
     return this.iamStore.currentCompanyId();
-  }
-
-  getDashboardSummary(): Observable<DashboardSummary> {
-    const companyId = this.currentCompanyId();
-    if (companyId == null) return throwError(() => new Error('No authenticated company'));
-    return this.dashboardSummaryEndpoint.getForCompany(companyId);
   }
 
   getDashboardTrend(): Observable<DashboardTrend[]> {

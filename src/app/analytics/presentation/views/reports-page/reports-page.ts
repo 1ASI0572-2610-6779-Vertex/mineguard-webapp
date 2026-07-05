@@ -8,7 +8,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { AnalyticsStore } from '../../../application/analytics.store';
 import { ReportsFatigueBars } from '../../components/reports-fatigue-bars/reports-fatigue-bars';
-import { ReportsHistoryTable } from '../../components/reports-history-table/reports-history-table';
+import { ReportDownloadRequest, ReportsHistoryTable } from '../../components/reports-history-table/reports-history-table';
 import { ReportsIncidentDistribution } from '../../components/reports-incident-distribution/reports-incident-distribution';
 
 /**
@@ -65,17 +65,13 @@ export class ReportsPage implements OnInit {
   }
 
   /**
-   * Report export moved to `GET /drivers/{driverId}/reports/{reportId}` in the
-   * new contract, which requires the owning `driverId`. The history table only
-   * exposes the row id, so the per-driver export cannot be resolved here yet —
-   * pending a backend/UI change that surfaces `driverId` (+ `reportId`) on the
-   * history row. The download capability itself lives in
-   * `AnalyticsStore.downloadReport(driverId, reportId, format)`.
-   *
-   * @todo Wire once the history row carries the owning driverId/reportId.
+   * Downloads the incident's report via
+   * `GET /drivers/{driverId}/reports/{reportId}?format=pdf`. The history row now
+   * carries both ids from the backend; the table only emits this event when both
+   * are present (the export button is disabled otherwise).
    */
-  onViewReport(_id: number): void {
-    // Intentionally a no-op until driverId is available on the row (see above).
+  onViewReport(request: ReportDownloadRequest): void {
+    this.store.downloadReport(request.driverId, request.reportId, 'pdf');
   }
 
   /** Generates and downloads a CSV of the currently filtered history rows. */

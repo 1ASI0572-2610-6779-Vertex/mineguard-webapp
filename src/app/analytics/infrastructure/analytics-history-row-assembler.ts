@@ -23,6 +23,8 @@ export class AnalyticsHistoryRowAssembler
       incidentType: resource.incidentType,
       involved: resource.involved,
       location: resource.location,
+      driverId: resource.driverId ?? null,
+      reportId: resource.reportId ?? null,
     });
   }
 
@@ -36,6 +38,8 @@ export class AnalyticsHistoryRowAssembler
       incidentType: entity.incidentType,
       involved: entity.involved,
       location: entity.location,
+      driverId: entity.driverId,
+      reportId: entity.reportId,
     };
   }
 }

@@ -1,5 +1,7 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+import { CompanyKpisStore } from '../../shared/application/company-kpis.store';
 
 import { AdminNotice } from '../domain/model/admin-notice.entity';
 import { AdminSummary } from '../domain/model/admin-summary.entity';
@@ -24,7 +26,8 @@ import { exportFormatExtension, triggerBlobDownload } from '../../shared/infrast
  */
 @Injectable({ providedIn: 'root' })
 export class AnalyticsStore {
-  private readonly dashboardSummarySignal = signal<DashboardSummary | null>(null);
+  private readonly kpisStore = inject(CompanyKpisStore);
+
   private readonly dashboardTrendSignal = signal<DashboardTrend[]>([]);
   private readonly riskDriversSignal = signal<DashboardRiskDriver[]>([]);
   private readonly recentAlertsSignal = signal<DashboardRecentAlert[]>([]);
@@ -40,7 +43,11 @@ export class AnalyticsStore {
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
 
-  readonly dashboardSummary = this.dashboardSummarySignal.asReadonly();
+  /** Dashboard KPI snapshot, derived from the shared tenant-KPIs cache. */
+  readonly dashboardSummary = computed(() => {
+    const kpis = this.kpisStore.kpis();
+    return kpis ? DashboardSummary.fromKpis(kpis) : null;
+  });
   readonly dashboardTrend = this.dashboardTrendSignal.asReadonly();
   readonly riskDrivers = this.riskDriversSignal.asReadonly();
   readonly recentAlerts = this.recentAlertsSignal.asReadonly();
@@ -66,14 +73,10 @@ export class AnalyticsStore {
   }
 
   loadDashboardSummary(): void {
-    this.loadingSignal.set(true);
-    this.analyticsApi.getDashboardSummary().pipe(takeUntilDestroyed()).subscribe({
-      next: (summary) => {
-        this.dashboardSummarySignal.set(summary);
-        this.loadingSignal.set(false);
-      },
-      error: (err) => this.handleFailure(err, 'Failed to load dashboard summary'),
-    });
+    // KPIs are served by the shared CompanyKpisStore (fetched once, cached, and
+    // reused by the catalog and fleet summaries). `dashboardSummary` is a
+    // computed projection over that cache.
+    this.kpisStore.load();
   }
 
   loadDashboardTrend(): void {

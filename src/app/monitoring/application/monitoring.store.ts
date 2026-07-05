@@ -7,6 +7,7 @@ import { ClassifyAlertCommand } from '../domain/model/classify-alert.command';
 import { FleetSummary } from '../domain/model/fleet-summary.entity';
 import { LiveMapVehicle } from '../domain/model/live-map-vehicle.entity';
 import { MonitoringApi } from '../infrastructure/monitoring-api';
+import { CompanyKpisStore } from '../../shared/application/company-kpis.store';
 import { exportFormatExtension, triggerBlobDownload } from '../../shared/infrastructure/file-download';
 import { RouteRepository } from '../../service/domain/route.repository';
 import { RouteOverlay } from '../presentation/components/live-map/live-map';
@@ -29,11 +30,11 @@ const LIVE_MAP_POLL_INTERVAL_MS = 4000;
 export class MonitoringStore implements OnDestroy {
   private liveMapPollHandle: ReturnType<typeof setInterval> | null = null;
   private routeRepo = inject(RouteRepository);
+  private readonly kpisStore = inject(CompanyKpisStore);
 
   private readonly auditLogSignal = signal<AuditLogEntry[]>([]);
   private readonly alertsSignal = signal<Alert[]>([]);
   private readonly liveMapVehiclesSignal = signal<LiveMapVehicle[]>([]);
-  private readonly fleetSummarySignal = signal<FleetSummary | null>(null);
   private readonly cardiacReadingSignal = signal<CardiacReading | null>(null);
   private readonly errorSignal = signal<string | null>(null);
   private readonly routesSignal = signal<Route[]>([]);
@@ -41,7 +42,11 @@ export class MonitoringStore implements OnDestroy {
   readonly auditLog = this.auditLogSignal.asReadonly();
   readonly alerts = this.alertsSignal.asReadonly();
   readonly liveMapVehicles = this.liveMapVehiclesSignal.asReadonly();
-  readonly fleetSummary = this.fleetSummarySignal.asReadonly();
+  /** Fleet counters, derived from the shared tenant-KPIs cache. */
+  readonly fleetSummary = computed(() => {
+    const kpis = this.kpisStore.kpis();
+    return kpis ? FleetSummary.fromKpis(kpis) : null;
+  });
   readonly cardiacReading = this.cardiacReadingSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
 
@@ -182,14 +187,10 @@ export class MonitoringStore implements OnDestroy {
    * Loads the fleet summary aggregate on demand.
    */
   loadFleetSummary(): void {
-    this.errorSignal.set(null);
-    this.monitoringApi.getFleetSummary().subscribe({
-      next: (summary) => this.fleetSummarySignal.set(summary),
-      error: (err) => {
-        console.error('Failed to load fleet summary:', err);
-        this.errorSignal.set('Failed to load fleet summary');
-      },
-    });
+    // Fleet counters come from the shared CompanyKpisStore (one cached KPIs fetch
+    // shared with the dashboard and catalog summaries). `fleetSummary` is a
+    // computed projection over that cache.
+    this.kpisStore.load();
   }
 
   /**

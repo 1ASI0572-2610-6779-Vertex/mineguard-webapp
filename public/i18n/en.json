@@ -251,7 +251,8 @@
         "involved": "Involved",
         "location": "Location",
         "action": "Action / Details"
-      }
+      },
+      "noReport": "No report available for this incident"
     }
   },
   "admin": {
