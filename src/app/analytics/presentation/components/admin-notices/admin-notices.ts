@@ -54,7 +54,7 @@ export class AdminNotices {
       next.add(notice.id);
       return next;
     });
-    // POST /api/v1/admin/notices/{noticeId}/dispatches — registra el re-envío en el backend
+    // POST /api/v1/companies/{companyId}/notices/{noticeId}/dispatches — registra el re-envío en el backend
     this.store.dispatchNotice(notice.id);
     this.snackBar.open('Aviso marcado como leído', 'OK', {
       duration: 3000,

@@ -1,13 +1,18 @@
 import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-response';
 
+/**
+ * `ReportResource` as returned by `GET /reports`. Camel-case per the platform
+ * contract (`id`, `incidentId`, `alertId`, `userId`, `metricId`, `reportType`,
+ * `createdAt`, `description`).
+ */
 export interface ReportResource extends BaseResource {
   id: number;
-  id_incident: number;
-  id_alert: number;
-  id_user: number;
-  id_metric: number;
-  report_type: string;
-  created_at: string;
+  incidentId: number;
+  alertId: number;
+  userId: number;
+  metricId: number;
+  reportType: string;
+  createdAt: string;
   description: string;
 }
 

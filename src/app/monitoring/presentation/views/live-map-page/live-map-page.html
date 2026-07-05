@@ -74,12 +74,12 @@
         <li
           class="tp-vehicle"
           [class.tp-vehicle--hovered]="hoveredVehicleId() === v.id"
-          [class.tp-vehicle--selected]="v.activeTripId != null && selectedTripId() === v.activeTripId"
+          [class.tp-vehicle--selected]="v.activeSessionId != null && selectedSessionId() === v.activeSessionId"
           [class.tp-vehicle--alert]="v.status === 'alert'"
           [style.animation-delay]="(i * 40) + 'ms'"
           (mouseenter)="hoveredVehicleId.set(v.id)"
           (mouseleave)="hoveredVehicleId.set(null)"
-          (click)="selectVehicle(v.activeTripId)">
+          (click)="selectVehicle(v.activeSessionId)">
 
           <span class="v-status-dot"
             [class.v-status-dot--operational]="v.status === 'in_transit'"

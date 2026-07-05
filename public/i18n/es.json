@@ -80,7 +80,9 @@
       "copyright": "© 2026 MineGuard Systems v2.4.1",
       "langSwitcher": {
         "ariaLabel": "Cambiar idioma"
-      }
+      },
+      "noAccount": "¿No tienes una cuenta?",
+      "registerCompany": "Registra tu empresa"
     },
     "forgotPassword": {
       "eyebrow": "Recuperación de acceso",
@@ -166,7 +168,62 @@
         }
       }
     },
-    "autoCredentialsBanner": "Las credenciales de acceso (ID de Usuario y Contraseña) serán generadas automáticamente por el sistema y enviadas al correo corporativo del empleado."
+    "autoCredentialsBanner": "Las credenciales de acceso (ID de Usuario y Contraseña) serán generadas automáticamente por el sistema y enviadas al correo corporativo del empleado.",
+    "registerCompany": {
+      "eyebrow": "Alta de nueva empresa",
+      "title": "Registra tu empresa",
+      "subtitle": "Crea tu espacio de trabajo en MineGuard. Aprovisionaremos tu cuenta de administrador y una API Key de telemetría para tu hardware.",
+      "companyName": {
+        "label": "Nombre de la empresa",
+        "placeholder": "ej. Antofagasta Minerals",
+        "required": "El nombre de la empresa es obligatorio."
+      },
+      "adminFullName": {
+        "label": "Nombre completo del administrador",
+        "placeholder": "ej. Juan García Flores",
+        "required": "El nombre del administrador es obligatorio."
+      },
+      "adminEmail": {
+        "label": "Correo del administrador",
+        "placeholder": "admin@empresa.com",
+        "required": "El correo es obligatorio.",
+        "invalid": "Ingresa un correo electrónico válido."
+      },
+      "plan": {
+        "label": "Plan de suscripción",
+        "perMonth": "/mes"
+      },
+      "plans": {
+        "starter": {
+          "name": "Starter",
+          "desc": "Malla preventiva para flotas pequeñas."
+        },
+        "standard": {
+          "name": "Standard",
+          "desc": "Control operativo para operaciones en crecimiento."
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "desc": "Ecosistema autónomo, escala ilimitada."
+        }
+      },
+      "submit": "Crear empresa",
+      "submitting": "Registrando...",
+      "backToLogin": "Volver al inicio de sesión",
+      "errors": {
+        "conflict": "El nombre de la empresa o el correo electrónico ya están registrados.",
+        "generic": "Algo salió mal. Inténtalo de nuevo o contacta a support@mineguard.io"
+      },
+      "success": {
+        "title": "Empresa registrada con éxito",
+        "body": "Las credenciales temporales fueron enviadas al correo del administrador. Guarda tu API Key ahora — la necesitarás para configurar tus dispositivos de hardware.",
+        "adminUsername": "Usuario administrador",
+        "apiKey": "API Key de telemetría",
+        "copy": "Copiar API Key",
+        "warning": "Esta API Key se muestra solo una vez. Guárdala de forma segura antes de salir de esta pantalla — es necesaria para aprovisionar tus sensores y smart-bands.",
+        "goToLogin": "Volver al inicio de sesión"
+      }
+    }
   },
   "reports": {
     "title": "Reportes y Analítica",
@@ -194,7 +251,8 @@
         "involved": "Involucrados",
         "location": "Ubicación",
         "action": "Acción / Detalles"
-      }
+      },
+      "noReport": "No hay reporte disponible para este incidente"
     }
   },
   "admin": {

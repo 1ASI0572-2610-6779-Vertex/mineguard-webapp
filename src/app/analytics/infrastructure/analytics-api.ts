@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
 
 import { BaseApi } from '../../shared/infrastructure/base-api';
+import { IamStore } from '../../iam/application/iam.store';
 import { AdminNotice } from '../domain/model/admin-notice.entity';
 import { AdminSummary } from '../domain/model/admin-summary.entity';
 import { AnalyticsFatigueBar } from '../domain/model/analytics-fatigue-bar.entity';
@@ -11,7 +12,6 @@ import { AnalyticsIncidentDistribution } from '../domain/model/analytics-inciden
 import { AnalyticsInsight } from '../domain/model/analytics-insight.entity';
 import { DashboardRecentAlert } from '../domain/model/dashboard-recent-alert.entity';
 import { DashboardRiskDriver } from '../domain/model/dashboard-risk-driver.entity';
-import { DashboardSummary } from '../domain/model/dashboard-summary.entity';
 import { DashboardTrend } from '../domain/model/dashboard-trend.entity';
 import { PerformanceMetric } from '../domain/model/performance-metric.entity';
 import { Report } from '../domain/model/report.entity';
@@ -23,7 +23,6 @@ import { AnalyticsIncidentDistributionApiEndpoint } from './analytics-incident-d
 import { AnalyticsInsightsApiEndpoint } from './analytics-insights-api-endpoint';
 import { DashboardRecentAlertsApiEndpoint } from './dashboard-recent-alerts-api-endpoint';
 import { DashboardRiskDriversApiEndpoint } from './dashboard-risk-drivers-api-endpoint';
-import { DashboardSummaryApiEndpoint } from './dashboard-summary-api-endpoint';
 import { DashboardTrendApiEndpoint } from './dashboard-trend-api-endpoint';
 import { PerformanceMetricsApiEndpoint } from './performance-metrics-api-endpoint';
 import { ReportsApiEndpoint } from './reports-api-endpoint';
@@ -35,7 +34,8 @@ import { ReportsApiEndpoint } from './reports-api-endpoint';
  */
 @Injectable({ providedIn: 'root' })
 export class AnalyticsApi extends BaseApi {
-  private readonly dashboardSummaryEndpoint: DashboardSummaryApiEndpoint;
+  private readonly iamStore = inject(IamStore);
+
   private readonly dashboardTrendEndpoint: DashboardTrendApiEndpoint;
   private readonly dashboardRiskDriversEndpoint: DashboardRiskDriversApiEndpoint;
   private readonly dashboardRecentAlertsEndpoint: DashboardRecentAlertsApiEndpoint;
@@ -50,7 +50,6 @@ export class AnalyticsApi extends BaseApi {
 
   constructor(http: HttpClient) {
     super();
-    this.dashboardSummaryEndpoint = new DashboardSummaryApiEndpoint(http);
     this.dashboardTrendEndpoint = new DashboardTrendApiEndpoint(http);
     this.dashboardRiskDriversEndpoint = new DashboardRiskDriversApiEndpoint(http);
     this.dashboardRecentAlertsEndpoint = new DashboardRecentAlertsApiEndpoint(http);
@@ -64,20 +63,29 @@ export class AnalyticsApi extends BaseApi {
     this.adminNoticesEndpoint = new AdminNoticesApiEndpoint(http);
   }
 
-  getDashboardSummary(): Observable<DashboardSummary[]> {
-    return this.dashboardSummaryEndpoint.getAll();
+  /**
+   * Resolves the tenant id from the authenticated session. Every
+   * `/companies/{companyId}/...` read is scoped by this value, which the backend
+   * cross-checks against the JWT. Returns null when not signed in.
+   */
+  private currentCompanyId(): number | null {
+    return this.iamStore.currentCompanyId();
   }
 
   getDashboardTrend(): Observable<DashboardTrend[]> {
-    return this.dashboardTrendEndpoint.getAll();
+    const companyId = this.currentCompanyId();
+    if (companyId == null) return throwError(() => new Error('No authenticated company'));
+    return this.dashboardTrendEndpoint.getForCompany(companyId);
   }
 
-  getDashboardRiskDrivers(): Observable<DashboardRiskDriver[]> {
-    return this.dashboardRiskDriversEndpoint.getAll();
+  /** Top risk drivers — derived from GET /drivers?sort=-riskScore&limit. */
+  getDashboardRiskDrivers(limit = 5): Observable<DashboardRiskDriver[]> {
+    return this.dashboardRiskDriversEndpoint.getTopRisk(limit);
   }
 
-  getDashboardRecentAlerts(): Observable<DashboardRecentAlert[]> {
-    return this.dashboardRecentAlertsEndpoint.getAll();
+  /** Recent alerts — derived from GET /alerts?view=operational&sort=-occurredAt&limit. */
+  getDashboardRecentAlerts(limit = 5): Observable<DashboardRecentAlert[]> {
+    return this.dashboardRecentAlertsEndpoint.getRecent(limit);
   }
 
   getPerformanceMetrics(driverId: number): Observable<PerformanceMetric[]> {
@@ -89,36 +97,52 @@ export class AnalyticsApi extends BaseApi {
   }
 
   getAnalyticsFatigueBars(): Observable<AnalyticsFatigueBar[]> {
-    return this.analyticsFatigueBarsEndpoint.getAll();
+    const companyId = this.currentCompanyId();
+    if (companyId == null) return throwError(() => new Error('No authenticated company'));
+    return this.analyticsFatigueBarsEndpoint.getForCompany(companyId);
   }
 
   getAnalyticsIncidentDistribution(): Observable<AnalyticsIncidentDistribution[]> {
-    return this.analyticsIncidentDistributionEndpoint.getAll();
+    const companyId = this.currentCompanyId();
+    if (companyId == null) return throwError(() => new Error('No authenticated company'));
+    return this.analyticsIncidentDistributionEndpoint.getForCompany(companyId);
   }
 
-  getAnalyticsHistoryRows(): Observable<AnalyticsHistoryRow[]> {
-    return this.analyticsHistoryRowsEndpoint.getAll();
+  getAnalyticsHistoryRows(page = 0, size = 20): Observable<AnalyticsHistoryRow[]> {
+    const companyId = this.currentCompanyId();
+    if (companyId == null) return throwError(() => new Error('No authenticated company'));
+    return this.analyticsHistoryRowsEndpoint.getForCompany(companyId, page, size);
   }
 
   getAnalyticsInsights(): Observable<AnalyticsInsight[]> {
-    return this.analyticsInsightsEndpoint.getAll();
+    const companyId = this.currentCompanyId();
+    if (companyId == null) return throwError(() => new Error('No authenticated company'));
+    return this.analyticsInsightsEndpoint.getForCompany(companyId);
   }
 
-  getAdminSummary(): Observable<AdminSummary[]> {
-    return this.adminSummaryEndpoint.getAll();
+  /** GET /platform/metrics — cross-tenant platform summary (single object). */
+  getAdminSummary(): Observable<AdminSummary> {
+    return this.adminSummaryEndpoint.getPlatformMetrics();
   }
 
   getAdminNotices(): Observable<AdminNotice[]> {
-    return this.adminNoticesEndpoint.getAll();
+    const companyId = this.currentCompanyId();
+    if (companyId == null) return throwError(() => new Error('No authenticated company'));
+    return this.adminNoticesEndpoint.getForCompany(companyId);
   }
 
-  // POST /api/v1/admin/notices/{noticeId}/dispatches
+  // POST /api/v1/companies/{companyId}/notices/{noticeId}/dispatches
   postNoticeDispatch(noticeId: number): Observable<void> {
-    return this.adminNoticesEndpoint.postDispatch(noticeId);
+    const companyId = this.currentCompanyId();
+    if (companyId == null) return throwError(() => new Error('No authenticated company'));
+    return this.adminNoticesEndpoint.postDispatch(companyId, noticeId);
   }
 
-  /** GET /reports/{id}?format=pdf — download binary PDF report as Blob. */
-  downloadReportPdf(id: number): Observable<Blob> {
-    return this.reportsEndpoint.downloadPdf(id);
+  /**
+   * GET /drivers/{driverId}/reports/{reportId}?format=pdf|xls — download a
+   * report as a binary file.
+   */
+  downloadReport(driverId: number, reportId: number, format: 'pdf' | 'xls'): Observable<Blob> {
+    return this.reportsEndpoint.download(driverId, reportId, format);
   }
 }

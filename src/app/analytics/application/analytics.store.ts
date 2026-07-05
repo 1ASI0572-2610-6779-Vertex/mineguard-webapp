@@ -1,5 +1,7 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+import { CompanyKpisStore } from '../../shared/application/company-kpis.store';
 
 import { AdminNotice } from '../domain/model/admin-notice.entity';
 import { AdminSummary } from '../domain/model/admin-summary.entity';
@@ -14,6 +16,7 @@ import { DashboardTrend } from '../domain/model/dashboard-trend.entity';
 import { PerformanceMetric } from '../domain/model/performance-metric.entity';
 import { Report } from '../domain/model/report.entity';
 import { AnalyticsApi } from '../infrastructure/analytics-api';
+import { exportFormatExtension, triggerBlobDownload } from '../../shared/infrastructure/file-download';
 
 /**
  * Application service (store) for the analytics bounded context.
@@ -23,7 +26,8 @@ import { AnalyticsApi } from '../infrastructure/analytics-api';
  */
 @Injectable({ providedIn: 'root' })
 export class AnalyticsStore {
-  private readonly dashboardSummarySignal = signal<DashboardSummary | null>(null);
+  private readonly kpisStore = inject(CompanyKpisStore);
+
   private readonly dashboardTrendSignal = signal<DashboardTrend[]>([]);
   private readonly riskDriversSignal = signal<DashboardRiskDriver[]>([]);
   private readonly recentAlertsSignal = signal<DashboardRecentAlert[]>([]);
@@ -39,7 +43,11 @@ export class AnalyticsStore {
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
 
-  readonly dashboardSummary = this.dashboardSummarySignal.asReadonly();
+  /** Dashboard KPI snapshot, derived from the shared tenant-KPIs cache. */
+  readonly dashboardSummary = computed(() => {
+    const kpis = this.kpisStore.kpis();
+    return kpis ? DashboardSummary.fromKpis(kpis) : null;
+  });
   readonly dashboardTrend = this.dashboardTrendSignal.asReadonly();
   readonly riskDrivers = this.riskDriversSignal.asReadonly();
   readonly recentAlerts = this.recentAlertsSignal.asReadonly();
@@ -65,14 +73,10 @@ export class AnalyticsStore {
   }
 
   loadDashboardSummary(): void {
-    this.loadingSignal.set(true);
-    this.analyticsApi.getDashboardSummary().pipe(takeUntilDestroyed()).subscribe({
-      next: (summaries) => {
-        this.dashboardSummarySignal.set(summaries[0] ?? null);
-        this.loadingSignal.set(false);
-      },
-      error: (err) => this.handleFailure(err, 'Failed to load dashboard summary'),
-    });
+    // KPIs are served by the shared CompanyKpisStore (fetched once, cached, and
+    // reused by the catalog and fleet summaries). `dashboardSummary` is a
+    // computed projection over that cache.
+    this.kpisStore.load();
   }
 
   loadDashboardTrend(): void {
@@ -141,8 +145,8 @@ export class AnalyticsStore {
   loadAdminSummary(): void {
     this.loadingSignal.set(true);
     this.analyticsApi.getAdminSummary().subscribe({
-      next: (summaries) => {
-        this.adminSummarySignal.set(summaries[0] ?? null);
+      next: (summary) => {
+        this.adminSummarySignal.set(summary);
         this.loadingSignal.set(false);
       },
       error: (err) => this.handleFailure(err, 'Failed to load admin summary'),
@@ -156,7 +160,7 @@ export class AnalyticsStore {
     });
   }
 
-  // POST /api/v1/admin/notices/{noticeId}/dispatches
+  // POST /api/v1/companies/{companyId}/notices/{noticeId}/dispatches
   dispatchNotice(noticeId: number): void {
     this.analyticsApi.postNoticeDispatch(noticeId).subscribe({
       error: (err) => this.handleFailure(err, `Failed to dispatch notice ${noticeId}`),
@@ -164,19 +168,18 @@ export class AnalyticsStore {
   }
 
   /**
-   * Downloads GET /reports/{id}/pdf and triggers a browser file-save dialog.
+   * Downloads GET /drivers/{driverId}/reports/{reportId}?format=pdf|xls and
+   * triggers a browser file-save dialog.
+   *
+   * @remarks
+   * The per-driver ownership chain (Report → Alert → DrivingSession → Driver) is
+   * enforced server-side, so both `driverId` and `reportId` are required.
    */
-  downloadReportPdf(id: number): void {
-    this.analyticsApi.downloadReportPdf(id).subscribe({
-      next: (blob) => {
-        const url = URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = `mineguard-report-${id}.pdf`;
-        anchor.click();
-        URL.revokeObjectURL(url);
-      },
-      error: (err) => this.handleFailure(err, `Failed to download report ${id}`),
+  downloadReport(driverId: number, reportId: number, format: 'pdf' | 'xls' = 'pdf'): void {
+    this.analyticsApi.downloadReport(driverId, reportId, format).subscribe({
+      next: (blob) =>
+        triggerBlobDownload(blob, `mineguard-report-${reportId}.${exportFormatExtension(format)}`),
+      error: (err) => this.handleFailure(err, `Failed to download report ${reportId}`),
     });
   }
 

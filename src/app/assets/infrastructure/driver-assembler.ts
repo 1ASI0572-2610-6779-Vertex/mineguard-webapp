@@ -14,6 +14,7 @@ export class DriverAssembler
       specialty: resource.specialty,
       shiftStatus: resource.shiftStatus,
       lastAccess: resource.lastAccess,
+      riskScore: resource.riskScore ?? 0,
     });
   }
 
@@ -26,6 +27,7 @@ export class DriverAssembler
       specialty: entity.specialty,
       shiftStatus: entity.shiftStatus,
       lastAccess: entity.lastAccess,
+      riskScore: entity.riskScore,
     };
   }
 

@@ -12,6 +12,10 @@ export class AnalyticsHistoryRow implements BaseEntity {
   incidentType: string;
   involved: string;
   location: string;
+  /** Owning driver of the incident; null when there is no associated trip. */
+  driverId: number | null;
+  /** Report id for this incident; null when no report has been generated. */
+  reportId: number | null;
 
   constructor(props: {
     id: number;
@@ -22,6 +26,8 @@ export class AnalyticsHistoryRow implements BaseEntity {
     incidentType: string;
     involved: string;
     location: string;
+    driverId?: number | null;
+    reportId?: number | null;
   }) {
     this.id = props.id;
     this.date = props.date;
@@ -31,5 +37,7 @@ export class AnalyticsHistoryRow implements BaseEntity {
     this.incidentType = props.incidentType;
     this.involved = props.involved;
     this.location = props.location;
+    this.driverId = props.driverId ?? null;
+    this.reportId = props.reportId ?? null;
   }
 }

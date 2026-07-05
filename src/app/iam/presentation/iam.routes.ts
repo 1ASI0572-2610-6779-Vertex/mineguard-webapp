@@ -8,6 +8,8 @@ const changePasswordPage = () =>
   import('./views/change-password-page/change-password-page').then((m) => m.ChangePasswordPage);
 const forgotPasswordPage = () =>
   import('./views/forgot-password-page/forgot-password-page').then((m) => m.ForgotPasswordPage);
+const registerCompanyPage = () =>
+  import('./views/register-company-page/register-company-page').then((m) => m.RegisterCompanyPage);
 const supervisorsPage = () =>
   import('./views/supervisors-page/supervisors-page').then((m) => m.SupervisorsPage);
 
@@ -22,6 +24,7 @@ export const iamRoutes: Routes = [
   { path: 'sign-in',          loadComponent: signInForm },
   { path: 'change-password',  loadComponent: changePasswordPage },
   { path: 'forgot-password',  loadComponent: forgotPasswordPage },
+  { path: 'sign-up',          loadComponent: registerCompanyPage },
   {
     path: 'supervisors',
     loadComponent: supervisorsPage,

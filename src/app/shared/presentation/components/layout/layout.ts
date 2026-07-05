@@ -219,6 +219,7 @@ export class Layout implements OnInit {
 
   private static readonly NO_SHELL_ROUTES: readonly string[] = [
     '/iam/sign-in',
+    '/iam/sign-up',
     '/iam/change-password',
     '/iam/forgot-password',
   ];
