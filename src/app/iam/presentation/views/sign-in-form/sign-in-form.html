@@ -106,6 +106,14 @@
 
     </form>
 
+    <!-- ── Sign-up prompt ── -->
+    <div class="si-signup-row">
+      <span>{{ 'iam.signIn.noAccount' | translate }}</span>
+      <a class="si-signup-link" [routerLink]="['/iam/sign-up']">
+        {{ 'iam.signIn.registerCompany' | translate }}
+      </a>
+    </div>
+
     <!-- ── Footer ── -->
     <footer class="auth-footer">
       <div class="auth-security">

@@ -14,6 +14,7 @@ import { DashboardTrend } from '../domain/model/dashboard-trend.entity';
 import { PerformanceMetric } from '../domain/model/performance-metric.entity';
 import { Report } from '../domain/model/report.entity';
 import { AnalyticsApi } from '../infrastructure/analytics-api';
+import { exportFormatExtension, triggerBlobDownload } from '../../shared/infrastructure/file-download';
 
 /**
  * Application service (store) for the analytics bounded context.
@@ -67,8 +68,8 @@ export class AnalyticsStore {
   loadDashboardSummary(): void {
     this.loadingSignal.set(true);
     this.analyticsApi.getDashboardSummary().pipe(takeUntilDestroyed()).subscribe({
-      next: (summaries) => {
-        this.dashboardSummarySignal.set(summaries[0] ?? null);
+      next: (summary) => {
+        this.dashboardSummarySignal.set(summary);
         this.loadingSignal.set(false);
       },
       error: (err) => this.handleFailure(err, 'Failed to load dashboard summary'),
@@ -141,8 +142,8 @@ export class AnalyticsStore {
   loadAdminSummary(): void {
     this.loadingSignal.set(true);
     this.analyticsApi.getAdminSummary().subscribe({
-      next: (summaries) => {
-        this.adminSummarySignal.set(summaries[0] ?? null);
+      next: (summary) => {
+        this.adminSummarySignal.set(summary);
         this.loadingSignal.set(false);
       },
       error: (err) => this.handleFailure(err, 'Failed to load admin summary'),
@@ -156,7 +157,7 @@ export class AnalyticsStore {
     });
   }
 
-  // POST /api/v1/admin/notices/{noticeId}/dispatches
+  // POST /api/v1/companies/{companyId}/notices/{noticeId}/dispatches
   dispatchNotice(noticeId: number): void {
     this.analyticsApi.postNoticeDispatch(noticeId).subscribe({
       error: (err) => this.handleFailure(err, `Failed to dispatch notice ${noticeId}`),
@@ -164,19 +165,18 @@ export class AnalyticsStore {
   }
 
   /**
-   * Downloads GET /reports/{id}/pdf and triggers a browser file-save dialog.
+   * Downloads GET /drivers/{driverId}/reports/{reportId}?format=pdf|xls and
+   * triggers a browser file-save dialog.
+   *
+   * @remarks
+   * The per-driver ownership chain (Report → Alert → DrivingSession → Driver) is
+   * enforced server-side, so both `driverId` and `reportId` are required.
    */
-  downloadReportPdf(id: number): void {
-    this.analyticsApi.downloadReportPdf(id).subscribe({
-      next: (blob) => {
-        const url = URL.createObjectURL(blob);
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = `mineguard-report-${id}.pdf`;
-        anchor.click();
-        URL.revokeObjectURL(url);
-      },
-      error: (err) => this.handleFailure(err, `Failed to download report ${id}`),
+  downloadReport(driverId: number, reportId: number, format: 'pdf' | 'xls' = 'pdf'): void {
+    this.analyticsApi.downloadReport(driverId, reportId, format).subscribe({
+      next: (blob) =>
+        triggerBlobDownload(blob, `mineguard-report-${reportId}.${exportFormatExtension(format)}`),
+      error: (err) => this.handleFailure(err, `Failed to download report ${reportId}`),
     });
   }
 

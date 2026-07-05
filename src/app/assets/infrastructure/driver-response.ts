@@ -9,6 +9,8 @@ export interface DriverResource extends BaseResource {
   specialty: string;
   shiftStatus: DriverShiftStatus;
   lastAccess: string;
+  /** Risk score derived from PerformanceMetric; drives `GET /drivers?sort=-riskScore`. */
+  riskScore: number;
 }
 
 export interface DriversResponse extends BaseResponse {}

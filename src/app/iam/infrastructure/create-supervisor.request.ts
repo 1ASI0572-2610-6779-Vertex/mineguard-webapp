@@ -1,11 +1,16 @@
 /**
- * HTTP request body for POST /supervisors.
- * Username and password are omitted — the backend generates them automatically
- * and delivers credentials via corporate email.
+ * HTTP request body for POST /supervisors (`CreateSupervisorResource`).
+ *
+ * @remarks
+ * The backend DTO is annotated `@JsonIgnoreProperties(ignoreUnknown = false)`,
+ * so it accepts **only** these fields — any extra property (including
+ * `username`, `password`, or `idCompany`) is rejected with `400`. The tenant
+ * (`companyId`) is resolved exclusively from the JWT, never from the body.
+ * Username and password are generated server-side and emailed to the supervisor.
  */
 export interface CreateSupervisorRequest {
-  email:       string;
   fullName:    string;
-  idCompany:   number;
   corporateId: string;
+  /** Optional; must be a valid email format when present. */
+  email?:      string;
 }

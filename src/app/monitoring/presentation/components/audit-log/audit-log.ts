@@ -1,6 +1,7 @@
-import { Component, Input, computed, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -10,7 +11,7 @@ import { AuditLogEntry } from '../../../domain/model/audit-log-entry.entity';
 @Component({
   selector: 'app-audit-log',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, MatTooltipModule, TranslatePipe],
+  imports: [MatButtonModule, MatIconModule, MatMenuModule, MatTooltipModule, TranslatePipe],
   templateUrl: './audit-log.html',
   styleUrl: './audit-log.css',
 })
@@ -20,6 +21,9 @@ export class AuditLog {
   @Input({ required: true }) set entries(value: AuditLogEntry[]) {
     this.entriesSignal.set(value);
   }
+
+  /** Emits the chosen binary export format when the user picks one from the menu. */
+  @Output() readonly export = new EventEmitter<'pdf' | 'xls'>();
 
   readonly query = signal<string>('');
   readonly categoryFilter = signal<AuditCategory | 'all'>('all');

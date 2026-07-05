@@ -14,15 +14,18 @@ export class SupervisorAssembler
       corporateId:  resource.corporateId,
       email:        resource.email,
       accessStatus: resource.accessStatus,
-      // username and idCompany are not returned by GET /api/v1/supervisors
+      // username is not returned by GET /api/v1/supervisors; idCompany is never
+      // exposed on the wire (tenant resolved from the JWT). The entity keeps its
+      // own internal default for idCompany.
       username:  resource.username  ?? '',
-      idCompany: resource.idCompany ?? 1,
     });
   }
 
   /**
-   * Builds the PUT /api/v1/supervisors/{id} body.
-   * password is omitted — the backend treats a missing password as "no change".
+   * Builds the PATCH /api/v1/supervisors/{id} body (`UpdateSupervisorResource`).
+   * All fields are optional (partial update); `password` is omitted so the
+   * backend treats it as "no change". `idCompany` is never sent — the tenant is
+   * resolved from the JWT (multi-tenant firewall).
    */
   toResourceFromEntity(entity: Supervisor): SupervisorResource {
     return {
@@ -32,7 +35,6 @@ export class SupervisorAssembler
       email:        entity.email,
       accessStatus: entity.accessStatus,
       username:     entity.username  || undefined,
-      idCompany:    entity.idCompany || undefined,
     };
   }
 
@@ -42,10 +44,9 @@ export class SupervisorAssembler
 
   toRequestFromCommand(command: CreateSupervisorCommand): CreateSupervisorRequest {
     return {
-      email:       command.email,
       fullName:    command.fullName,
-      idCompany:   command.idCompany,
       corporateId: command.corporateId,
+      email:       command.email || undefined,
     };
   }
 }

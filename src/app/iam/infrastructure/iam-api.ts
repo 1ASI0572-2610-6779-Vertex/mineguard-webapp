@@ -4,11 +4,14 @@ import { Observable } from 'rxjs';
 
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { CreateSupervisorCommand } from '../domain/model/create-supervisor.command';
+import { RegisterCompanyCommand } from '../domain/model/register-company.command';
 import { SignInCommand } from '../domain/model/sign-in.command';
 import { SignUpCommand } from '../domain/model/sign-up.command';
 import { Supervisor } from '../domain/model/supervisor.entity';
 import { ChangePasswordApiEndpoint } from './change-password-api-endpoint';
+import { CompanyRegistrationResponse } from './company-registration-response';
 import { ForgotPasswordApiEndpoint } from './forgot-password-api-endpoint';
+import { RegisterCompanyApiEndpoint } from './register-company-api-endpoint';
 import { SignInApiEndpoint } from './sign-in-api-endpoint';
 import { SignInAssembler } from './sign-in-assembler';
 import { SignInResource } from './sign-in-response';
@@ -37,6 +40,7 @@ export class IamApi extends BaseApi {
   private readonly supervisorsEndpoint: SupervisorsApiEndpoint;
   private readonly changePasswordEndpoint: ChangePasswordApiEndpoint;
   private readonly forgotPasswordEndpoint: ForgotPasswordApiEndpoint;
+  private readonly registerCompanyEndpoint: RegisterCompanyApiEndpoint;
 
   /**
    * Creates an instance of IamApi.
@@ -50,6 +54,7 @@ export class IamApi extends BaseApi {
     this.supervisorsEndpoint = new SupervisorsApiEndpoint(http);
     this.changePasswordEndpoint = new ChangePasswordApiEndpoint(http);
     this.forgotPasswordEndpoint = new ForgotPasswordApiEndpoint(http);
+    this.registerCompanyEndpoint = new RegisterCompanyApiEndpoint(http);
   }
 
   /**
@@ -95,5 +100,13 @@ export class IamApi extends BaseApi {
   /** Sends POST /authentication/forgot-password with the corporate email. */
   forgotPassword(email: string): Observable<void> {
     return this.forgotPasswordEndpoint.forgotPassword(email);
+  }
+
+  /**
+   * Registers a new company (tenant) via POST /companies. Requires no JWT.
+   * Rejects with a CompanyRegistrationError carrying the HTTP status on failure.
+   */
+  registerCompany(command: RegisterCompanyCommand): Observable<CompanyRegistrationResponse> {
+    return this.registerCompanyEndpoint.register(command);
   }
 }

@@ -1,4 +1,5 @@
 import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-response';
+import { SubscriptionPlan } from './company-registration.request';
 
 /**
  * Resource representation of authenticated user data returned by sign-in endpoint.
@@ -18,6 +19,12 @@ export interface SignInResource extends BaseResource {
   role: string;
   /** True when the backend issued a temporary password — user must set a new one before proceeding. */
   requiresPasswordChange: boolean;
+  /**
+   * Descriptive subscription plan of the company linked to this user
+   * (`STARTER`/`STANDARD`/`ENTERPRISE`). Defaults to `STANDARD` for companies
+   * with no plan assigned. Purely informational — imposes no client-side limits.
+   */
+  subscriptionPlan: SubscriptionPlan;
 }
 
 /**

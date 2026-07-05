@@ -26,7 +26,7 @@ export class AssetsStore {
   loadCatalogSummary(): void {
     this.errorSignal.set(null);
     this.assetsApi.getCatalogSummary().subscribe({
-      next: (summaries) => this.catalogSummarySignal.set(summaries[0] ?? null),
+      next: (summary) => this.catalogSummarySignal.set(summary),
       error: (err) => {
         console.error('Failed to load catalog summary:', err);
         this.errorSignal.set('Failed to load catalog summary');
@@ -103,7 +103,7 @@ export class AssetsStore {
     );
   }
 
-  /** PUT /drivers/{id} — updates a driver and refreshes the local directory list. */
+  /** PATCH /drivers/{id} — updates a driver and refreshes the local directory list. */
   updateDriver$(command: SaveDriverCommand): Observable<DriverResource> {
     return this.assetsApi.updateDriver(command).pipe(
       tap(() => this.loadDrivers()),

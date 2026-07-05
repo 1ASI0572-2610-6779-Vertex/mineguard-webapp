@@ -1,0 +1,172 @@
+<div class="auth-shell">
+  <div class="auth-card rc-card">
+
+    @if (!result()) {
+
+      <!-- ── Header ── -->
+      <header class="auth-header">
+        <p class="auth-eyebrow">{{ 'iam.registerCompany.eyebrow' | translate }}</p>
+        <h1 class="auth-title">{{ 'iam.registerCompany.title' | translate }}</h1>
+        <p class="auth-subtitle">{{ 'iam.registerCompany.subtitle' | translate }}</p>
+      </header>
+
+      <!-- ── API error banner ── -->
+      @if (errorKey()) {
+        <div class="auth-error" role="alert" aria-live="polite">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorKey()! | translate }}</span>
+        </div>
+      }
+
+      <!-- ── Form ── -->
+      <form class="rc-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+        <!-- Company name -->
+        <div class="auth-field-wrap">
+          <label class="auth-label" for="rc-company">{{ 'iam.registerCompany.companyName.label' | translate }}</label>
+          <mat-form-field appearance="outline" class="auth-field">
+            <mat-icon matPrefix>domain</mat-icon>
+            <input
+              matInput
+              id="rc-company"
+              formControlName="companyName"
+              [placeholder]="'iam.registerCompany.companyName.placeholder' | translate" />
+            @if (form.controls.companyName.invalid && form.controls.companyName.touched) {
+              <mat-error>{{ 'iam.registerCompany.companyName.required' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Admin full name -->
+        <div class="auth-field-wrap">
+          <label class="auth-label" for="rc-admin">{{ 'iam.registerCompany.adminFullName.label' | translate }}</label>
+          <mat-form-field appearance="outline" class="auth-field">
+            <mat-icon matPrefix>badge</mat-icon>
+            <input
+              matInput
+              id="rc-admin"
+              formControlName="adminFullName"
+              [placeholder]="'iam.registerCompany.adminFullName.placeholder' | translate" />
+            @if (form.controls.adminFullName.invalid && form.controls.adminFullName.touched) {
+              <mat-error>{{ 'iam.registerCompany.adminFullName.required' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Admin email -->
+        <div class="auth-field-wrap">
+          <label class="auth-label" for="rc-email">{{ 'iam.registerCompany.adminEmail.label' | translate }}</label>
+          <mat-form-field appearance="outline" class="auth-field">
+            <mat-icon matPrefix>mail_outline</mat-icon>
+            <input
+              matInput
+              id="rc-email"
+              type="email"
+              autocomplete="email"
+              formControlName="adminEmail"
+              [placeholder]="'iam.registerCompany.adminEmail.placeholder' | translate" />
+            @if (form.controls.adminEmail.hasError('required') && form.controls.adminEmail.touched) {
+              <mat-error>{{ 'iam.registerCompany.adminEmail.required' | translate }}</mat-error>
+            }
+            @if (form.controls.adminEmail.hasError('email') && form.controls.adminEmail.touched) {
+              <mat-error>{{ 'iam.registerCompany.adminEmail.invalid' | translate }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Subscription plan selector -->
+        <div class="auth-field-wrap">
+          <label class="auth-label">{{ 'iam.registerCompany.plan.label' | translate }}</label>
+          <div class="rc-plans" role="radiogroup" [attr.aria-label]="'iam.registerCompany.plan.label' | translate">
+            @for (plan of plans; track plan.key) {
+              <button
+                type="button"
+                class="rc-plan"
+                [class.rc-plan--active]="form.controls.subscriptionPlan.value === plan.key"
+                role="radio"
+                [attr.aria-checked]="form.controls.subscriptionPlan.value === plan.key"
+                (click)="selectPlan(plan.key)">
+                <span class="rc-plan-check"><mat-icon>check_circle</mat-icon></span>
+                <span class="rc-plan-name">{{ plan.nameKey | translate }}</span>
+                <span class="rc-plan-desc">{{ plan.descKey | translate }}</span>
+                <span class="rc-plan-price">{{ plan.price }}<small>{{ 'iam.registerCompany.plan.perMonth' | translate }}</small></span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button mat-flat-button type="submit" class="auth-submit" [disabled]="submitting()">
+          @if (submitting()) {
+            <mat-spinner diameter="20" class="auth-spinner"></mat-spinner>
+            <span>{{ 'iam.registerCompany.submitting' | translate }}</span>
+          } @else {
+            <ng-container>
+              <mat-icon>rocket_launch</mat-icon>
+              <span>{{ 'iam.registerCompany.submit' | translate }}</span>
+            </ng-container>
+          }
+        </button>
+      </form>
+
+      <!-- ── Back link ── -->
+      <div class="rc-back">
+        <a class="auth-back-link" [routerLink]="['/iam/sign-in']">
+          <mat-icon>arrow_back</mat-icon>
+          {{ 'iam.registerCompany.backToLogin' | translate }}
+        </a>
+      </div>
+
+    } @else {
+
+      <!-- ── Success state ── -->
+      <div class="auth-success">
+        <div class="auth-success-icon">
+          <mat-icon>verified</mat-icon>
+        </div>
+        <h2 class="auth-success-title">{{ 'iam.registerCompany.success.title' | translate }}</h2>
+        <p class="auth-success-body">{{ 'iam.registerCompany.success.body' | translate }}</p>
+      </div>
+
+      <!-- Generated credentials -->
+      <div class="rc-creds">
+        <div class="rc-cred-row">
+          <span class="rc-cred-label">{{ 'iam.registerCompany.success.adminUsername' | translate }}</span>
+          <code class="rc-cred-value">{{ result()!.adminUsername }}</code>
+        </div>
+
+        <div class="rc-cred-row rc-cred-row--key">
+          <span class="rc-cred-label">
+            <mat-icon>vpn_key</mat-icon>
+            {{ 'iam.registerCompany.success.apiKey' | translate }}
+          </span>
+          <div class="rc-apikey-box">
+            <code class="rc-cred-value rc-apikey-value">{{ result()!.apiKey }}</code>
+            <button
+              mat-icon-button
+              type="button"
+              class="rc-copy-btn"
+              [attr.aria-label]="'iam.registerCompany.success.copy' | translate"
+              (click)="copyApiKey()">
+              <mat-icon>{{ apiKeyCopied() ? 'check' : 'content_copy' }}</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Warning / instructions -->
+      <div class="auth-hint">
+        <mat-icon>warning_amber</mat-icon>
+        <span>{{ 'iam.registerCompany.success.warning' | translate }}</span>
+      </div>
+
+      <!-- Back to login (explicit, only after copying) -->
+      <button mat-flat-button type="button" class="auth-submit" (click)="goToLogin()">
+        <mat-icon>login</mat-icon>
+        <span>{{ 'iam.registerCompany.success.goToLogin' | translate }}</span>
+      </button>
+
+    }
+
+  </div>
+</div>

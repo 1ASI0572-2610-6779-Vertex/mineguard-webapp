@@ -22,12 +22,18 @@ export class CardiacReadingsApiEndpoint extends BaseApiEndpoint<
     );
   }
 
-  // GET /api/v1/trips/{tripId}/cardiac-readings
-  getByTripId(tripId: number): Observable<CardiacReading[]> {
-    const url = `${this.endpointUrl}/${tripId}/cardiac-readings`;
-    return this.http.get<CardiacReadingResource[]>(url).pipe(
-      map((resources) => resources.map((r) => this.assembler.toEntityFromResource(r))),
-      catchError(this.handleError(`Failed to fetch cardiac readings for trip ${tripId}`)),
+  /**
+   * GET /api/v1/driving-sessions/{sessionId}/cardiac-readings
+   *
+   * @remarks
+   * Returns the resource **directly, not wrapped in an array** — a Driving
+   * Session has exactly one active driver, so cardiac readings are a singleton.
+   */
+  getBySessionId(sessionId: number): Observable<CardiacReading> {
+    const url = `${this.endpointUrl}/${sessionId}/cardiac-readings`;
+    return this.http.get<CardiacReadingResource>(url).pipe(
+      map((resource) => this.assembler.toEntityFromResource(resource)),
+      catchError(this.handleError(`Failed to fetch cardiac reading for session ${sessionId}`)),
     );
   }
 }

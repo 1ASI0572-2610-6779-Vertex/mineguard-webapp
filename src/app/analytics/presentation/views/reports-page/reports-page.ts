@@ -64,8 +64,18 @@ export class ReportsPage implements OnInit {
     this.store.loadHistoryRows();
   }
 
-  onViewReport(id: number): void {
-    this.store.downloadReportPdf(id);
+  /**
+   * Report export moved to `GET /drivers/{driverId}/reports/{reportId}` in the
+   * new contract, which requires the owning `driverId`. The history table only
+   * exposes the row id, so the per-driver export cannot be resolved here yet —
+   * pending a backend/UI change that surfaces `driverId` (+ `reportId`) on the
+   * history row. The download capability itself lives in
+   * `AnalyticsStore.downloadReport(driverId, reportId, format)`.
+   *
+   * @todo Wire once the history row carries the owning driverId/reportId.
+   */
+  onViewReport(_id: number): void {
+    // Intentionally a no-op until driverId is available on the row (see above).
   }
 
   /** Generates and downloads a CSV of the currently filtered history rows. */

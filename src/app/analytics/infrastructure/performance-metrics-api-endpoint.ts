@@ -25,9 +25,9 @@ export class PerformanceMetricsApiEndpoint extends BaseApiEndpoint<
     );
   }
 
-  // GET /api/v1/drivers/{driverId}/performance-metrics
+  // GET /api/v1/drivers/{driverId}/metrics
   getByDriverId(driverId: number): Observable<PerformanceMetric[]> {
-    const url = `${this.endpointUrl}/${driverId}/performance-metrics`;
+    const url = `${this.endpointUrl}/${driverId}/metrics`;
     return this.http.get<PerformanceMetricResource[]>(url).pipe(
       map((resources) => resources.map((r) => this.assembler.toEntityFromResource(r))),
       catchError(this.handleError(`Failed to fetch performance metrics for driver ${driverId}`)),

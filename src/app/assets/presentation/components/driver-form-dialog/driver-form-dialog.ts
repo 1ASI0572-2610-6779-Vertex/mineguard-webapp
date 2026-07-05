@@ -9,7 +9,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { IamStore } from '../../../../iam/application/iam.store';
 import { AssetsStore } from '../../../application/assets.store';
 import { Driver } from '../../../domain/model/driver.entity';
 import { SaveDriverCommand } from '../../../domain/model/save-driver.command';
@@ -39,7 +38,6 @@ export class DriverFormDialog {
   private readonly fb        = inject(FormBuilder);
   private readonly dialogRef = inject(MatDialogRef<DriverFormDialog>);
   private readonly store     = inject(AssetsStore);
-  private readonly iamStore  = inject(IamStore);
   readonly data: DriverDialogData = inject(MAT_DIALOG_DATA) ?? {};
 
   readonly isEdit   = !!this.data.driver;
@@ -67,7 +65,6 @@ export class DriverFormDialog {
       id:            this.data.driver?.id,
       fullName:      v.fullName,
       email:         v.email,
-      idCompany:     this.iamStore.currentCompanyId() ?? 1,
       licenseNumber: v.licenseNumber,
       workShift:     v.workShift,
     });

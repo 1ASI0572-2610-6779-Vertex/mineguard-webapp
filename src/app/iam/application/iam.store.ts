@@ -4,10 +4,13 @@ import { Router } from '@angular/router';
 
 import { AccessStatus } from '../domain/model/access-status';
 import { CreateSupervisorCommand } from '../domain/model/create-supervisor.command';
+import { RegisterCompanyCommand } from '../domain/model/register-company.command';
 import { SignInCommand } from '../domain/model/sign-in.command';
 import { SignUpCommand } from '../domain/model/sign-up.command';
 import { Supervisor } from '../domain/model/supervisor.entity';
 import { User } from '../domain/model/user.entity';
+import { CompanyRegistrationResponse } from '../infrastructure/company-registration-response';
+import { SubscriptionPlan } from '../infrastructure/company-registration.request';
 import { IamApi } from '../infrastructure/iam-api';
 
 /**
@@ -23,6 +26,7 @@ interface PersistedSession {
   role: string;
   token: string;
   companyId: number | null;
+  subscriptionPlan: SubscriptionPlan | null;
 }
 
 const SESSION_STORAGE_KEY = 'mineguard.session';
@@ -87,6 +91,9 @@ export class IamStore {
   /** companyId decoded from the JWT payload at sign-in time. */
   private readonly currentCompanyIdSignal = signal<number | null>(null);
 
+  /** Subscription plan of the authenticated user's company (from sign-in). */
+  private readonly currentSubscriptionPlanSignal = signal<SubscriptionPlan | null>(null);
+
   /**
    * Signal containing all users in the system (for queries/search).
    * @private
@@ -146,6 +153,9 @@ export class IamStore {
   /** companyId from the JWT payload. Used by write operations that require tenant scoping. */
   readonly currentCompanyId = this.currentCompanyIdSignal.asReadonly();
 
+  /** Subscription plan of the current company (STARTER/STANDARD/ENTERPRISE). */
+  readonly currentSubscriptionPlan = this.currentSubscriptionPlanSignal.asReadonly();
+
   /**
    * Readonly signal for the list of users retrieved by user queries.
    */
@@ -200,6 +210,7 @@ export class IamStore {
           role:      signInResource.role,
           token:     signInResource.token,
           companyId: this.decodeCompanyIdFromJwt(signInResource.token),
+          subscriptionPlan: signInResource.subscriptionPlan ?? 'STANDARD',
         };
         this.savePersistedSession(session);
         this.applySession(session);
@@ -263,6 +274,20 @@ export class IamStore {
         router.navigate(['/iam/sign-up']).then();
       },
     });
+  }
+
+  /**
+   * Registers a new company (tenant) through the IAM API.
+   *
+   * @remarks
+   * Returns the raw Observable so the caller manages its own loading/success/error
+   * state. On success the emitted {@link CompanyRegistrationResponse} carries the
+   * generated `adminUsername` and telemetry `apiKey` that must be shown to the
+   * user. Unlike sign-in, this does not mutate the authenticated session — the new
+   * admin still has to sign in afterwards with the emailed temporary password.
+   */
+  registerCompany(command: RegisterCompanyCommand): Observable<CompanyRegistrationResponse> {
+    return this.iamApi.registerCompany(command);
   }
 
   /**
@@ -374,6 +399,11 @@ export class IamStore {
         if (session.companyId == null) {
           session.companyId = this.decodeCompanyIdFromJwt(session.token);
         }
+        // subscriptionPlan may be absent in sessions persisted before this
+        // change — default to STANDARD (backend's own default).
+        if (session.subscriptionPlan == null) {
+          session.subscriptionPlan = 'STANDARD';
+        }
         return session as PersistedSession;
       }
       this.clearPersistedSession();
@@ -426,6 +456,7 @@ export class IamStore {
     this.currentRoleSignal.set(session.role);
     this.currentTokenSignal.set(session.token);
     this.currentCompanyIdSignal.set(session.companyId ?? null);
+    this.currentSubscriptionPlanSignal.set(session.subscriptionPlan ?? null);
   }
 
   /**
@@ -439,5 +470,6 @@ export class IamStore {
     this.currentRoleSignal.set(null);
     this.currentTokenSignal.set(null);
     this.currentCompanyIdSignal.set(null);
+    this.currentSubscriptionPlanSignal.set(null);
   }
 }
