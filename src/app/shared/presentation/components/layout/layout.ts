@@ -70,6 +70,12 @@ export class Layout implements OnInit {
       roles: ['Administrator'],
     },
     {
+      icon: 'sensors',
+      path: '/devices',
+      title: 'option.devices',
+      roles: ['Administrator'],
+    },
+    {
       icon: 'dashboard',
       path: '/analytics/dashboard',
       title: 'option.dashboard',

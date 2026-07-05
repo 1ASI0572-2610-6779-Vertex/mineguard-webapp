@@ -7,10 +7,56 @@
     "adminSummary": "Resumen del Sistema",
     "userManagement": "Gestión de Usuarios",
     "auditAndAssets": "Auditoría y Activos",
+    "devices": "Dispositivos",
     "fleetAndDrivers": "Flota y Conductores",
     "routeDesign": "Diseño de ruta",
     "alerts": "Gestión de Alertas",
     "liveMap": "Mapa en Vivo"
+  },
+  "devices": {
+    "title": "Dispositivos",
+    "subtitle": "Vincula cada vehículo con su unidad edge MineGuard",
+    "count": "{{ count }} dispositivo(s)",
+    "form": {
+      "title": "Registrar dispositivo",
+      "subtitle": "Un dispositivo MineGuard integra los 4 sensores (GPS, ritmo cardíaco, ultrasonido anticolisión y colisión). Solo vincula 1 vehículo con 1 Device ID.",
+      "vehicle": {
+        "label": "Vehículo",
+        "placeholder": "Selecciona un vehículo",
+        "required": "Selecciona un vehículo.",
+        "empty": "No hay vehículos disponibles. Registra un vehículo antes de vincular un dispositivo."
+      },
+      "deviceId": {
+        "label": "Device ID",
+        "placeholder": "Ej: 1",
+        "hint": "Usa un identificador simple (ej. 1, 2, 3). Debe coincidir exactamente con el configurado en la caja física del vehículo.",
+        "required": "Ingresa el Device ID."
+      },
+      "submit": "Vincular dispositivo",
+      "submitting": "Vinculando...",
+      "successSnack": "Dispositivo vinculado correctamente."
+    },
+    "table": {
+      "title": "Dispositivos registrados",
+      "col": {
+        "deviceId": "Device ID",
+        "vehicle": "Vehículo",
+        "status": "Estado"
+      },
+      "empty": {
+        "title": "Sin dispositivos registrados",
+        "sub": "Vincula el primer vehículo con su dispositivo MineGuard usando el formulario."
+      }
+    },
+    "error": {
+      "badRequest": "Completa vehículo y Device ID.",
+      "vehicleNotFound": "El vehículo no existe o no pertenece a tu empresa.",
+      "conflict": "Ese vehículo ya tiene un dispositivo o ese Device ID ya está en uso.",
+      "sessionExpired": "Tu sesión expiró. Vuelve a iniciar sesión.",
+      "generic": "No se pudo vincular el dispositivo. Inténtalo de nuevo.",
+      "loadDevices": "No se pudieron cargar los dispositivos.",
+      "loadVehicles": "No se pudieron cargar los vehículos."
+    }
   },
   "about": {
     "title": "Acerca de nosotros",
