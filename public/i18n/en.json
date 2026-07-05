@@ -7,10 +7,56 @@
     "adminSummary": "System Overview",
     "userManagement": "User Management",
     "auditAndAssets": "Audit & Assets",
+    "devices": "Devices",
     "fleetAndDrivers": "Fleet & Drivers",
     "routeDesign": "Route Design",
     "alerts": "Alert Management",
     "liveMap": "Live Map"
+  },
+  "devices": {
+    "title": "Devices",
+    "subtitle": "Link each vehicle with its MineGuard edge unit",
+    "count": "{{ count }} device(s)",
+    "form": {
+      "title": "Register device",
+      "subtitle": "A MineGuard device integrates all 4 sensors (GPS, heart-rate, anti-collision ultrasound and collision). Just link 1 vehicle with 1 Device ID.",
+      "vehicle": {
+        "label": "Vehicle",
+        "placeholder": "Select a vehicle",
+        "required": "Select a vehicle.",
+        "empty": "No vehicles available. Register a vehicle before linking a device."
+      },
+      "deviceId": {
+        "label": "Device ID",
+        "placeholder": "e.g. 1",
+        "hint": "Use a simple identifier (e.g. 1, 2, 3). It must exactly match the one configured in the vehicle's physical box.",
+        "required": "Enter the Device ID."
+      },
+      "submit": "Link device",
+      "submitting": "Linking...",
+      "successSnack": "Device linked successfully."
+    },
+    "table": {
+      "title": "Registered devices",
+      "col": {
+        "deviceId": "Device ID",
+        "vehicle": "Vehicle",
+        "status": "Status"
+      },
+      "empty": {
+        "title": "No devices registered",
+        "sub": "Link the first vehicle with its MineGuard device using the form."
+      }
+    },
+    "error": {
+      "badRequest": "Complete vehicle and Device ID.",
+      "vehicleNotFound": "The vehicle does not exist or does not belong to your company.",
+      "conflict": "That vehicle already has a device, or that Device ID is already in use.",
+      "sessionExpired": "Your session expired. Please sign in again.",
+      "generic": "Could not link the device. Please try again.",
+      "loadDevices": "Could not load devices.",
+      "loadVehicles": "Could not load vehicles."
+    }
   },
   "about": {
     "title": "About us",

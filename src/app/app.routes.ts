@@ -15,6 +15,8 @@ const serviceDesignRoutes = () =>
 
 const monitoringRoutes = () =>
   import('./monitoring/presentation/monitoring.routes').then((m) => m.monitoringRoutes);
+const devicesRoutes = () =>
+  import('./devices/presentation/devices.routes').then((m) => m.devicesRoutes);
 
 const baseTitle = 'MineGuard';
 
@@ -31,6 +33,7 @@ export const routes: Routes = [
   { path: 'iam', loadChildren: iamRoutes },
   { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [iamGuard] },
   { path: 'monitoring', loadChildren: monitoringRoutes, canActivate: [iamGuard] },
+  { path: 'devices', loadChildren: devicesRoutes, canActivate: [iamGuard] },
   { path: 'assets', loadChildren: assetsRoutes, canActivate: [iamGuard] },
   { path: 'service', loadChildren: serviceDesignRoutes, canActivate: [iamGuard] },
   { path: '', redirectTo: '/iam/sign-in', pathMatch: 'full' },
