@@ -101,3 +101,24 @@
 .si-forgot-link:hover {
   color: var(--blue);
 }
+
+/* ── Sign-up prompt ─────────────────────────────────────── */
+.si-signup-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-500);
+}
+
+.si-signup-link {
+  font-weight: 700;
+  color: var(--blue);
+  text-decoration: none;
+  transition: color 0.14s;
+}
+
+.si-signup-link:hover {
+  color: var(--blue-hover);
+  text-decoration: underline;
+}

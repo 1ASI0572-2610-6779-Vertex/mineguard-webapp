@@ -45,6 +45,7 @@ export class SignInAssembler {
       token: response.token,
       role: response.role,
       requiresPasswordChange: response.requiresPasswordChange ?? false,
+      subscriptionPlan: response.subscriptionPlan ?? 'STANDARD',
     } as SignInResource;
   }
 

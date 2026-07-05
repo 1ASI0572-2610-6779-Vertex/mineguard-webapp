@@ -7,6 +7,8 @@ import { ClassifyAlertCommand } from '../domain/model/classify-alert.command';
 import { FleetSummary } from '../domain/model/fleet-summary.entity';
 import { LiveMapVehicle } from '../domain/model/live-map-vehicle.entity';
 import { MonitoringApi } from '../infrastructure/monitoring-api';
+import { CompanyKpisStore } from '../../shared/application/company-kpis.store';
+import { exportFormatExtension, triggerBlobDownload } from '../../shared/infrastructure/file-download';
 import { RouteRepository } from '../../service/domain/route.repository';
 import { RouteOverlay } from '../presentation/components/live-map/live-map';
 import { Route } from '../../service/domain/model/route.entity';
@@ -28,20 +30,24 @@ const LIVE_MAP_POLL_INTERVAL_MS = 4000;
 export class MonitoringStore implements OnDestroy {
   private liveMapPollHandle: ReturnType<typeof setInterval> | null = null;
   private routeRepo = inject(RouteRepository);
+  private readonly kpisStore = inject(CompanyKpisStore);
 
   private readonly auditLogSignal = signal<AuditLogEntry[]>([]);
   private readonly alertsSignal = signal<Alert[]>([]);
   private readonly liveMapVehiclesSignal = signal<LiveMapVehicle[]>([]);
-  private readonly fleetSummarySignal = signal<FleetSummary | null>(null);
-  private readonly cardiacReadingsSignal = signal<CardiacReading[]>([]);
+  private readonly cardiacReadingSignal = signal<CardiacReading | null>(null);
   private readonly errorSignal = signal<string | null>(null);
   private readonly routesSignal = signal<Route[]>([]);
 
   readonly auditLog = this.auditLogSignal.asReadonly();
   readonly alerts = this.alertsSignal.asReadonly();
   readonly liveMapVehicles = this.liveMapVehiclesSignal.asReadonly();
-  readonly fleetSummary = this.fleetSummarySignal.asReadonly();
-  readonly cardiacReadings = this.cardiacReadingsSignal.asReadonly();
+  /** Fleet counters, derived from the shared tenant-KPIs cache. */
+  readonly fleetSummary = computed(() => {
+    const kpis = this.kpisStore.kpis();
+    return kpis ? FleetSummary.fromKpis(kpis) : null;
+  });
+  readonly cardiacReading = this.cardiacReadingSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
 
   /**
@@ -102,16 +108,14 @@ export class MonitoringStore implements OnDestroy {
   }
 
   /**
-   * Classifies an alert via POST /api/v1/alerts/{alertId}/actions and
-   * replaces the entry in the local inbox signal on success.
+   * Classifies an alert via PATCH /api/v1/alerts/{alertId} (sending the target
+   * status directly) and replaces the entry in the local inbox signal on success.
    */
   classifyAlert(command: ClassifyAlertCommand): void {
     if (!this.alertsSignal().find((a) => a.id === command.alertId)) return;
 
-    const action = command.status === 'resolved' ? 'resolve' : 'markReviewed';
-
     this.errorSignal.set(null);
-    this.monitoringApi.postAlertAction(command.alertId, action).subscribe({
+    this.monitoringApi.classifyAlert(command.alertId, command.status, command.notes).subscribe({
       next: (alert) => {
         this.alertsSignal.update((list) =>
           list.map((a) => (a.id === alert.id ? alert : a)),
@@ -120,6 +124,21 @@ export class MonitoringStore implements OnDestroy {
       error: (err) => {
         console.error('Failed to classify alert:', err);
         this.errorSignal.set('Failed to classify alert');
+      },
+    });
+  }
+
+  /**
+   * Exports the audit trail as a binary file (PDF or Excel) via
+   * GET /audit-logs?format=... and triggers the browser download.
+   */
+  exportAuditLog(format: 'pdf' | 'xls'): void {
+    this.errorSignal.set(null);
+    this.monitoringApi.exportAuditLog(format).subscribe({
+      next: (blob) => triggerBlobDownload(blob, `audit-log.${exportFormatExtension(format)}`),
+      error: (err) => {
+        console.error('Failed to export audit log:', err);
+        this.errorSignal.set('Failed to export audit log');
       },
     });
   }
@@ -168,27 +187,23 @@ export class MonitoringStore implements OnDestroy {
    * Loads the fleet summary aggregate on demand.
    */
   loadFleetSummary(): void {
-    this.errorSignal.set(null);
-    this.monitoringApi.getFleetSummary().subscribe({
-      next: (summaries) => this.fleetSummarySignal.set(summaries[0] ?? null),
-      error: (err) => {
-        console.error('Failed to load fleet summary:', err);
-        this.errorSignal.set('Failed to load fleet summary');
-      },
-    });
+    // Fleet counters come from the shared CompanyKpisStore (one cached KPIs fetch
+    // shared with the dashboard and catalog summaries). `fleetSummary` is a
+    // computed projection over that cache.
+    this.kpisStore.load();
   }
 
   /**
-   * Loads cardiac readings for a specific trip.
-   * TODO: Obtener tripId real del vehículo seleccionado
+   * Loads the latest cardiac reading for a specific Driving Session.
+   * The endpoint returns a single reading (the session's active driver).
    */
-  loadCardiacReadings(tripId: number): void {
+  loadCardiacReading(sessionId: number): void {
     this.errorSignal.set(null);
-    this.monitoringApi.getCardiacReadings(tripId).subscribe({
-      next: (readings) => this.cardiacReadingsSignal.set(readings),
+    this.monitoringApi.getCardiacReading(sessionId).subscribe({
+      next: (reading) => this.cardiacReadingSignal.set(reading),
       error: (err) => {
-        console.error('Failed to load cardiac readings:', err);
-        this.errorSignal.set('Failed to load cardiac readings');
+        console.error('Failed to load cardiac reading:', err);
+        this.errorSignal.set('Failed to load cardiac reading');
       },
     });
   }

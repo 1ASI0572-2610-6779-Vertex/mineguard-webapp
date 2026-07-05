@@ -33,4 +33,9 @@ export class AuditAndAssetsPage implements OnInit {
     this.monitoringStore.loadAuditLog();
     this.assetsStore.loadCatalogSummary();
   }
+
+  /** Downloads the audit trail in the chosen binary format (PDF or Excel). */
+  onExportAuditLog(format: 'pdf' | 'xls'): void {
+    this.monitoringStore.exportAuditLog(format);
+  }
 }

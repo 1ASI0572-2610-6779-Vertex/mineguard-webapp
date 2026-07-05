@@ -8,6 +8,7 @@ import { ReportAssembler } from './report-assembler';
 import { ReportResource, ReportsResponse } from './reports-response';
 
 const endpointUrl = `${environment.platformProviderApiBaseUrl}${environment.platformProviderReportsEndpointPath}`;
+const driversBaseUrl = `${environment.platformProviderApiBaseUrl}${environment.platformProviderPerformanceMetricsEndpointPath}`;
 
 export class ReportsApiEndpoint extends BaseApiEndpoint<
   Report,
@@ -19,10 +20,15 @@ export class ReportsApiEndpoint extends BaseApiEndpoint<
     super(http, endpointUrl, new ReportAssembler());
   }
 
-  /** GET /reports/{id}?format=pdf — download binary PDF report. */
-  downloadPdf(id: number): Observable<Blob> {
-    return this.http.get(`${endpointUrl}/${id}`, { params: { format: 'pdf' }, responseType: 'blob' }).pipe(
-      catchError(this.handleError(`Failed to download PDF for report ${id}`)),
+  /**
+   * GET /drivers/{driverId}/reports/{reportId}?format=pdf|xls — downloads the
+   * report as a binary file. The ownership chain (Report → Alert → DrivingSession
+   * → Driver) is validated server-side; a mismatch returns 404.
+   */
+  download(driverId: number, reportId: number, format: 'pdf' | 'xls'): Observable<Blob> {
+    const url = `${driversBaseUrl}/${driverId}/reports/${reportId}`;
+    return this.http.get(url, { params: { format }, responseType: 'blob' }).pipe(
+      catchError(this.handleError(`Failed to download ${format} for report ${reportId}`)),
     );
   }
 }

@@ -62,7 +62,6 @@ export class SupervisorForm extends BaseForm {
       fullName:    v.fullName.trim(),
       corporateId: v.corporateId.trim(),
       email:       v.email.trim(),
-      idCompany:   1,
     });
 
     this.store.createSupervisor(command);

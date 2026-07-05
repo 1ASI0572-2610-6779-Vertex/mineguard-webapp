@@ -1,4 +1,5 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
+import { CompanyKpis } from '../../../shared/domain/model/company-kpis';
 
 /**
  * Aggregated control-center snapshot displayed at the top of the dashboard.
@@ -28,5 +29,18 @@ export class DashboardSummary implements BaseEntity {
     this.fatigueEvents = props.fatigueEvents;
     this.activeVehicles = props.activeVehicles;
     this.totalDrivers = props.totalDrivers;
+  }
+
+  /** Projects the shared tenant KPIs onto the dashboard snapshot view model. */
+  static fromKpis(kpis: CompanyKpis): DashboardSummary {
+    return new DashboardSummary({
+      id: kpis.companyId,
+      activeSensors: kpis.activeSensors,
+      totalSensors: kpis.totalSensors,
+      criticalAlerts: kpis.criticalAlerts,
+      fatigueEvents: kpis.fatigueEvents,
+      activeVehicles: kpis.vehiclesOperational,
+      totalDrivers: kpis.driversTotal,
+    });
   }
 }

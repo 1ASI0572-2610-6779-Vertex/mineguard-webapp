@@ -1,4 +1,5 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
+import { CompanyKpis } from '../../../shared/domain/model/company-kpis';
 
 /**
  * Aggregated catalog counts surfaced by the admin "Auditoría y Activos" view.
@@ -89,5 +90,18 @@ export class CatalogSummary implements BaseEntity {
 
   set supervisorsLocked(value: number) {
     this._supervisorsLocked = value;
+  }
+
+  /** Projects the shared tenant KPIs onto the catalog summary view model. */
+  static fromKpis(kpis: CompanyKpis): CatalogSummary {
+    return new CatalogSummary({
+      id: kpis.companyId,
+      driversTotal: kpis.driversTotal,
+      driversInactive: kpis.driversInactive,
+      vehiclesTotal: kpis.vehiclesTotal,
+      vehiclesMaintenance: kpis.vehiclesMaintenance,
+      supervisorsTotal: kpis.supervisorsTotal,
+      supervisorsLocked: kpis.supervisorsLocked,
+    });
   }
 }

@@ -11,10 +11,20 @@
         <p class="al-subtitle">{{ filteredEntries().length }} evento{{ filteredEntries().length !== 1 ? 's' : '' }} registrado{{ filteredEntries().length !== 1 ? 's' : '' }}</p>
       </div>
     </div>
-    <button mat-stroked-button class="al-export-btn" matTooltip="Exportar registro">
+    <button mat-stroked-button class="al-export-btn" matTooltip="Exportar registro" [matMenuTriggerFor]="exportMenu">
       <mat-icon>download</mat-icon>
       Exportar
     </button>
+    <mat-menu #exportMenu="matMenu">
+      <button mat-menu-item (click)="export.emit('pdf')">
+        <mat-icon>picture_as_pdf</mat-icon>
+        <span>PDF</span>
+      </button>
+      <button mat-menu-item (click)="export.emit('xls')">
+        <mat-icon>table_view</mat-icon>
+        <span>Excel</span>
+      </button>
+    </mat-menu>
   </div>
 
   <!-- Toolbar: search + category filters -->

@@ -1,6 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
+import { CompanyKpisStore } from '../../shared/application/company-kpis.store';
 import { CatalogSummary } from '../domain/model/catalog-summary.entity';
 import { Driver } from '../domain/model/driver.entity';
 import { SaveDriverCommand } from '../domain/model/save-driver.command';
@@ -11,12 +12,17 @@ import { AssetsApi } from '../infrastructure/assets-api';
 
 @Injectable({ providedIn: 'root' })
 export class AssetsStore {
-  private readonly catalogSummarySignal = signal<CatalogSummary | null>(null);
+  private readonly kpisStore = inject(CompanyKpisStore);
+
   private readonly vehiclesSignal = signal<Vehicle[]>([]);
   private readonly driversSignal = signal<Driver[]>([]);
   private readonly errorSignal = signal<string | null>(null);
 
-  readonly catalogSummary = this.catalogSummarySignal.asReadonly();
+  /** Catalog counts, derived from the shared tenant-KPIs cache. */
+  readonly catalogSummary = computed(() => {
+    const kpis = this.kpisStore.kpis();
+    return kpis ? CatalogSummary.fromKpis(kpis) : null;
+  });
   readonly vehicles = this.vehiclesSignal.asReadonly();
   readonly drivers = this.driversSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
@@ -24,14 +30,10 @@ export class AssetsStore {
   constructor(private assetsApi: AssetsApi) {}
 
   loadCatalogSummary(): void {
-    this.errorSignal.set(null);
-    this.assetsApi.getCatalogSummary().subscribe({
-      next: (summaries) => this.catalogSummarySignal.set(summaries[0] ?? null),
-      error: (err) => {
-        console.error('Failed to load catalog summary:', err);
-        this.errorSignal.set('Failed to load catalog summary');
-      },
-    });
+    // Catalog counts come from the shared CompanyKpisStore (one cached KPIs fetch
+    // shared with the dashboard and fleet summaries). `catalogSummary` is a
+    // computed projection over that cache.
+    this.kpisStore.load();
   }
 
   loadVehicles(): void {
@@ -103,7 +105,7 @@ export class AssetsStore {
     );
   }
 
-  /** PUT /drivers/{id} — updates a driver and refreshes the local directory list. */
+  /** PATCH /drivers/{id} — updates a driver and refreshes the local directory list. */
   updateDriver$(command: SaveDriverCommand): Observable<DriverResource> {
     return this.assetsApi.updateDriver(command).pipe(
       tap(() => this.loadDrivers()),
