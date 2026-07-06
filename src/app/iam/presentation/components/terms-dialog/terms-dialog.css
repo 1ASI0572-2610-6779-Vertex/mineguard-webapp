@@ -1,0 +1,82 @@
+/*
+ * Explicit light card + dark text. The dialog renders in the CDK overlay
+ * (outside the auth component host), so it cannot read the auth :host tokens,
+ * and it must NOT follow prefers-color-scheme — the app is pinned to light,
+ * so raw dark text on the white surface is always correct.
+ */
+:host {
+  display: block;
+  color: #0f172a;
+}
+
+.terms-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 4px 0;
+}
+
+.terms-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.terms-title-wrap mat-icon {
+  color: #2578f4;
+}
+
+.terms-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.terms-close-x {
+  flex-shrink: 0;
+  color: #475569;
+}
+
+.terms-content {
+  max-width: 560px;
+  max-height: 60vh;
+  padding-top: 8px;
+}
+
+.terms-intro {
+  margin: 0 0 16px;
+  color: #334155;
+  line-height: 1.55;
+}
+
+.terms-section {
+  margin-bottom: 14px;
+}
+
+.terms-section-title {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.terms-section-body {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #475569;
+}
+
+.terms-updated {
+  margin: 18px 0 0;
+  font-size: 12px;
+  font-style: italic;
+  color: #94a3b8;
+}
+
+.terms-accept {
+  background: #2578f4;
+  color: #ffffff;
+}

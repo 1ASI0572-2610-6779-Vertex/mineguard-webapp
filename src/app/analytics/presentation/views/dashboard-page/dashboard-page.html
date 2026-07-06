@@ -4,7 +4,7 @@
   <div class="context-panel" [class]="'context-panel--' + operationStatus()">
     <div class="context-left">
       <div class="context-user">
-        <span class="context-tag">Supervisor en turno</span>
+        <span class="context-tag">{{ 'dashboard.context.onShift' | translate }}</span>
         <h1 class="context-name">{{ displayName() }}</h1>
       </div>
       <div class="context-divider"></div>
@@ -24,8 +24,8 @@
       <div class="op-status-badge">
         <mat-icon class="op-status-icon">{{ operationStatusIcon() }}</mat-icon>
         <div class="op-status-text">
-          <span class="op-status-label">Estado de operación</span>
-          <strong class="op-status-value">{{ operationStatusLabel() }}</strong>
+          <span class="op-status-label">{{ 'dashboard.context.operationStatus' | translate }}</span>
+          <strong class="op-status-value">{{ operationStatusLabel() | translate }}</strong>
         </div>
       </div>
     </div>

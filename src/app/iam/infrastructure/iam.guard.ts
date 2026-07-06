@@ -30,6 +30,6 @@ export const iamGuard: CanActivateFn = (route, state) => {
   if (store.isSignedIn()) {
     return true;
   }
-  router.navigate(['/iam/sign-in']).then();
+  router.navigate(['/login']).then();
   return false;
 };

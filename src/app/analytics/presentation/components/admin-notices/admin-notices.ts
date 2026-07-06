@@ -3,7 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { AnalyticsStore } from '../../../application/analytics.store';
 import { AdminNotice } from '../../../domain/model/admin-notice.entity';
@@ -22,6 +22,7 @@ export class AdminNotices {
 
   private snackBar = inject(MatSnackBar);
   private store    = inject(AnalyticsStore);
+  private translate = inject(TranslateService);
 
   readonly allNotices = signal<AdminNotice[]>([]);
   private readonly dismissedIds = signal<Set<number>>(new Set());
@@ -42,7 +43,7 @@ export class AdminNotices {
       next.add(notice.id);
       return next;
     });
-    this.snackBar.open('Aviso descartado', 'OK', {
+    this.snackBar.open(this.translate.instant('admin.notices.snack.dismissed'), 'OK', {
       duration: 3000,
       panelClass: ['mg-snack', 'mg-snack--neutral'],
     });
@@ -56,7 +57,7 @@ export class AdminNotices {
     });
     // POST /api/v1/companies/{companyId}/notices/{noticeId}/dispatches — registra el re-envío en el backend
     this.store.dispatchNotice(notice.id);
-    this.snackBar.open('Aviso marcado como leído', 'OK', {
+    this.snackBar.open(this.translate.instant('admin.notices.snack.markedRead'), 'OK', {
       duration: 3000,
       panelClass: ['mg-snack', 'mg-snack--success'],
     });

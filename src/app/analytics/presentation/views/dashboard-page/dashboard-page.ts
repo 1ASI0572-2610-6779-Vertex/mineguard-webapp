@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { IamStore } from '../../../../iam/application/iam.store';
 import { AnalyticsStore } from '../../../application/analytics.store';
@@ -18,6 +19,7 @@ import { DashboardTrend as DashboardTrendComponent } from '../../components/dash
   standalone: true,
   imports: [
     MatIconModule,
+    TranslatePipe,
     DashboardStats,
     DashboardTrendComponent,
     DashboardRiskDrivers,
@@ -29,6 +31,7 @@ import { DashboardTrend as DashboardTrendComponent } from '../../components/dash
 export class DashboardPage {
   private store = inject(AnalyticsStore);
   private iamStore = inject(IamStore);
+  private translate = inject(TranslateService);
 
   readonly displayName = this.iamStore.currentUsername;
   readonly displayRole = this.iamStore.currentRole;
@@ -39,12 +42,15 @@ export class DashboardPage {
   readonly performanceMetrics   = this.store.performanceMetrics;
   readonly recentAlerts = this.store.recentAlerts;
 
-  readonly todayLabel = new Date().toLocaleDateString('es-PE', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  get todayLabel(): string {
+    const locale = this.translate.currentLang === 'en' ? 'en-US' : 'es-PE';
+    return new Date().toLocaleDateString(locale, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  }
 
   /** Derived operation status based on criticalAlerts count */
   readonly operationStatus = computed(() => {
@@ -57,10 +63,10 @@ export class DashboardPage {
 
   readonly operationStatusLabel = computed(() => {
     switch (this.operationStatus()) {
-      case 'critical': return 'OPERACIÓN CRÍTICA';
-      case 'warning':  return 'ATENCIÓN REQUERIDA';
-      case 'normal':   return 'OPERACIÓN NORMAL';
-      default:         return 'CARGANDO...';
+      case 'critical': return 'dashboard.operationStatus.critical';
+      case 'warning':  return 'dashboard.operationStatus.warning';
+      case 'normal':   return 'dashboard.operationStatus.normal';
+      default:         return 'dashboard.operationStatus.loading';
     }
   });
 

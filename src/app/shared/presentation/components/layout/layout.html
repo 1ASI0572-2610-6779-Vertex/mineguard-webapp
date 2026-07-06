@@ -58,6 +58,11 @@
         <div class="user-details">
           <span class="user-name">{{ displayName() }}</span>
           <span class="user-role">{{ displayRole() }}</span>
+          <span class="user-company" [attr.title]="displayCompany()">
+            <mat-icon aria-hidden="true">domain</mat-icon>
+            {{ displayCompany() }}
+          </span>
+          <span class="user-plan" [attr.data-tier]="planTier()">{{ displayPlan() }}</span>
         </div>
         <button
           mat-icon-button

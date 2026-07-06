@@ -7,15 +7,15 @@
         <mat-icon>admin_panel_settings</mat-icon>
       </div>
       <div class="ph-text">
-        <p class="ph-eyebrow">Panel de Administración</p>
-        <h1 class="ph-title">Vista del Sistema</h1>
+        <p class="ph-eyebrow">{{ 'admin.summary.eyebrow' | translate }}</p>
+        <h1 class="ph-title">{{ 'admin.summary.heading' | translate }}</h1>
         <p class="ph-date">{{ todayLabel }}</p>
       </div>
     </div>
     <div class="ph-right">
       <div class="ph-status-chip">
         <span class="ph-live-dot"></span>
-        Servidor activo
+        {{ 'admin.summary.serverActive' | translate }}
       </div>
       @if (displayName(); as name) {
         <div class="ph-admin-chip">
@@ -30,7 +30,7 @@
   <section class="as-section">
     <div class="as-section-label">
       <mat-icon class="asl-icon">monitor_heart</mat-icon>
-      Estado del Hardware
+      {{ 'admin.summary.hardwareSection' | translate }}
     </div>
     @if (summary(); as s) {
       <app-admin-stats [summary]="s"></app-admin-stats>
@@ -47,7 +47,7 @@
   <section class="as-section">
     <div class="as-section-label">
       <mat-icon class="asl-icon">campaign</mat-icon>
-      Avisos Pendientes
+      {{ 'admin.summary.noticesSection' | translate }}
       @if (notices().length > 0) {
         <span class="asl-badge">{{ notices().length }}</span>
       }

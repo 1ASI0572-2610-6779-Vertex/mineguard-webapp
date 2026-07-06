@@ -34,6 +34,6 @@ export class DashboardRiskDrivers {
 
   /** Navigates to the reports page to view the full driver risk report. */
   goToFullReport(): void {
-    this.router.navigate(['/analytics/reports']);
+    this.router.navigate(['/reports']);
   }
 }

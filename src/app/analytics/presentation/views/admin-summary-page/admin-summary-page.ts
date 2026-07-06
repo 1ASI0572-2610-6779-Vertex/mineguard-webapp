@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { IamStore } from '../../../../iam/application/iam.store';
 import { AnalyticsStore } from '../../../application/analytics.store';
@@ -9,24 +10,29 @@ import { AdminStats } from '../../components/admin-stats/admin-stats';
 @Component({
   selector: 'app-admin-summary-page',
   standalone: true,
-  imports: [AdminStats, AdminNotices, MatIconModule],
+  imports: [AdminStats, AdminNotices, MatIconModule, TranslatePipe],
   templateUrl: './admin-summary-page.html',
   styleUrl: './admin-summary-page.css',
 })
 export class AdminSummaryPage implements OnInit {
   private store = inject(AnalyticsStore);
   private iamStore = inject(IamStore);
+  private translate = inject(TranslateService);
 
   readonly displayName = this.iamStore.currentUsername;
   readonly summary = this.store.adminSummary;
   readonly notices = this.store.adminNotices;
 
-  readonly todayLabel = new Date().toLocaleDateString('es-PE', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
+  /** Localized "today" label, formatted with the active language's locale. */
+  get todayLabel(): string {
+    const locale = this.translate.currentLang === 'en' ? 'en-US' : 'es-PE';
+    return new Date().toLocaleDateString(locale, {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  }
 
   ngOnInit(): void {
     this.store.loadAdminSummary();
