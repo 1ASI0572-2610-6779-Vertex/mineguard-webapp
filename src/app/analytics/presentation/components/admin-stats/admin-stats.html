@@ -3,7 +3,7 @@
   <!-- Sensors / Hardware -->
   <div class="as-card as-card--sensors">
     <div class="as-card-body">
-      <p class="as-label">Sensores Activos</p>
+      <p class="as-label">{{ 'admin.stats.activeSensors' | translate }}</p>
       <div class="as-value-row">
         <span class="as-value">{{ summary.activeSensors }}</span>
         <span class="as-value-total">/ {{ summary.totalSensors }}</span>
@@ -13,7 +13,7 @@
       </div>
       <p class="as-footer as-footer--ok">
         <mat-icon class="as-footer-icon">check_circle</mat-icon>
-        {{ sensorHealthPct }}% operativos
+        {{ 'admin.stats.operationalPct' | translate: { pct: sensorHealthPct } }}
       </p>
     </div>
     <div class="as-icon-wrap as-icon-wrap--ok">
@@ -24,7 +24,7 @@
   <!-- Locked accounts -->
   <div class="as-card" [class.as-card--alert]="summary.lockedAccounts > 0">
     <div class="as-card-body">
-      <p class="as-label">Cuentas Bloqueadas</p>
+      <p class="as-label">{{ 'admin.stats.lockedAccounts' | translate }}</p>
       <div class="as-value-row">
         <span class="as-value" [class.as-value--danger]="summary.lockedAccounts > 0">
           {{ summary.lockedAccounts }}
@@ -33,10 +33,10 @@
       <p class="as-footer" [class.as-footer--danger]="summary.lockedAccounts > 0" [class.as-footer--muted]="summary.lockedAccounts === 0">
         @if (summary.lockedAccounts > 0) {
           <mat-icon class="as-footer-icon">warning</mat-icon>
-          Requieren revisión
+          {{ 'admin.stats.requireReview' | translate }}
         } @else {
           <mat-icon class="as-footer-icon">check_circle</mat-icon>
-          Sin cuentas bloqueadas
+          {{ 'admin.stats.noLocked' | translate }}
         }
       </p>
     </div>
@@ -46,23 +46,23 @@
     <button
       mat-stroked-button
       class="as-nav-btn"
-      matTooltip="Gestionar supervisores"
+      [matTooltip]="'admin.stats.manageSupervisorsTooltip' | translate"
       (click)="goToUsers()">
       <mat-icon>manage_accounts</mat-icon>
-      Gestionar usuarios
+      {{ 'admin.stats.manageUsers' | translate }}
     </button>
   </div>
 
   <!-- Registered assets -->
   <div class="as-card as-card--assets">
     <div class="as-card-body">
-      <p class="as-label">Activos Registrados</p>
+      <p class="as-label">{{ 'admin.stats.registeredAssetsTitle' | translate }}</p>
       <div class="as-value-row">
         <span class="as-value">{{ summary.registeredAssets }}</span>
       </div>
       <p class="as-footer as-footer--muted">
         <mat-icon class="as-footer-icon">inventory_2</mat-icon>
-        Vehículos y conductores
+        {{ 'admin.stats.vehiclesAndDrivers' | translate }}
       </p>
     </div>
     <div class="as-icon-wrap as-icon-wrap--info">

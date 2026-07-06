@@ -7,14 +7,14 @@
         <mat-icon>notifications_active</mat-icon>
       </div>
       <div class="title-block">
-        <h2 class="inbox-title">Bandeja de Incidentes</h2>
-        <p class="inbox-subtitle">{{ filteredAlerts().length }} de {{ statusCounts().all }} alertas</p>
+        <h2 class="inbox-title">{{ 'monitoring.alerts.inbox.title' | translate }}</h2>
+        <p class="inbox-subtitle">{{ 'monitoring.alerts.inbox.subtitle' | translate: { shown: filteredAlerts().length, total: statusCounts().all } }}</p>
       </div>
     </div>
     <select class="sort-select" [value]="sortMode()" (change)="sortMode.set($any($event.target).value)">
-      <option value="date-desc">Más recientes</option>
-      <option value="date-asc">Más antiguas</option>
-      <option value="priority">Por prioridad</option>
+      <option value="date-desc">{{ 'monitoring.alerts.sort.newest' | translate }}</option>
+      <option value="date-asc">{{ 'monitoring.alerts.sort.oldest' | translate }}</option>
+      <option value="priority">{{ 'monitoring.alerts.sort.priority' | translate }}</option>
     </select>
   </header>
 
@@ -25,7 +25,7 @@
         class="filter-pill"
         [class.filter-pill--active]="statusFilter() === pill.key"
         (click)="statusFilter.set(pill.key)">
-        {{ pill.label }}
+        {{ pill.label | translate }}
         @if (pill.key !== 'all') {
           <span class="pill-count">{{ statusCounts()[pill.key] }}</span>
         } @else {
@@ -49,7 +49,7 @@
         } @else if (pill.key === 'high') {
           <mat-icon class="pill-icon">trending_up</mat-icon>
         }
-        {{ pill.label }}
+        {{ pill.label | translate }}
         @if (pill.key !== 'all') {
           <span class="pill-count">{{ statusCounts()[pill.key] }}</span>
         }
@@ -104,7 +104,7 @@
     @if (filteredAlerts().length === 0) {
       <li class="empty-state">
         <mat-icon class="empty-icon">inbox</mat-icon>
-        <span class="empty-text">No hay alertas que coincidan con los filtros seleccionados</span>
+        <span class="empty-text">{{ 'monitoring.alerts.noMatches' | translate }}</span>
       </li>
     }
   </ul>

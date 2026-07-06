@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { ServiceDesignStore } from '../../../application/service-design.store';
 import { MonitoringStore } from '../../../../monitoring/application/monitoring.store';
@@ -30,6 +30,7 @@ export class ServiceDesignPage implements OnInit, OnDestroy {
   private monitoring = inject(MonitoringStore);
   private router    = inject(Router);
   private snackBar  = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   readonly vehicles      = this.monitoring.liveMapVehicles;
   readonly routeOverlays = this.monitoring.routeOverlays;
@@ -49,19 +50,19 @@ export class ServiceDesignPage implements OnInit, OnDestroy {
   }
 
   onEditRoute(id: string): void {
-    this.router.navigate(['/service/planning', id, 'edit']);
+    this.router.navigate(['/route-design', id, 'edit']);
   }
 
   onViewOnMap(id: string): void {
     this.store.selectRoute(id);
-    this.snackBar.open('Ruta resaltada en el mapa', 'OK', {
+    this.snackBar.open(this.translate.instant('serviceDesign.snack.routeHighlighted'), 'OK', {
       duration: 2500,
       panelClass: ['mg-snack', 'mg-snack--neutral'],
     });
   }
 
   onAssignVehicle(id: string): void {
-    this.snackBar.open('Asignación de vehículo próximamente disponible', 'OK', {
+    this.snackBar.open(this.translate.instant('serviceDesign.snack.vehicleAssignSoon'), 'OK', {
       duration: 3000,
       panelClass: ['mg-snack', 'mg-snack--neutral'],
     });

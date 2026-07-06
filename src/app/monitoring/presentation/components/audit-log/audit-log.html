@@ -8,12 +8,12 @@
       </div>
       <div>
         <h2 class="al-title">{{ 'monitoring.audit.title' | translate }}</h2>
-        <p class="al-subtitle">{{ filteredEntries().length }} evento{{ filteredEntries().length !== 1 ? 's' : '' }} registrado{{ filteredEntries().length !== 1 ? 's' : '' }}</p>
+        <p class="al-subtitle">{{ 'monitoring.audit.subtitle' | translate: { count: filteredEntries().length } }}</p>
       </div>
     </div>
-    <button mat-stroked-button class="al-export-btn" matTooltip="Exportar registro" [matMenuTriggerFor]="exportMenu">
+    <button mat-stroked-button class="al-export-btn" [matTooltip]="'monitoring.audit.exportTooltip' | translate" [matMenuTriggerFor]="exportMenu">
       <mat-icon>download</mat-icon>
-      Exportar
+      {{ 'monitoring.audit.exportBtn' | translate }}
     </button>
     <mat-menu #exportMenu="matMenu">
       <button mat-menu-item (click)="export.emit('pdf')">
@@ -36,7 +36,7 @@
         type="search"
         [value]="query()"
         (input)="onSearch($any($event.target).value)"
-        placeholder="Buscar evento, usuario..."
+        [placeholder]="'monitoring.audit.searchPlaceholder' | translate"
       />
     </div>
     <div class="al-category-pills">
@@ -44,7 +44,7 @@
         class="al-pill"
         [class.al-pill--active]="categoryFilter() === 'all'"
         (click)="setCategory('all')">
-        Todos
+        {{ 'monitoring.audit.filter.all' | translate }}
         @if (counts().all > 0) { <span class="al-pill-count">{{ counts().all }}</span> }
       </button>
       <button
@@ -52,7 +52,7 @@
         [class.al-pill--active]="categoryFilter() === 'security'"
         (click)="setCategory('security')">
         <mat-icon class="al-pill-icon">gpp_bad</mat-icon>
-        Seguridad
+        {{ 'monitoring.audit.category.security' | translate }}
         @if (counts().security > 0) { <span class="al-pill-count">{{ counts().security }}</span> }
       </button>
       <button
@@ -60,7 +60,7 @@
         [class.al-pill--active]="categoryFilter() === 'administrative'"
         (click)="setCategory('administrative')">
         <mat-icon class="al-pill-icon">manage_accounts</mat-icon>
-        Admin
+        {{ 'monitoring.audit.filter.admin' | translate }}
         @if (counts().administrative > 0) { <span class="al-pill-count">{{ counts().administrative }}</span> }
       </button>
       <button
@@ -68,7 +68,7 @@
         [class.al-pill--active]="categoryFilter() === 'operational'"
         (click)="setCategory('operational')">
         <mat-icon class="al-pill-icon">construction</mat-icon>
-        Operativo
+        {{ 'monitoring.audit.category.operational' | translate }}
         @if (counts().operational > 0) { <span class="al-pill-count">{{ counts().operational }}</span> }
       </button>
     </div>
@@ -80,12 +80,12 @@
       <div class="al-empty-icon">
         <mat-icon>manage_search</mat-icon>
       </div>
-      <p class="al-empty-title">Sin eventos</p>
+      <p class="al-empty-title">{{ 'monitoring.audit.empty.title' | translate }}</p>
       <p class="al-empty-sub">
         @if (query() || categoryFilter() !== 'all') {
-          Ningún evento coincide con los filtros aplicados.
+          {{ 'monitoring.audit.empty.noMatch' | translate }}
         } @else {
-          El registro de auditoría está vacío.
+          {{ 'monitoring.audit.empty.none' | translate }}
         }
       </p>
     </div>

@@ -9,7 +9,7 @@
         </div>
         <div>
           <h2 class="rf-title">{{ 'routeForm.title' | translate }}</h2>
-          <p class="rf-subtitle">Haz clic en el mapa para añadir puntos de control</p>
+          <p class="rf-subtitle">{{ 'routeForm.subtitle' | translate }}</p>
         </div>
       </div>
       <button mat-icon-button class="rf-close-btn" (click)="close()">
@@ -62,7 +62,7 @@
           @if (form.waypoints.length === 0) {
             <div class="wp-empty">
               <mat-icon>my_location</mat-icon>
-              <span>Sin puntos de control. Haz clic en el mapa.</span>
+              <span>{{ 'routeForm.emptyWaypoints' | translate }}</span>
             </div>
           }
 

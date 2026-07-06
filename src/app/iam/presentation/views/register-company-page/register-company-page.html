@@ -79,18 +79,41 @@
           <label class="auth-label">{{ 'iam.registerCompany.plan.label' | translate }}</label>
           <div class="rc-plans" role="radiogroup" [attr.aria-label]="'iam.registerCompany.plan.label' | translate">
             @for (plan of plans; track plan.key) {
-              <button
-                type="button"
+              <div
                 class="rc-plan"
                 [class.rc-plan--active]="form.controls.subscriptionPlan.value === plan.key"
+                [class.rc-plan--expanded]="expandedPlan() === plan.key"
                 role="radio"
+                tabindex="0"
                 [attr.aria-checked]="form.controls.subscriptionPlan.value === plan.key"
-                (click)="selectPlan(plan.key)">
+                (click)="selectPlan(plan.key)"
+                (keydown.enter)="selectPlan(plan.key)"
+                (keydown.space)="selectPlan(plan.key); $event.preventDefault()">
                 <span class="rc-plan-check"><mat-icon>check_circle</mat-icon></span>
                 <span class="rc-plan-name">{{ plan.nameKey | translate }}</span>
                 <span class="rc-plan-desc">{{ plan.descKey | translate }}</span>
                 <span class="rc-plan-price">{{ plan.price }}<small>{{ 'iam.registerCompany.plan.perMonth' | translate }}</small></span>
-              </button>
+
+                <button
+                  type="button"
+                  class="rc-plan-info"
+                  [attr.aria-expanded]="expandedPlan() === plan.key"
+                  (click)="toggleFeatures(plan.key, $event)">
+                  <span>{{ 'iam.registerCompany.plan.features' | translate }}</span>
+                  <mat-icon>{{ expandedPlan() === plan.key ? 'expand_less' : 'expand_more' }}</mat-icon>
+                </button>
+
+                @if (expandedPlan() === plan.key) {
+                  <ul class="rc-plan-features">
+                    @for (featureKey of plan.featureKeys; track featureKey) {
+                      <li>
+                        <mat-icon aria-hidden="true">check</mat-icon>
+                        <span>{{ featureKey | translate }}</span>
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
             }
           </div>
         </div>
@@ -111,7 +134,7 @@
 
       <!-- ── Back link ── -->
       <div class="rc-back">
-        <a class="auth-back-link" [routerLink]="['/iam/sign-in']">
+        <a class="auth-back-link" [routerLink]="['/login']">
           <mat-icon>arrow_back</mat-icon>
           {{ 'iam.registerCompany.backToLogin' | translate }}
         </a>

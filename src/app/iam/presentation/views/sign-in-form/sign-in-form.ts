@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -10,6 +11,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { IamStore } from '../../../application/iam.store';
 import { SignInCommand } from '../../../domain/model/sign-in.command';
+import { TermsDialog } from '../../components/terms-dialog/terms-dialog';
 import { BaseForm } from '../../../../shared/presentation/components/base-form/base-form';
 
 @Component({
@@ -32,6 +34,7 @@ export class SignInForm extends BaseForm implements OnInit {
   private readonly router    = inject(Router);
   private readonly store     = inject(IamStore);
   private readonly translate = inject(TranslateService);
+  private readonly dialog    = inject(MatDialog);
 
   readonly submitting   = signal(false);
   readonly hidePassword = signal(true);
@@ -46,11 +49,17 @@ export class SignInForm extends BaseForm implements OnInit {
 
   ngOnInit(): void {
     if (this.store.isSignedIn()) {
-      const dest = this.store.currentRole() === 'Administrator'
-        ? '/analytics/admin-summary'
-        : '/analytics/dashboard';
-      this.router.navigate([dest]).then();
+      this.router.navigate([this.store.landingForRole(this.store.currentRole())]).then();
     }
+  }
+
+  openTerms(): void {
+    this.dialog.open(TermsDialog, {
+      panelClass: 'terms-dialog-panel',
+      maxWidth: '640px',
+      width: '92vw',
+      autoFocus: false,
+    });
   }
 
   switchLang(lang: 'es' | 'en'): void {

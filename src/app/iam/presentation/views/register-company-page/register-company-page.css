@@ -96,6 +96,73 @@
   margin-left: 2px;
 }
 
+.rc-plan-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin-top: 8px;
+  padding: 4px 6px;
+  width: 100%;
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--radius-sm);
+  background: none;
+  cursor: pointer;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: #475569;
+  transition: color 0.14s, border-color 0.14s;
+}
+
+.rc-plan-info:hover {
+  color: #2578f4;
+  border-color: #2578f4;
+}
+
+.rc-plan-info mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+}
+
+.rc-plan--expanded .rc-plan-info {
+  color: #2578f4;
+  border-color: #2578f4;
+}
+
+/* Explicit light panel + dark text so features never render light-on-light. */
+.rc-plan-features {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+}
+
+.rc-plan-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  font-size: 0.66rem;
+  line-height: 1.35;
+  color: #1e293b;
+}
+
+.rc-plan-features mat-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  margin-top: 1px;
+  color: #16a34a;
+  flex-shrink: 0;
+}
+
 @media (max-width: 480px) {
   .rc-plans {
     grid-template-columns: 1fr;

@@ -34,7 +34,7 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
     const router = inject(Router);
 
     if (!store.isSignedIn()) {
-      router.navigate(['/iam/sign-in']).then();
+      router.navigate(['/login']).then();
       return false;
     }
 
@@ -43,7 +43,9 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
       return true;
     }
 
-    router.navigate(['/home']).then();
+    // Signed in but the role cannot access this view — send them to their own
+    // default landing instead of a non-existent /home route.
+    router.navigate([store.landingForRole(currentRole)]).then();
     return false;
   };
 };

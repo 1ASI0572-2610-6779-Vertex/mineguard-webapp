@@ -11,7 +11,7 @@
         <span class="dialog-category">{{ alert.category }}</span>
       </div>
     </div>
-    <button mat-icon-button class="close-btn" (click)="close()" aria-label="Cerrar">
+    <button mat-icon-button class="close-btn" (click)="close()" [attr.aria-label]="'analytics.alertDetail.close' | translate">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -29,7 +29,7 @@
       </span>
       <span class="status-chip" [class.status-chip--active]="alert.status === 'active'">
         <mat-icon>{{ alert.status === 'active' ? 'radio_button_checked' : 'check_circle' }}</mat-icon>
-        {{ alert.status === 'active' ? 'Activa' : 'Resuelta' }}
+        {{ (alert.status === 'active' ? 'analytics.alertDetail.active' : 'analytics.alertDetail.resolved') | translate }}
       </span>
     </div>
 
@@ -38,7 +38,7 @@
       <div class="detail-item">
         <mat-icon class="detail-icon">person</mat-icon>
         <div class="detail-content">
-          <span class="detail-label">Conductor implicado</span>
+          <span class="detail-label">{{ 'analytics.alertDetail.driver' | translate }}</span>
           <strong class="detail-value">{{ alert.driverName }}</strong>
         </div>
       </div>
@@ -46,7 +46,7 @@
       <div class="detail-item">
         <mat-icon class="detail-icon">local_shipping</mat-icon>
         <div class="detail-content">
-          <span class="detail-label">Vehículo</span>
+          <span class="detail-label">{{ 'analytics.alertDetail.vehicle' | translate }}</span>
           <strong class="detail-value">{{ alert.vehicleCode }} — {{ alert.vehicleType }}</strong>
         </div>
       </div>
@@ -54,7 +54,7 @@
       <div class="detail-item">
         <mat-icon class="detail-icon">route</mat-icon>
         <div class="detail-content">
-          <span class="detail-label">Ruta</span>
+          <span class="detail-label">{{ 'analytics.alertDetail.route' | translate }}</span>
           <strong class="detail-value">{{ alert.route }}</strong>
         </div>
       </div>
@@ -62,7 +62,7 @@
       <div class="detail-item">
         <mat-icon class="detail-icon">schedule</mat-icon>
         <div class="detail-content">
-          <span class="detail-label">Hora del evento</span>
+          <span class="detail-label">{{ 'analytics.alertDetail.time' | translate }}</span>
           <strong class="detail-value">{{ alert.time }}</strong>
         </div>
       </div>
@@ -72,11 +72,11 @@
   <!-- Footer actions -->
   <div class="dialog-footer">
     <button mat-stroked-button class="btn-cancel" (click)="close()">
-      Cerrar
+      {{ 'analytics.alertDetail.close' | translate }}
     </button>
     <button mat-flat-button class="btn-attend" (click)="close()">
       <mat-icon>assignment_turned_in</mat-icon>
-      Marcar como atendida
+      {{ 'analytics.alertDetail.markAttended' | translate }}
     </button>
   </div>
 

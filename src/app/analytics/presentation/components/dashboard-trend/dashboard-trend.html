@@ -10,14 +10,14 @@
     </div>
 
     <!-- Period filter buttons -->
-    <div class="period-filter" role="group" aria-label="Filtro de período">
+    <div class="period-filter" role="group" [attr.aria-label]="'dashboard.trend.periodFilterAria' | translate">
       @for (p of periods; track p.key) {
         <button
           class="period-btn"
           [class.period-btn--active]="selectedPeriod() === p.key"
           (click)="selectPeriod(p.key)"
           type="button">
-          {{ p.label }}
+          {{ p.label | translate }}
         </button>
       }
     </div>
