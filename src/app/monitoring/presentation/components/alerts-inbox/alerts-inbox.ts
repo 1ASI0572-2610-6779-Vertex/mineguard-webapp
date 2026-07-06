@@ -28,17 +28,18 @@ export class AlertsInbox {
   readonly priorityFilter = signal<PriorityFilter>('all');
   readonly sortMode = signal<SortMode>('date-desc');
 
+  // Labels are i18n keys resolved with the `translate` pipe in the template.
   readonly statusPills: { key: StatusFilter; label: string }[] = [
-    { key: 'all',      label: 'Todas' },
-    { key: 'open',     label: 'Abiertas' },
-    { key: 'reviewed', label: 'Revisadas' },
-    { key: 'resolved', label: 'Resueltas' },
+    { key: 'all',      label: 'monitoring.alerts.filter.all' },
+    { key: 'open',     label: 'monitoring.alerts.filter.open' },
+    { key: 'reviewed', label: 'monitoring.alerts.filter.reviewed' },
+    { key: 'resolved', label: 'monitoring.alerts.filter.resolved' },
   ];
 
   readonly priorityPills: { key: PriorityFilter; label: string }[] = [
-    { key: 'all',      label: 'Todas' },
-    { key: 'critical', label: 'Crítico' },
-    { key: 'high',     label: 'Alta' },
+    { key: 'all',      label: 'monitoring.alerts.filter.all' },
+    { key: 'critical', label: 'monitoring.alerts.filter.critical' },
+    { key: 'high',     label: 'monitoring.alerts.filter.high' },
   ];
 
   readonly statusCounts = computed(() => {

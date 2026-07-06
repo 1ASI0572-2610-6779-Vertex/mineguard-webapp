@@ -56,10 +56,10 @@
         @if (vehicles().length === 0) {
           <div class="empty-state">
             <mat-icon class="empty-icon">local_shipping</mat-icon>
-            <p class="empty-title">Sin vehículos registrados</p>
-            <p class="empty-sub">Agrega el primer vehículo para comenzar a gestionar la flota.</p>
+            <p class="empty-title">{{ 'assets.fleet.vehicles.empty.title' | translate }}</p>
+            <p class="empty-sub">{{ 'assets.fleet.vehicles.empty.sub' | translate }}</p>
             <button mat-flat-button class="cta-btn" (click)="openAddVehicle()">
-              <mat-icon>add</mat-icon> Registrar vehículo
+              <mat-icon>add</mat-icon> {{ 'assets.fleet.vehicles.form.submitCreate' | translate }}
             </button>
           </div>
         } @else {
@@ -69,10 +69,10 @@
         @if (drivers().length === 0) {
           <div class="empty-state">
             <mat-icon class="empty-icon">groups</mat-icon>
-            <p class="empty-title">Sin conductores registrados</p>
-            <p class="empty-sub">Incorpora el primer conductor al directorio operativo.</p>
+            <p class="empty-title">{{ 'assets.fleet.drivers.empty.title' | translate }}</p>
+            <p class="empty-sub">{{ 'assets.fleet.drivers.empty.sub' | translate }}</p>
             <button mat-flat-button class="cta-btn" (click)="openAddDriver()">
-              <mat-icon>person_add</mat-icon> Registrar conductor
+              <mat-icon>person_add</mat-icon> {{ 'assets.fleet.drivers.form.submitCreate' | translate }}
             </button>
           </div>
         } @else {

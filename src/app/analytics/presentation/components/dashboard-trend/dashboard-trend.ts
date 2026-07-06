@@ -26,10 +26,11 @@ export class DashboardTrend {
 
   readonly selectedPeriod = signal<TrendPeriod>('today');
 
+  // Labels are i18n keys resolved with the `translate` pipe in the template.
   readonly periods: { key: TrendPeriod; label: string }[] = [
-    { key: 'today', label: 'Hoy' },
-    { key: 'week',  label: '7 días' },
-    { key: 'month', label: '30 días' },
+    { key: 'today', label: 'dashboard.trend.today' },
+    { key: 'week',  label: 'dashboard.trend.week' },
+    { key: 'month', label: 'dashboard.trend.month' },
   ];
 
   selectPeriod(period: TrendPeriod): void {

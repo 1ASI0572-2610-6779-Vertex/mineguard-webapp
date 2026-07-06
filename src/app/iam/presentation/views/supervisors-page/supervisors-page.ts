@@ -2,6 +2,7 @@ import { Component, OnInit, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { IamStore } from '../../../application/iam.store';
 import { SupervisorDirectory } from '../../components/supervisor-directory/supervisor-directory';
@@ -10,7 +11,7 @@ import { SupervisorForm } from '../../components/supervisor-form/supervisor-form
 @Component({
   selector: 'app-supervisors-page',
   standalone: true,
-  imports: [SupervisorDirectory, MatButtonModule, MatIconModule],
+  imports: [SupervisorDirectory, MatButtonModule, MatIconModule, TranslatePipe],
   templateUrl: './supervisors-page.html',
   styleUrl: './supervisors-page.css',
 })

@@ -7,20 +7,20 @@
         <mat-icon>manage_accounts</mat-icon>
       </div>
       <div class="sp-title-block">
-        <h1 class="sp-title">Gestión de Usuarios</h1>
-        <p class="sp-subtitle">Administra las cuentas de acceso del sistema MineGuard</p>
+        <h1 class="sp-title">{{ 'iam.supervisors.title' | translate }}</h1>
+        <p class="sp-subtitle">{{ 'iam.supervisors.pageSubtitle' | translate }}</p>
       </div>
     </div>
     <div class="sp-header-right">
       @if (supervisorCount() > 0) {
         <span class="sp-count-chip">
           <mat-icon class="sp-count-icon">group</mat-icon>
-          {{ supervisorCount() }} supervisores
+          {{ 'iam.supervisors.count' | translate: { count: supervisorCount() } }}
         </span>
       }
       <button mat-flat-button class="sp-add-btn" (click)="openCreateDialog()">
         <mat-icon>person_add</mat-icon>
-        Nuevo Supervisor
+        {{ 'iam.supervisors.newSupervisor.title' | translate }}
       </button>
     </div>
   </header>

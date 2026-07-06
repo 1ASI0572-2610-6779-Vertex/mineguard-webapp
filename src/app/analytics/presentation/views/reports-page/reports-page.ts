@@ -41,11 +41,12 @@ export class ReportsPage implements OnInit {
 
   readonly criticalityFilter = signal<string>('all');
 
+  // Labels are i18n keys resolved with the `translate` pipe in the template.
   readonly criticalityOptions = [
-    { value: 'all',    label: 'Todos los niveles' },
-    { value: 'high',   label: 'Crítico' },
-    { value: 'medium', label: 'Medio' },
-    { value: 'low',    label: 'Bajo' },
+    { value: 'all',    label: 'reports.criticality.all' },
+    { value: 'high',   label: 'reports.criticality.high' },
+    { value: 'medium', label: 'reports.criticality.medium' },
+    { value: 'low',    label: 'reports.criticality.low' },
   ];
 
   /** Rows filtered by the page-level criticality dropdown */

@@ -78,6 +78,6 @@ export class LiveMapPage implements OnInit, OnDestroy {
   }
 
   goToAlerts(): void {
-    this.router.navigate(['/monitoring/alerts']);
+    this.router.navigate(['/alerts']);
   }
 }

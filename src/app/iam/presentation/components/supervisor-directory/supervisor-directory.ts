@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { IamStore } from '../../../application/iam.store';
 import { Supervisor } from '../../../domain/model/supervisor.entity';
@@ -10,7 +11,7 @@ import { Supervisor } from '../../../domain/model/supervisor.entity';
 @Component({
   selector: 'app-supervisor-directory',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, MatTooltipModule],
+  imports: [MatButtonModule, MatIconModule, MatTooltipModule, TranslatePipe],
   templateUrl: './supervisor-directory.html',
   styleUrl: './supervisor-directory.css',
 })

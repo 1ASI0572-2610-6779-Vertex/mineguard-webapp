@@ -35,15 +35,15 @@
       <div class="tp-fleet-counters">
         <div class="fleet-counter fleet-counter--success">
           <span class="fc-value">{{ s.operational }}</span>
-          <span class="fc-label">Operativos</span>
+          <span class="fc-label">{{ 'monitoring.liveMap.fleet.operational' | translate }}</span>
         </div>
         <div class="fleet-counter fleet-counter--warning">
           <span class="fc-value">{{ s.maintenance }}</span>
-          <span class="fc-label">Mantenimiento</span>
+          <span class="fc-label">{{ 'monitoring.liveMap.fleet.maintenance' | translate }}</span>
         </div>
         <div class="fleet-counter fleet-counter--danger">
           <span class="fc-value">{{ s.alert }}</span>
-          <span class="fc-label">Alerta</span>
+          <span class="fc-label">{{ 'monitoring.liveMap.fleet.alert' | translate }}</span>
         </div>
       </div>
 
@@ -108,7 +108,7 @@
       @if (!isLoading() && !vehicles().length) {
         <li class="tp-empty">
           <mat-icon>directions_car</mat-icon>
-          <span>Sin vehículos en campo</span>
+          <span>{{ 'monitoring.liveMap.noVehicles' | translate }}</span>
         </li>
       }
     </ul>

@@ -3,8 +3,8 @@
     <div class="an-empty-icon-wrap">
       <mat-icon>notifications_none</mat-icon>
     </div>
-    <p class="an-empty-title">Sin avisos pendientes</p>
-    <p class="an-empty-sub">El sistema no registra notificaciones activas.</p>
+    <p class="an-empty-title">{{ 'admin.notices.emptyTitle' | translate }}</p>
+    <p class="an-empty-sub">{{ 'admin.notices.emptyBody' | translate }}</p>
   </div>
 } @else {
   <ul class="an-list">
@@ -26,7 +26,7 @@
           @if (isRead(notice.id)) {
             <span class="an-read-badge">
               <mat-icon class="an-read-icon">done</mat-icon>
-              Leído
+              {{ 'admin.notices.read' | translate }}
             </span>
           }
         </div>
@@ -36,7 +36,7 @@
           <button
             mat-icon-button
             class="an-action-btn an-action-btn--view"
-            matTooltip="Ver detalles"
+            [matTooltip]="'admin.notices.viewDetails' | translate"
             (click)="viewDetails(notice)">
             <mat-icon>visibility</mat-icon>
           </button>
@@ -44,7 +44,7 @@
             <button
               mat-icon-button
               class="an-action-btn an-action-btn--read"
-              matTooltip="Marcar como leído"
+              [matTooltip]="'admin.notices.markRead' | translate"
               (click)="markRead(notice)">
               <mat-icon>done</mat-icon>
             </button>
@@ -52,7 +52,7 @@
           <button
             mat-icon-button
             class="an-action-btn an-action-btn--dismiss"
-            matTooltip="Descartar"
+            [matTooltip]="'admin.notices.dismiss' | translate"
             (click)="dismiss(notice)">
             <mat-icon>close</mat-icon>
           </button>

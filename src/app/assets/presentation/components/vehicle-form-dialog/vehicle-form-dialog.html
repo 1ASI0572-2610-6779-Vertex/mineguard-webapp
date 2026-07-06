@@ -11,10 +11,10 @@
     </div>
     <div>
       <h2 mat-dialog-title class="dialog-title">
-        {{ isEdit ? 'Editar Vehículo' : 'Registrar Vehículo' }}
+        {{ (isEdit ? 'assets.fleet.vehicles.form.titleEdit' : 'assets.fleet.vehicles.form.titleCreate') | translate }}
       </h2>
       <p class="dialog-subtitle">
-        {{ isEdit ? 'Modifica los datos del vehículo seleccionado.' : 'Completa los campos para agregar un nuevo vehículo a la flota.' }}
+        {{ (isEdit ? 'assets.fleet.vehicles.form.subtitleEdit' : 'assets.fleet.vehicles.form.subtitleCreate') | translate }}
       </p>
     </div>
     <button mat-icon-button class="close-btn" (click)="cancel()" [disabled]="loading()">
@@ -27,49 +27,49 @@
     <form [formGroup]="form" class="dialog-form">
       <div class="form-row">
         <mat-form-field appearance="outline" class="field-half">
-          <mat-label>Código</mat-label>
-          <input matInput formControlName="code" placeholder="Ej. VH-001" />
+          <mat-label>{{ 'assets.fleet.vehicles.form.code' | translate }}</mat-label>
+          <input matInput formControlName="code" [placeholder]="'assets.fleet.vehicles.form.codePlaceholder' | translate" />
           @if (form.controls.code.hasError('required') && form.controls.code.touched) {
-            <mat-error>El código es obligatorio</mat-error>
+            <mat-error>{{ 'assets.fleet.vehicles.form.codeRequired' | translate }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="field-half">
-          <mat-label>Modelo</mat-label>
-          <input matInput formControlName="model" placeholder="Ej. Volvo FH 500" />
+          <mat-label>{{ 'assets.fleet.vehicles.form.model' | translate }}</mat-label>
+          <input matInput formControlName="model" [placeholder]="'assets.fleet.vehicles.form.modelPlaceholder' | translate" />
           @if (form.controls.model.hasError('required') && form.controls.model.touched) {
-            <mat-error>El modelo es obligatorio</mat-error>
+            <mat-error>{{ 'assets.fleet.vehicles.form.modelRequired' | translate }}</mat-error>
           }
         </mat-form-field>
       </div>
 
       <div class="form-row">
         <mat-form-field appearance="outline" class="field-half">
-          <mat-label>Categoría</mat-label>
-          <input matInput formControlName="category" placeholder="Ej. Camión de carga" />
+          <mat-label>{{ 'assets.fleet.vehicles.form.category' | translate }}</mat-label>
+          <input matInput formControlName="category" [placeholder]="'assets.fleet.vehicles.form.categoryPlaceholder' | translate" />
           @if (form.controls.category.hasError('required') && form.controls.category.touched) {
-            <mat-error>La categoría es obligatoria</mat-error>
+            <mat-error>{{ 'assets.fleet.vehicles.form.categoryRequired' | translate }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="field-half">
-          <mat-label>Estado operativo</mat-label>
+          <mat-label>{{ 'assets.fleet.vehicles.form.status' | translate }}</mat-label>
           <mat-select formControlName="status">
             @for (opt of statusOptions; track opt.value) {
-              <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+              <mat-option [value]="opt.value">{{ opt.label | translate }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
       </div>
 
       <mat-form-field appearance="outline" class="field-full">
-        <mat-label>Conductor asignado (opcional)</mat-label>
-        <input matInput formControlName="assignedDriverName" placeholder="Nombre completo del conductor" />
+        <mat-label>{{ 'assets.fleet.vehicles.form.assignedDriver' | translate }}</mat-label>
+        <input matInput formControlName="assignedDriverName" [placeholder]="'assets.fleet.vehicles.form.assignedDriverPlaceholder' | translate" />
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="field-full">
-        <mat-label>Turno (opcional)</mat-label>
-        <input matInput formControlName="shiftLabel" placeholder="Ej. Turno Mañana" />
+        <mat-label>{{ 'assets.fleet.vehicles.form.shift' | translate }}</mat-label>
+        <input matInput formControlName="shiftLabel" [placeholder]="'assets.fleet.vehicles.form.shiftPlaceholder' | translate" />
       </mat-form-field>
 
       @if (errorMsg()) {
@@ -84,11 +84,11 @@
   <!-- Actions -->
   <mat-dialog-actions align="end">
     <button mat-button class="btn-cancel" (click)="cancel()" [disabled]="loading()">
-      Cancelar
+      {{ 'assets.fleet.vehicles.form.cancel' | translate }}
     </button>
     <button mat-flat-button class="btn-submit" (click)="submit()" [disabled]="loading()">
       <mat-icon>{{ isEdit ? 'save' : 'add_circle' }}</mat-icon>
-      {{ isEdit ? 'Guardar cambios' : 'Registrar vehículo' }}
+      {{ (isEdit ? 'assets.fleet.vehicles.form.submitEdit' : 'assets.fleet.vehicles.form.submitCreate') | translate }}
     </button>
   </mat-dialog-actions>
 </div>

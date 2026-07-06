@@ -3,13 +3,14 @@ import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { AdminSummary } from '../../../domain/model/admin-summary.entity';
 
 @Component({
   selector: 'app-admin-stats',
   standalone: true,
-  imports: [MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [MatIconModule, MatButtonModule, MatTooltipModule, TranslatePipe],
   templateUrl: './admin-stats.html',
   styleUrl: './admin-stats.css',
 })
@@ -24,6 +25,6 @@ export class AdminStats {
   }
 
   goToUsers(): void {
-    this.router.navigate(['/iam/supervisors']);
+    this.router.navigate(['/user-management']);
   }
 }

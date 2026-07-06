@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatButton } from '@angular/material/button';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { IamStore } from '../../../../iam/application/iam.store';
+
 /**
  * Displays fallback content for unknown routes.
  */
@@ -21,12 +23,13 @@ export class PageNotFound implements OnInit {
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private store = inject(IamStore);
 
   ngOnInit(): void {
     this.invalidPath = this.route.snapshot.url.map((segment) => segment.path).join('/');
   }
 
   protected navigateToHome(): void {
-    this.router.navigate(['home']).then();
+    this.router.navigate([this.store.landingForRole(this.store.currentRole())]).then();
   }
 }

@@ -84,6 +84,12 @@
       "operations": "OPERACIONES"
     },
     "sensors": "Sensores ({{ active }} / {{ total }})",
+    "company": "Empresa #{{id}}",
+    "subscription": {
+      "starter": "Plan Starter",
+      "standard": "Plan Standard",
+      "enterprise": "Plan Enterprise"
+    },
     "user": {
       "placeholder": {
         "name": "Juan Perez",
@@ -128,7 +134,31 @@
         "ariaLabel": "Cambiar idioma"
       },
       "noAccount": "¿No tienes una cuenta?",
-      "registerCompany": "Registra tu empresa"
+      "registerCompany": "Registra tu empresa",
+      "termsPrefix": "Al continuar aceptas los",
+      "termsLink": "Términos y Condiciones"
+    },
+    "terms": {
+      "title": "Términos y Condiciones",
+      "intro": "Bienvenido a MineGuard. Al acceder y utilizar esta plataforma aceptas los siguientes términos y condiciones de uso. Léelos con atención.",
+      "s1": {
+        "title": "1. Uso de la plataforma",
+        "body": "MineGuard es una plataforma de seguridad para operaciones mineras destinada exclusivamente a personal autorizado. El acceso está restringido a usuarios con credenciales corporativas válidas y su uso debe ceñirse a los fines operativos de tu empresa."
+      },
+      "s2": {
+        "title": "2. Privacidad y datos",
+        "body": "Los datos de telemetría, ubicación y monitoreo del personal se tratan conforme a la normativa de protección de datos aplicable. La información se utiliza únicamente para fines de seguridad operativa y no se comparte con terceros sin consentimiento."
+      },
+      "s3": {
+        "title": "3. Responsabilidades del usuario",
+        "body": "Eres responsable de mantener la confidencialidad de tus credenciales y de toda actividad realizada bajo tu cuenta. Debes notificar de inmediato cualquier uso no autorizado o brecha de seguridad."
+      },
+      "s4": {
+        "title": "4. Suscripción y servicio",
+        "body": "El plan de suscripción contratado determina los límites y funcionalidades disponibles. MineGuard puede actualizar estos términos y el servicio; los cambios relevantes se notificarán a través de la plataforma."
+      },
+      "updated": "Última actualización: julio de 2026.",
+      "close": "Entendido"
     },
     "forgotPassword": {
       "eyebrow": "Recuperación de acceso",
@@ -200,7 +230,8 @@
         "column": {
           "userContact": "Usuario y contacto",
           "accessStatus": "Estado del acceso",
-          "actionRequired": "Acción requerida"
+          "actionRequired": "Acción requerida",
+          "actions": "Acciones"
         },
         "status": {
           "active": "Activo",
@@ -210,9 +241,26 @@
         "action": {
           "suspend": "Suspender",
           "restore": "Restablecer Acceso",
-          "historyPreserved": "Historial conservado"
+          "historyPreserved": "Historial conservado",
+          "suspendTooltip": "Suspender acceso del supervisor",
+          "restoreTooltip": "Restaurar acceso del supervisor"
+        },
+        "resultCount": "{{count}} resultado(s)",
+        "empty": {
+          "title": "Sin supervisores registrados",
+          "sub": "Haz clic en «Nuevo Supervisor» para comenzar."
+        },
+        "noResults": {
+          "title": "Sin resultados",
+          "sub": "Ningún supervisor coincide con «{{query}}»."
+        },
+        "confirm": {
+          "title": "¿Suspender cuenta?",
+          "no": "No"
         }
-      }
+      },
+      "pageSubtitle": "Administra las cuentas de acceso del sistema MineGuard",
+      "count": "{{count}} supervisores"
     },
     "autoCredentialsBanner": "Las credenciales de acceso (ID de Usuario y Contraseña) serán generadas automáticamente por el sistema y enviadas al correo corporativo del empleado.",
     "registerCompany": {
@@ -237,20 +285,39 @@
       },
       "plan": {
         "label": "Plan de suscripción",
-        "perMonth": "/mes"
+        "perMonth": "/mes",
+        "features": "Qué incluye"
       },
       "plans": {
         "starter": {
           "name": "Starter",
-          "desc": "Malla preventiva para flotas pequeñas."
+          "desc": "Malla preventiva para flotas pequeñas.",
+          "features": {
+            "f1": "Hasta 10 vehículos monitoreados",
+            "f2": "Sensores GPS y anticolisión",
+            "f3": "Alertas operativas en tiempo real",
+            "f4": "Soporte por correo"
+          }
         },
         "standard": {
           "name": "Standard",
-          "desc": "Control operativo para operaciones en crecimiento."
+          "desc": "Control operativo para operaciones en crecimiento.",
+          "features": {
+            "f1": "Hasta 50 vehículos monitoreados",
+            "f2": "Monitoreo de fatiga y ritmo cardíaco",
+            "f3": "Reportes y analítica operativa",
+            "f4": "Soporte prioritario"
+          }
         },
         "enterprise": {
           "name": "Enterprise",
-          "desc": "Ecosistema autónomo, escala ilimitada."
+          "desc": "Ecosistema autónomo, escala ilimitada.",
+          "features": {
+            "f1": "Vehículos y usuarios ilimitados",
+            "f2": "Analítica avanzada e IA predictiva",
+            "f3": "API de telemetría y SSO",
+            "f4": "Soporte dedicado 24/7"
+          }
         }
       },
       "submit": "Crear empresa",
@@ -277,7 +344,10 @@
     "export": "Exportar",
     "fatigueBars": {
       "title": "Análisis de Fatiga por Conductor",
-      "subtitle": "Acumulado mensual"
+      "subtitle": "Acumulado mensual",
+      "driversCount": "{{count}} conductores",
+      "eventsTooltip": "{{count}} eventos de fatiga",
+      "empty": "Sin eventos de fatiga registrados"
     },
     "incidentDistribution": {
       "title": "Distribución de Incidentes",
@@ -299,13 +369,24 @@
         "action": "Acción / Detalles"
       },
       "noReport": "No hay reporte disponible para este incidente"
+    },
+    "criticality": {
+      "all": "Todos los niveles",
+      "high": "Crítico",
+      "medium": "Medio",
+      "low": "Bajo"
     }
   },
   "admin": {
     "summary": {
       "title": "Panel de Control de Recursos",
       "subtitle": "Administración de accesos, infraestructura técnica y auditoría",
-      "sectionHealth": "Salud Operativa del Sistema"
+      "sectionHealth": "Salud Operativa del Sistema",
+      "eyebrow": "Panel de Administración",
+      "heading": "Vista del Sistema",
+      "serverActive": "Servidor activo",
+      "hardwareSection": "Estado del Hardware",
+      "noticesSection": "Avisos Pendientes"
     },
     "stats": {
       "hardwareStatus": "Estado hardware",
@@ -313,7 +394,15 @@
       "lockedAccounts": "Cuentas bloqueadas",
       "lockedAccountsFooter": "Requieren revisión manual →",
       "registeredAssets": "Activos en base",
-      "registeredAssetsFooter": "Conductores y Vehículos registrados"
+      "registeredAssetsFooter": "Conductores y Vehículos registrados",
+      "activeSensors": "Sensores Activos",
+      "operationalPct": "{{pct}}% operativos",
+      "requireReview": "Requieren revisión",
+      "noLocked": "Sin cuentas bloqueadas",
+      "manageUsers": "Gestionar usuarios",
+      "manageSupervisorsTooltip": "Gestionar supervisores",
+      "registeredAssetsTitle": "Activos Registrados",
+      "vehiclesAndDrivers": "Vehículos y conductores"
     },
     "notices": {
       "title": "Avisos Administrativos Pendientes",
@@ -322,6 +411,16 @@
       "action": {
         "resendInvite": "Reenviar aviso",
         "downloadPdf": "Descargar PDF"
+      },
+      "emptyTitle": "Sin avisos pendientes",
+      "emptyBody": "El sistema no registra notificaciones activas.",
+      "read": "Leído",
+      "viewDetails": "Ver detalles",
+      "markRead": "Marcar como leído",
+      "dismiss": "Descartar",
+      "snack": {
+        "dismissed": "Aviso descartado",
+        "markedRead": "Aviso marcado como leído"
       }
     }
   },
@@ -336,7 +435,8 @@
       "export": "Exportar Registro (PDF/Excel)",
       "filter": {
         "label": "Filtrar",
-        "all": "Todas las acciones"
+        "all": "Todas las acciones",
+        "admin": "Admin"
       },
       "category": {
         "security": "Seguridad",
@@ -360,13 +460,23 @@
           "title": "Alta de Nuevo Supervisor",
           "description": "Se creó el perfil para {{fullName}} ({{corporateId}}) y se enviaron credenciales temporales al correo corporativo."
         }
+      },
+      "subtitle": "{{count}} evento(s) registrado(s)",
+      "exportTooltip": "Exportar registro",
+      "exportBtn": "Exportar",
+      "searchPlaceholder": "Buscar evento, usuario...",
+      "empty": {
+        "title": "Sin eventos",
+        "noMatch": "Ningún evento coincide con los filtros aplicados.",
+        "none": "El registro de auditoría está vacío."
       }
     },
     "alerts": {
       "pageTitle": "Gestión de Alertas",
       "pageSubtitle": "Atención, comunicación y resolución de incidentes operativos",
       "inbox": {
-        "title": "Bandeja de incidentes"
+        "title": "Bandeja de incidentes",
+        "subtitle": "{{shown}} de {{total}} alertas"
       },
       "type": {
         "proximity_collision": "Colisión por Proximidad",
@@ -416,7 +526,26 @@
         "falseAlarm": "Falsa Alarma",
         "resolve": "Marcar como Resuelta"
       },
-      "empty": "Selecciona una alerta de la bandeja para ver su detalle."
+      "empty": "Selecciona una alerta de la bandeja para ver su detalle.",
+      "filter": {
+        "all": "Todas",
+        "open": "Abiertas",
+        "reviewed": "Revisadas",
+        "resolved": "Resueltas",
+        "critical": "Crítico",
+        "high": "Alta"
+      },
+      "sort": {
+        "newest": "Más recientes",
+        "oldest": "Más antiguas",
+        "priority": "Por prioridad"
+      },
+      "noMatches": "No hay alertas que coincidan con los filtros seleccionados",
+      "detailEmptyTitle": "Sin alerta seleccionada",
+      "snack": {
+        "falseAlarm": "Alerta marcada como falsa alarma",
+        "resolved": "Alerta marcada como resuelta"
+      }
     },
     "liveMap": {
       "title": "Mapa Operativo en Vivo",
@@ -444,7 +573,8 @@
         "title": "Monitoreo Cardiaco",
         "bpm": "{{rate}} lpm",
         "empty": "Sin lecturas cardíacas disponibles"
-      }
+      },
+      "noVehicles": "Sin vehículos en campo"
     }
   },
   "assets": {
@@ -461,7 +591,8 @@
       "supervisors": {
         "label": "Supervisores",
         "sub": "{{count}} bloqueado"
-      }
+      },
+      "subtitle": "Inventario del sistema"
     },
     "fleet": {
       "title": "Flota y Conductores",
@@ -491,6 +622,34 @@
           "edit": "Editar",
           "sendToWorkshop": "Enviar a Taller",
           "markOperational": "Marcar Operativo"
+        },
+        "form": {
+          "titleCreate": "Registrar Vehículo",
+          "titleEdit": "Editar Vehículo",
+          "subtitleCreate": "Completa los campos para agregar un nuevo vehículo a la flota.",
+          "subtitleEdit": "Modifica los datos del vehículo seleccionado.",
+          "code": "Código",
+          "codePlaceholder": "Ej. VH-001",
+          "codeRequired": "El código es obligatorio",
+          "model": "Modelo",
+          "modelPlaceholder": "Ej. Volvo FH 500",
+          "modelRequired": "El modelo es obligatorio",
+          "category": "Categoría",
+          "categoryPlaceholder": "Ej. Camión de carga",
+          "categoryRequired": "La categoría es obligatoria",
+          "status": "Estado operativo",
+          "assignedDriver": "Conductor asignado (opcional)",
+          "assignedDriverPlaceholder": "Nombre completo del conductor",
+          "shift": "Turno (opcional)",
+          "shiftPlaceholder": "Ej. Turno Mañana",
+          "cancel": "Cancelar",
+          "submitCreate": "Registrar vehículo",
+          "submitEdit": "Guardar cambios",
+          "saveError": "Error al guardar el vehículo"
+        },
+        "empty": {
+          "title": "Sin vehículos registrados",
+          "sub": "Agrega el primer vehículo para comenzar a gestionar la flota."
         }
       },
       "drivers": {
@@ -543,6 +702,10 @@
           "cancel": "Cancelar",
           "submitCreate": "Registrar conductor",
           "submitEdit": "Guardar cambios"
+        },
+        "empty": {
+          "title": "Sin conductores registrados",
+          "sub": "Incorpora el primer conductor al directorio operativo."
         }
       }
     }
@@ -562,7 +725,16 @@
       "newRoute": "Nueva Ruta",
       "active": "ACTIVAS",
       "planned": "PLANIFICADAS",
-      "empty": "No hay rutas creadas aún"
+      "empty": "No hay rutas creadas aún",
+      "emptyTitle": "Sin rutas configuradas"
+    },
+    "legend": {
+      "operational": "Operativo",
+      "alert": "Alerta"
+    },
+    "snack": {
+      "routeHighlighted": "Ruta resaltada en el mapa",
+      "vehicleAssignSoon": "Asignación de vehículo próximamente disponible"
     }
   },
   "routeForm": {
@@ -576,7 +748,10 @@
     "wpLng": "Lng",
     "addWaypoint": "Agregar waypoint",
     "cancel": "Cancelar",
-    "submit": "Crear Ruta"
+    "submit": "Crear Ruta",
+    "subtitle": "Haz clic en el mapa para añadir puntos de control",
+    "mapClickHint": "Haz clic en el mapa para colocar cada punto.",
+    "emptyWaypoints": "Sin puntos de control. Haz clic en el mapa."
   },
   "routeCard": {
     "vehicles": "vehículo(s)",
@@ -595,7 +770,10 @@
       "title": "Tendencia de incidentes",
       "today": "Hoy",
       "alerts": "Alertas",
-      "incidents": "Incidentes"
+      "incidents": "Incidentes",
+      "week": "7 días",
+      "month": "30 días",
+      "periodFilterAria": "Filtro de período"
     },
     "riskDrivers": {
       "title": "Conductores en Riesgo",
@@ -617,6 +795,28 @@
       "high": "Crítica",
       "medium": "Media",
       "low": "Baja"
+    },
+    "context": {
+      "onShift": "Supervisor en turno",
+      "operationStatus": "Estado de operación"
+    },
+    "operationStatus": {
+      "critical": "OPERACIÓN CRÍTICA",
+      "warning": "ATENCIÓN REQUERIDA",
+      "normal": "OPERACIÓN NORMAL",
+      "loading": "CARGANDO..."
+    }
+  },
+  "analytics": {
+    "alertDetail": {
+      "close": "Cerrar",
+      "active": "Activa",
+      "resolved": "Resuelta",
+      "driver": "Conductor implicado",
+      "vehicle": "Vehículo",
+      "route": "Ruta",
+      "time": "Hora del evento",
+      "markAttended": "Marcar como atendida"
     }
   }
 }
