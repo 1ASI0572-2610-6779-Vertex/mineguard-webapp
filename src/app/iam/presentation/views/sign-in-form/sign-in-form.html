@@ -86,7 +86,7 @@
 
       <!-- Forgot password -->
       <div class="si-forgot-row">
-        <a class="auth-back-link si-forgot-link" [routerLink]="['/iam/forgot-password']" tabindex="0">
+        <a class="auth-back-link si-forgot-link" [routerLink]="['/forgot-password']" tabindex="0">
           {{ 'iam.signIn.forgotPassword' | translate }}
         </a>
       </div>
@@ -109,10 +109,18 @@
     <!-- ── Sign-up prompt ── -->
     <div class="si-signup-row">
       <span>{{ 'iam.signIn.noAccount' | translate }}</span>
-      <a class="si-signup-link" [routerLink]="['/iam/sign-up']">
+      <a class="si-signup-link" [routerLink]="['/register-company']">
         {{ 'iam.signIn.registerCompany' | translate }}
       </a>
     </div>
+
+    <!-- ── Terms & Conditions ── -->
+    <p class="si-terms-row">
+      {{ 'iam.signIn.termsPrefix' | translate }}
+      <button type="button" class="si-terms-link" (click)="openTerms()">
+        {{ 'iam.signIn.termsLink' | translate }}
+      </button>
+    </p>
 
     <!-- ── Footer ── -->
     <footer class="auth-footer">

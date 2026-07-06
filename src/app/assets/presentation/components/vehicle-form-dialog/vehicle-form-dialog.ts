@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { AssetsStore } from '../../../application/assets.store';
 import { Vehicle } from '../../../domain/model/vehicle.entity';
@@ -28,6 +29,7 @@ export interface VehicleDialogData {
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
+    TranslatePipe,
   ],
   templateUrl: './vehicle-form-dialog.html',
   styleUrl: './vehicle-form-dialog.css',
@@ -36,16 +38,18 @@ export class VehicleFormDialog {
   private fb = inject(FormBuilder);
   private dialogRef = inject(MatDialogRef<VehicleFormDialog>);
   private store = inject(AssetsStore);
+  private translate = inject(TranslateService);
   readonly data: VehicleDialogData = inject(MAT_DIALOG_DATA) ?? {};
 
   readonly isEdit = !!this.data.vehicle;
   readonly loading = signal(false);
   readonly errorMsg = signal<string | null>(null);
 
+  // Labels are i18n keys resolved with the `translate` pipe in the template.
   readonly statusOptions: { value: VehicleStatus; label: string }[] = [
-    { value: 'available',   label: 'Disponible' },
-    { value: 'in_use',      label: 'En Uso' },
-    { value: 'maintenance', label: 'En Mantenimiento' },
+    { value: 'available',   label: 'assets.fleet.vehicles.status.available' },
+    { value: 'in_use',      label: 'assets.fleet.vehicles.status.inUse' },
+    { value: 'maintenance', label: 'assets.fleet.vehicles.status.maintenance' },
   ];
 
   form = this.fb.nonNullable.group({
@@ -78,7 +82,7 @@ export class VehicleFormDialog {
 
     call$.subscribe({
       next:  (saved) => { this.loading.set(false); this.dialogRef.close(saved); },
-      error: (err)   => { this.loading.set(false); this.errorMsg.set(err.message ?? 'Error al guardar el vehículo'); },
+      error: (err)   => { this.loading.set(false); this.errorMsg.set(err.message ?? this.translate.instant('assets.fleet.vehicles.form.saveError')); },
     });
   }
 

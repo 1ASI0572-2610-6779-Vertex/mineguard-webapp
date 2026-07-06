@@ -9,20 +9,20 @@
         type="search"
         [value]="query()"
         (input)="onSearch($any($event.target).value)"
-        placeholder="Buscar por nombre, ID o correo..."
+        [placeholder]="'iam.supervisors.directory.searchPlaceholder' | translate"
       />
     </div>
     <span class="sd-result-count">
-      {{ filteredSupervisors().length }} resultado{{ filteredSupervisors().length !== 1 ? 's' : '' }}
+      {{ 'iam.supervisors.directory.resultCount' | translate: { count: filteredSupervisors().length } }}
     </span>
   </div>
 
   <!-- Column headers -->
   @if (filteredSupervisors().length > 0) {
     <div class="sd-col-headers">
-      <span class="sd-col-header">Usuario / Contacto</span>
-      <span class="sd-col-header">Estado de Acceso</span>
-      <span class="sd-col-header sd-col-right">Acciones</span>
+      <span class="sd-col-header">{{ 'iam.supervisors.directory.column.userContact' | translate }}</span>
+      <span class="sd-col-header">{{ 'iam.supervisors.directory.column.accessStatus' | translate }}</span>
+      <span class="sd-col-header sd-col-right">{{ 'iam.supervisors.directory.column.actions' | translate }}</span>
     </div>
   }
 
@@ -32,16 +32,16 @@
       <div class="sd-empty-icon-wrap">
         <mat-icon>group_off</mat-icon>
       </div>
-      <p class="sd-empty-title">Sin supervisores registrados</p>
-      <p class="sd-empty-sub">Haz clic en "Nuevo Supervisor" para comenzar.</p>
+      <p class="sd-empty-title">{{ 'iam.supervisors.directory.empty.title' | translate }}</p>
+      <p class="sd-empty-sub">{{ 'iam.supervisors.directory.empty.sub' | translate }}</p>
     </div>
   } @else if (filteredSupervisors().length === 0) {
     <div class="sd-empty">
       <div class="sd-empty-icon-wrap">
         <mat-icon>search_off</mat-icon>
       </div>
-      <p class="sd-empty-title">Sin resultados</p>
-      <p class="sd-empty-sub">Ningún supervisor coincide con "{{ query() }}".</p>
+      <p class="sd-empty-title">{{ 'iam.supervisors.directory.noResults.title' | translate }}</p>
+      <p class="sd-empty-sub">{{ 'iam.supervisors.directory.noResults.sub' | translate: { query: query() } }}</p>
     </div>
   }
 
@@ -74,19 +74,19 @@
             @case ('active') {
               <span class="sd-badge sd-badge--active">
                 <mat-icon class="sd-badge-icon">check_circle</mat-icon>
-                Activo
+                {{ 'iam.supervisors.directory.status.active' | translate }}
               </span>
             }
             @case ('locked') {
               <span class="sd-badge sd-badge--locked">
                 <mat-icon class="sd-badge-icon">lock</mat-icon>
-                Bloqueado
+                {{ 'iam.supervisors.directory.status.locked' | translate }}
               </span>
             }
             @case ('inactive') {
               <span class="sd-badge sd-badge--inactive">
                 <mat-icon class="sd-badge-icon">block</mat-icon>
-                Inactivo
+                {{ 'iam.supervisors.directory.status.inactive' | translate }}
               </span>
             }
           }
@@ -98,12 +98,12 @@
             <!-- Inline confirm -->
             <div class="sd-confirm-strip">
               <mat-icon class="sd-confirm-icon">warning</mat-icon>
-              <span class="sd-confirm-label">¿Suspender cuenta?</span>
+              <span class="sd-confirm-label">{{ 'iam.supervisors.directory.confirm.title' | translate }}</span>
               <button mat-stroked-button class="sd-confirm-cancel-btn" (click)="cancelAction()">
-                No
+                {{ 'iam.supervisors.directory.confirm.no' | translate }}
               </button>
               <button mat-flat-button class="sd-confirm-ok-btn" (click)="confirmSuspend(s)">
-                Suspender
+                {{ 'iam.supervisors.directory.action.suspend' | translate }}
               </button>
             </div>
           } @else {
@@ -112,26 +112,26 @@
                 <button
                   mat-stroked-button
                   class="sd-action-btn sd-action-btn--danger"
-                  matTooltip="Suspender acceso del supervisor"
+                  [matTooltip]="'iam.supervisors.directory.action.suspendTooltip' | translate"
                   (click)="requestSuspend(s)">
                   <mat-icon>lock</mat-icon>
-                  Suspender
+                  {{ 'iam.supervisors.directory.action.suspend' | translate }}
                 </button>
               }
               @case ('locked') {
                 <button
                   mat-stroked-button
                   class="sd-action-btn sd-action-btn--success"
-                  matTooltip="Restaurar acceso del supervisor"
+                  [matTooltip]="'iam.supervisors.directory.action.restoreTooltip' | translate"
                   (click)="restoreAccess(s)">
                   <mat-icon>lock_open</mat-icon>
-                  Restaurar
+                  {{ 'iam.supervisors.directory.action.restore' | translate }}
                 </button>
               }
               @case ('inactive') {
                 <span class="sd-action-readonly">
                   <mat-icon class="sd-readonly-icon">history</mat-icon>
-                  Historial preservado
+                  {{ 'iam.supervisors.directory.action.historyPreserved' | translate }}
                 </span>
               }
             }

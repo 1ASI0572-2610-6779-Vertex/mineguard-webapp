@@ -42,11 +42,11 @@
         </div>
         <div class="legend-item">
           <span class="legend-dot legend-dot--success"></span>
-          <span class="legend-label">Operativo</span>
+          <span class="legend-label">{{ 'serviceDesign.legend.operational' | translate }}</span>
         </div>
         <div class="legend-item">
           <span class="legend-dot legend-dot--danger"></span>
-          <span class="legend-label">Alerta</span>
+          <span class="legend-label">{{ 'serviceDesign.legend.alert' | translate }}</span>
         </div>
       </div>
     </section>
@@ -115,11 +115,11 @@
                 <div class="empty-icon-wrap">
                   <mat-icon>route</mat-icon>
                 </div>
-                <h3 class="empty-title">Sin rutas configuradas</h3>
+                <h3 class="empty-title">{{ 'serviceDesign.routes.emptyTitle' | translate }}</h3>
                 <p class="empty-text">{{ 'serviceDesign.routes.empty' | translate }}</p>
                 <button mat-flat-button class="empty-cta" [routerLink]="['new']">
                   <mat-icon>add</mat-icon>
-                  Nueva ruta
+                  {{ 'serviceDesign.routes.newRoute' | translate }}
                 </button>
               </div>
             }

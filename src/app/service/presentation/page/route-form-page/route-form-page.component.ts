@@ -188,6 +188,6 @@ export class RouteFormPage implements AfterViewInit, OnDestroy {
   }
 
   close(): void {
-    this.router.navigate(['/service/planning']);
+    this.router.navigate(['/route-design']);
   }
 }

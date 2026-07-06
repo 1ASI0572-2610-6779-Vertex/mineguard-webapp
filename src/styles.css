@@ -78,6 +78,15 @@ body {
   overflow: hidden;
 }
 
+/* Terms & Conditions dialog — pin a light surface + dark text regardless of the
+   viewer's OS color scheme, so the copy never renders light-on-light. */
+.terms-dialog-panel .mat-mdc-dialog-surface {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  color-scheme: light;
+  border-radius: 16px !important;
+}
+
 /* ─────────────────────────────────────────────────────────────
    GLOBAL — MatSnackBar custom panel classes
    ───────────────────────────────────────────────────────────── */

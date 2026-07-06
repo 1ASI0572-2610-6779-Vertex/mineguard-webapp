@@ -16,12 +16,12 @@
     <div class="filter-toolbar">
       <!-- Criticality filter -->
       <mat-form-field appearance="outline" class="filter-select">
-        <mat-label>Criticidad</mat-label>
+        <mat-label>{{ 'reports.history.column.criticality' | translate }}</mat-label>
         <mat-select
           [value]="criticalityFilter()"
           (selectionChange)="criticalityFilter.set($event.value)">
           @for (opt of criticalityOptions; track opt.value) {
-            <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+            <mat-option [value]="opt.value">{{ opt.label | translate }}</mat-option>
           }
         </mat-select>
       </mat-form-field>

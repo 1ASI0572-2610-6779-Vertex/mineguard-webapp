@@ -27,9 +27,30 @@ interface PersistedSession {
   token: string;
   companyId: number | null;
   subscriptionPlan: SubscriptionPlan | null;
+  /** Registered display name of the account owner (resolved from the profile directory). */
+  fullName: string | null;
+  /** Legal name of the company the account belongs to (resolved from the profile directory). */
+  companyName: string | null;
+}
+
+/**
+ * Lightweight profile captured at registration time so the sidebar can show the
+ * real person name and company name — neither is returned by the sign-in
+ * endpoint (which only yields username, role, companyId and plan).
+ */
+interface StoredProfile {
+  fullName: string;
+  companyName: string;
 }
 
 const SESSION_STORAGE_KEY = 'mineguard.session';
+
+/**
+ * localStorage key for the profile directory: a map of `username → StoredProfile`.
+ * Populated when a company is registered (admin account) and when supervisors are
+ * created, then read back at sign-in to enrich the session.
+ */
+const PROFILES_STORAGE_KEY = 'mineguard.profiles';
 
 /**
  * Application service managing IAM domain state and authentication orchestration.
@@ -94,6 +115,12 @@ export class IamStore {
   /** Subscription plan of the authenticated user's company (from sign-in). */
   private readonly currentSubscriptionPlanSignal = signal<SubscriptionPlan | null>(null);
 
+  /** Registered full name of the current user (from the profile directory). */
+  private readonly currentFullNameSignal = signal<string | null>(null);
+
+  /** Company name of the current user (from the profile directory). */
+  private readonly currentCompanyNameSignal = signal<string | null>(null);
+
   /**
    * Signal containing all users in the system (for queries/search).
    * @private
@@ -156,6 +183,12 @@ export class IamStore {
   /** Subscription plan of the current company (STARTER/STANDARD/ENTERPRISE). */
   readonly currentSubscriptionPlan = this.currentSubscriptionPlanSignal.asReadonly();
 
+  /** Registered full name of the current user; null when unknown (fallback to username in UI). */
+  readonly currentFullName = this.currentFullNameSignal.asReadonly();
+
+  /** Company name of the current user; null when unknown (fallback to "Company #id" in UI). */
+  readonly currentCompanyName = this.currentCompanyNameSignal.asReadonly();
+
   /**
    * Readonly signal for the list of users retrieved by user queries.
    */
@@ -204,6 +237,7 @@ export class IamStore {
   signIn(signInCommand: SignInCommand, router: Router) {
     this.iamApi.signIn(signInCommand).subscribe({
       next: (signInResource) => {
+        const profile = this.lookupProfile(signInResource.username);
         const session: PersistedSession = {
           id:        signInResource.id,
           username:  signInResource.username,
@@ -211,23 +245,24 @@ export class IamStore {
           token:     signInResource.token,
           companyId: this.resolveCompanyId(signInResource.token, signInResource.username),
           subscriptionPlan: signInResource.subscriptionPlan ?? 'STANDARD',
+          fullName:    profile?.fullName ?? null,
+          companyName: profile?.companyName ?? null,
         };
         this.savePersistedSession(session);
         this.applySession(session);
 
         if (signInResource.requiresPasswordChange) {
           // Token saved so the interceptor can authenticate the PUT /authentication/change-password call.
-          router.navigate(['/iam/change-password']).then();
+          router.navigate(['/change-password']).then();
         } else {
-          const dest = session.role === 'Administrator' ? '/analytics/admin-summary' : '/analytics/dashboard';
-          router.navigate([dest]).then();
+          router.navigate([this.landingForRole(session.role)]).then();
         }
       },
       error: (err) => {
         console.error('Sign-in failed:', err);
         this.clearPersistedSession();
         this.clearSessionSignals();
-        router.navigate(['/iam/sign-in']).then();
+        router.navigate(['/login']).then();
       },
     });
   }
@@ -253,7 +288,20 @@ export class IamStore {
 
   /** Resolves the post-change-password destination based on the current role. */
   postChangePasswordDestination(): string {
-    return this.currentRole() === 'Administrator' ? '/analytics/admin-summary' : '/analytics/dashboard';
+    return this.landingForRole(this.currentRole());
+  }
+
+  /**
+   * Maps a role to its default landing route.
+   *
+   * @remarks
+   * Administrators land on the system overview; every other authenticated role
+   * (Supervisor) lands on the operational dashboard. Used after sign-in, after a
+   * mandatory password change, and by `role.guard` when redirecting a user away
+   * from a view their role cannot access.
+   */
+  landingForRole(role: string | null): string {
+    return role === 'Administrator' ? '/admin-overview' : '/dashboard';
   }
 
   /**
@@ -265,13 +313,13 @@ export class IamStore {
   signUp(signUpCommand: SignUpCommand, router: Router) {
     this.iamApi.signUp(signUpCommand).subscribe({
       next: () => {
-        router.navigate(['/iam/sign-in']).then();
+        router.navigate(['/login']).then();
       },
       error: (err) => {
         console.error('Sign-up failed:', err);
         this.clearPersistedSession();
         this.clearSessionSignals();
-        router.navigate(['/iam/sign-up']).then();
+        router.navigate(['/register-company']).then();
       },
     });
   }
@@ -298,7 +346,7 @@ export class IamStore {
   signOut(router: Router) {
     this.clearPersistedSession();
     this.clearSessionSignals();
-    router.navigate(['/iam/sign-in']).then();
+    router.navigate(['/login']).then();
   }
 
   /**
@@ -339,6 +387,13 @@ export class IamStore {
     this.iamApi.createSupervisor(command).subscribe({
       next: (supervisor) => {
         this.supervisorsSignal.update((list) => [...list, supervisor]);
+        // Record the supervisor's profile (company inherited from the admin's
+        // session) so their own sidebar shows a real name and company on sign-in.
+        this.rememberProfile(
+          supervisor.corporateId,
+          supervisor.fullName,
+          this.currentCompanyName() ?? '',
+        );
       },
       error: (err) => {
         console.error('Failed to create supervisor:', err);
@@ -404,6 +459,13 @@ export class IamStore {
         // change — default to STANDARD (backend's own default).
         if (session.subscriptionPlan == null) {
           session.subscriptionPlan = 'STANDARD';
+        }
+        // fullName / companyName may be absent in older sessions, or the profile
+        // may have been recorded after sign-in — re-resolve from the directory.
+        if (session.fullName == null || session.companyName == null) {
+          const profile = this.lookupProfile(session.username ?? '');
+          session.fullName = session.fullName ?? profile?.fullName ?? null;
+          session.companyName = session.companyName ?? profile?.companyName ?? null;
         }
         return session as PersistedSession;
       }
@@ -528,6 +590,8 @@ export class IamStore {
     this.currentTokenSignal.set(session.token);
     this.currentCompanyIdSignal.set(session.companyId ?? null);
     this.currentSubscriptionPlanSignal.set(session.subscriptionPlan ?? null);
+    this.currentFullNameSignal.set(session.fullName ?? null);
+    this.currentCompanyNameSignal.set(session.companyName ?? null);
   }
 
   /**
@@ -542,5 +606,49 @@ export class IamStore {
     this.currentTokenSignal.set(null);
     this.currentCompanyIdSignal.set(null);
     this.currentSubscriptionPlanSignal.set(null);
+    this.currentFullNameSignal.set(null);
+    this.currentCompanyNameSignal.set(null);
+  }
+
+  /**
+   * Persists a `username → { fullName, companyName }` entry in the profile
+   * directory so a later sign-in with that username can enrich the session.
+   *
+   * @remarks
+   * Best-effort and browser-local: it bridges registration data (which the
+   * backend does not echo back at sign-in) to the sidebar. A sign-in from a
+   * different browser simply falls back to username / "Company #id".
+   */
+  rememberProfile(username: string, fullName: string, companyName: string): void {
+    const cleanUser = (username ?? '').trim();
+    if (!cleanUser) return;
+    const directory = this.loadProfiles();
+    directory[cleanUser] = {
+      fullName: (fullName ?? '').trim(),
+      companyName: (companyName ?? '').trim(),
+    };
+    try {
+      localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(directory));
+    } catch {
+      // Storage full or unavailable — profile enrichment is non-critical.
+    }
+  }
+
+  /** Reads the stored profile for a username, or null when none is recorded. */
+  private lookupProfile(username: string): StoredProfile | null {
+    const entry = this.loadProfiles()[(username ?? '').trim()];
+    return entry && entry.fullName ? entry : null;
+  }
+
+  /** Reads and parses the profile directory from localStorage (empty map on any error). */
+  private loadProfiles(): Record<string, StoredProfile> {
+    try {
+      const raw = localStorage.getItem(PROFILES_STORAGE_KEY);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw) as Record<string, StoredProfile>;
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch {
+      return {};
+    }
   }
 }

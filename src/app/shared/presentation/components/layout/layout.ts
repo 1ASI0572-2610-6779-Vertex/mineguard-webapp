@@ -41,7 +41,9 @@ interface MenuOption {
 export class Layout implements OnInit {
   @ViewChild(MatSidenav) sidenav!: MatSidenav;
 
-  readonly showShell = signal<boolean>(true);
+  // Default to hidden and resolve synchronously in the constructor so a hard
+  // refresh on an auth route never flashes the shell before the redirect lands.
+  readonly showShell = signal<boolean>(false);
   activeOption = signal<string>('option.dashboard');
 
   /** Tracks whether the sidenav is open (used for mobile overlay mode). */
@@ -53,19 +55,19 @@ export class Layout implements OnInit {
   readonly options: MenuOption[] = [
     {
       icon: 'monitor_heart',
-      path: '/analytics/admin-summary',
+      path: '/admin-overview',
       title: 'option.adminSummary',
       roles: ['Administrator'],
     },
     {
       icon: 'manage_accounts',
-      path: '/iam/supervisors',
+      path: '/user-management',
       title: 'option.userManagement',
       roles: ['Administrator'],
     },
     {
       icon: 'verified_user',
-      path: '/monitoring/audit-and-assets',
+      path: '/audit',
       title: 'option.auditAndAssets',
       roles: ['Administrator'],
     },
@@ -77,37 +79,37 @@ export class Layout implements OnInit {
     },
     {
       icon: 'dashboard',
-      path: '/analytics/dashboard',
+      path: '/dashboard',
       title: 'option.dashboard',
       roles: ['Supervisor'],
     },
     {
       icon: 'alt_route',
-      path: '/service/planning',
+      path: '/route-design',
       title: 'option.routeDesign',
       roles: ['Supervisor'],
     },
     {
       icon: 'map',
-      path: '/monitoring/live-map',
+      path: '/live-map',
       title: 'option.liveMap',
       roles: ['Supervisor'],
     },
     {
       icon: 'crisis_alert',
-      path: '/monitoring/alerts',
+      path: '/alerts',
       title: 'option.alerts',
       roles: ['Supervisor'],
     },
     {
       icon: 'directions_car',
-      path: '/assets/fleet-and-drivers',
+      path: '/fleet',
       title: 'option.fleetAndDrivers',
       roles: ['Supervisor'],
     },
     {
       icon: 'bar_chart',
-      path: '/analytics/reports',
+      path: '/reports',
       title: 'option.reports',
       roles: ['Supervisor'],
     },
@@ -120,6 +122,10 @@ export class Layout implements OnInit {
   protected store = inject(IamStore);
 
   constructor() {
+    // Resolve shell visibility synchronously from the current URL + auth state,
+    // before the first change detection, to avoid a shell flash on hard refresh.
+    this.updateShellVisibility(window.location.pathname);
+
     // Re-configure sidenav mode whenever the shell becomes visible after login.
     // ngAfterViewInit already ran (sidenav was undefined then), so we must
     // re-trigger synchronously once the @if block renders the mat-sidenav.
@@ -136,11 +142,34 @@ export class Layout implements OnInit {
   });
 
   readonly displayName = computed(
-    () => this.store.currentUsername() ?? this.translate.instant('layout.user.placeholder.name'),
+    () =>
+      this.store.currentFullName() ??
+      this.store.currentUsername() ??
+      this.translate.instant('layout.user.placeholder.name'),
   );
 
   readonly displayRole = computed(
     () => this.store.currentRole() ?? this.translate.instant('layout.user.placeholder.role'),
+  );
+
+  /** Company name for the sidebar; falls back to "Company #<id>" when unknown. */
+  readonly displayCompany = computed(() => {
+    const name = this.store.currentCompanyName();
+    if (name) return name;
+    const id = this.store.currentCompanyId();
+    return id != null
+      ? this.translate.instant('layout.company', { id })
+      : this.translate.instant('layout.company', { id: '—' });
+  });
+
+  /** Lowercased plan tier ('starter' | 'standard' | 'enterprise') for label + color. */
+  readonly planTier = computed(() =>
+    (this.store.currentSubscriptionPlan() ?? 'STANDARD').toLowerCase(),
+  );
+
+  /** Localized subscription-plan label (e.g. "Plan Enterprise"). Defaults to Standard. */
+  readonly displayPlan = computed(() =>
+    this.translate.instant(`layout.subscription.${this.planTier()}`),
   );
 
   readonly avatarInitials = computed(() => {
@@ -224,14 +253,18 @@ export class Layout implements OnInit {
   }
 
   private static readonly NO_SHELL_ROUTES: readonly string[] = [
-    '/iam/sign-in',
-    '/iam/sign-up',
-    '/iam/change-password',
-    '/iam/forgot-password',
+    '/login',
+    '/register-company',
+    '/change-password',
+    '/forgot-password',
   ];
 
   private updateShellVisibility(url: string): void {
     const pathOnly = url.split('?')[0].split(';')[0];
-    this.showShell.set(!Layout.NO_SHELL_ROUTES.includes(pathOnly));
+    const isNoShellRoute = Layout.NO_SHELL_ROUTES.includes(pathOnly);
+    // The shell only renders for an authenticated session on a non-auth route.
+    // This keeps the sidebar/toolbar hidden during the sign-in redirect on a
+    // hard refresh instead of flashing them for a frame.
+    this.showShell.set(this.store.isSignedIn() && !isNoShellRoute);
   }
 }

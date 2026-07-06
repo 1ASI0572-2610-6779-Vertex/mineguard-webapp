@@ -1,0 +1,32 @@
+<div class="terms-header">
+  <div class="terms-title-wrap">
+    <mat-icon aria-hidden="true">gavel</mat-icon>
+    <h2 class="terms-title" mat-dialog-title>{{ 'iam.terms.title' | translate }}</h2>
+  </div>
+  <button
+    mat-icon-button
+    class="terms-close-x"
+    [attr.aria-label]="'iam.terms.close' | translate"
+    mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="terms-content">
+  <p class="terms-intro">{{ 'iam.terms.intro' | translate }}</p>
+
+  @for (key of sections; track key) {
+    <section class="terms-section">
+      <h3 class="terms-section-title">{{ 'iam.terms.' + key + '.title' | translate }}</h3>
+      <p class="terms-section-body">{{ 'iam.terms.' + key + '.body' | translate }}</p>
+    </section>
+  }
+
+  <p class="terms-updated">{{ 'iam.terms.updated' | translate }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button class="terms-accept" mat-dialog-close>
+    {{ 'iam.terms.close' | translate }}
+  </button>
+</mat-dialog-actions>
