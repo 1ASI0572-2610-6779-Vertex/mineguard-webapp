@@ -56,6 +56,9 @@
       "generic": "Could not link the device. Please try again.",
       "loadDevices": "Could not load devices.",
       "loadVehicles": "Could not load vehicles."
+    },
+    "audit": {
+      "note": "Read-only audit. Devices are now linked from Fleet when a supervisor creates a vehicle."
     }
   },
   "about": {
@@ -652,7 +655,12 @@
         "action": {
           "edit": "Edit",
           "sendToWorkshop": "Send to Workshop",
-          "markOperational": "Mark Operational"
+          "markOperational": "Mark Operational",
+          "linkDevice": "Link device",
+          "more": "More actions",
+          "moveDevice": "Move device",
+          "retireDevice": "Retire device",
+          "archive": "Decommission vehicle"
         },
         "form": {
           "titleCreate": "Register Vehicle",
@@ -676,11 +684,60 @@
           "cancel": "Cancel",
           "submitCreate": "Register vehicle",
           "submitEdit": "Save changes",
-          "saveError": "Error saving the vehicle"
+          "saveError": "Error saving the vehicle",
+          "device": {
+            "linkTitle": "Link MineGuard device",
+            "linkSubtitle": "The vehicle was created. Now we're linking its device.",
+            "sectionTitle": "MineGuard device",
+            "sectionSubtitle": "Link an edge device to this vehicle right now.",
+            "linkToggle": "Link a device now",
+            "autoIdLabel": "Device ID",
+            "autoIdValue": "Automatic",
+            "autoHint": "The system assigns the next sequential ID and links it to this vehicle when you save.",
+            "vehicleCreated": "Vehicle {{code}} was created successfully",
+            "linking": "Linking device…",
+            "linkFailedTitle": "We couldn't link the device",
+            "retry": "Retry link",
+            "closeAnyway": "Close anyway",
+            "linkedSnack": "Device #{{id}} linked to {{code}}"
+          }
         },
         "empty": {
           "title": "No vehicles registered",
           "sub": "Add the first vehicle to start managing the fleet."
+        },
+        "device": {
+          "filter": "Without device",
+          "linked": "Device #{{id}}",
+          "none": "No device",
+          "emptyFiltered": "All vehicles have a device linked."
+        },
+        "confirm": {
+          "archive": {
+            "title": "Decommission vehicle?",
+            "message": "{{code}} will be archived and hidden from the fleet. Its history is preserved. You can't do this while it has an active device.",
+            "confirm": "Decommission"
+          },
+          "retire": {
+            "title": "Retire device?",
+            "message": "Device #{{id}} will be retired and unlinked. Its id stays reserved and is never reused.",
+            "confirm": "Retire device"
+          }
+        },
+        "archivedSnack": "Vehicle {{code}} was decommissioned",
+        "retiredSnack": "Device #{{id}} was retired",
+        "archiveHasDevice": "Move or retire the device before decommissioning the vehicle.",
+        "archiveError": "We couldn't decommission the vehicle. Please try again.",
+        "moveDialog": {
+          "title": "Move device",
+          "subtitle": "Reassign this device to another vehicle, keeping its id.",
+          "currentlyOn": "Currently on {{code}}",
+          "targetLabel": "Destination vehicle",
+          "targetPlaceholder": "Select a vehicle without a device",
+          "noTargets": "There are no vehicles without a device to move it to.",
+          "confirm": "Move device",
+          "cancel": "Cancel",
+          "movedSnack": "Device #{{id}} moved to {{code}}"
         }
       },
       "drivers": {
@@ -737,7 +794,16 @@
         "empty": {
           "title": "No drivers registered",
           "sub": "Add the first driver to the operational directory."
-        }
+        },
+        "confirm": {
+          "deactivate": {
+            "title": "Deactivate driver?",
+            "message": "{{name}} will be deactivated. Their session and report history is preserved.",
+            "confirm": "Deactivate"
+          }
+        },
+        "deactivatedSnack": "{{name}} was deactivated",
+        "deactivateError": "We couldn't deactivate the driver. Please try again."
       }
     }
   },
@@ -851,6 +917,7 @@
     }
   },
   "common": {
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "cancel": "Cancel"
   }
 }

@@ -56,6 +56,9 @@
       "generic": "No se pudo vincular el dispositivo. Inténtalo de nuevo.",
       "loadDevices": "No se pudieron cargar los dispositivos.",
       "loadVehicles": "No se pudieron cargar los vehículos."
+    },
+    "audit": {
+      "note": "Auditoría de solo lectura. Los devices ahora se vinculan desde Flota cuando un supervisor crea un vehículo."
     }
   },
   "about": {
@@ -652,7 +655,12 @@
         "action": {
           "edit": "Editar",
           "sendToWorkshop": "Enviar a Taller",
-          "markOperational": "Marcar Operativo"
+          "markOperational": "Marcar Operativo",
+          "linkDevice": "Vincular device",
+          "more": "Más acciones",
+          "moveDevice": "Mover device",
+          "retireDevice": "Retirar device",
+          "archive": "Dar de baja vehículo"
         },
         "form": {
           "titleCreate": "Registrar Vehículo",
@@ -676,11 +684,60 @@
           "cancel": "Cancelar",
           "submitCreate": "Registrar vehículo",
           "submitEdit": "Guardar cambios",
-          "saveError": "Error al guardar el vehículo"
+          "saveError": "Error al guardar el vehículo",
+          "device": {
+            "linkTitle": "Vincular device MineGuard",
+            "linkSubtitle": "El vehículo se creó. Ahora estamos vinculando su device.",
+            "sectionTitle": "Device MineGuard",
+            "sectionSubtitle": "Vincula un device edge a este vehículo ahora mismo.",
+            "linkToggle": "Vincular un device ahora",
+            "autoIdLabel": "ID del Device",
+            "autoIdValue": "Automático",
+            "autoHint": "El sistema asigna el siguiente ID secuencial y lo vincula a este vehículo al guardar.",
+            "vehicleCreated": "El vehículo {{code}} se creó correctamente",
+            "linking": "Vinculando device…",
+            "linkFailedTitle": "No pudimos vincular el device",
+            "retry": "Reintentar vinculación",
+            "closeAnyway": "Cerrar de todos modos",
+            "linkedSnack": "Device #{{id}} vinculado a {{code}}"
+          }
         },
         "empty": {
           "title": "Sin vehículos registrados",
           "sub": "Agrega el primer vehículo para comenzar a gestionar la flota."
+        },
+        "device": {
+          "filter": "Sin device",
+          "linked": "Device #{{id}}",
+          "none": "Sin device",
+          "emptyFiltered": "Todos los vehículos tienen un device vinculado."
+        },
+        "confirm": {
+          "archive": {
+            "title": "¿Dar de baja el vehículo?",
+            "message": "{{code}} se archivará y se ocultará de la flota. Su historial se conserva. No puedes hacerlo mientras tenga un device activo.",
+            "confirm": "Dar de baja"
+          },
+          "retire": {
+            "title": "¿Retirar el device?",
+            "message": "El device #{{id}} se retirará y desvinculará. Su id queda reservado y nunca se reutiliza.",
+            "confirm": "Retirar device"
+          }
+        },
+        "archivedSnack": "El vehículo {{code}} se dio de baja",
+        "retiredSnack": "El device #{{id}} se retiró",
+        "archiveHasDevice": "Mueve o retira el device antes de dar de baja el vehículo.",
+        "archiveError": "No pudimos dar de baja el vehículo. Inténtalo de nuevo.",
+        "moveDialog": {
+          "title": "Mover device",
+          "subtitle": "Reasigna este device a otro vehículo, conservando su id.",
+          "currentlyOn": "Actualmente en {{code}}",
+          "targetLabel": "Vehículo destino",
+          "targetPlaceholder": "Selecciona un vehículo sin device",
+          "noTargets": "No hay vehículos sin device a los que moverlo.",
+          "confirm": "Mover device",
+          "cancel": "Cancelar",
+          "movedSnack": "Device #{{id}} movido a {{code}}"
         }
       },
       "drivers": {
@@ -737,7 +794,16 @@
         "empty": {
           "title": "Sin conductores registrados",
           "sub": "Incorpora el primer conductor al directorio operativo."
-        }
+        },
+        "confirm": {
+          "deactivate": {
+            "title": "¿Desactivar conductor?",
+            "message": "{{name}} se desactivará. Su historial de sesiones y reportes se conserva.",
+            "confirm": "Desactivar"
+          }
+        },
+        "deactivatedSnack": "{{name}} se desactivó",
+        "deactivateError": "No pudimos desactivar al conductor. Inténtalo de nuevo."
       }
     }
   },
@@ -851,6 +917,7 @@
     }
   },
   "common": {
-    "dismiss": "Cerrar"
+    "dismiss": "Cerrar",
+    "cancel": "Cancelar"
   }
 }
