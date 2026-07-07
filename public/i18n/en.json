@@ -136,7 +136,12 @@
       "noAccount": "Don't have an account?",
       "registerCompany": "Register your company",
       "termsPrefix": "By continuing you accept the",
-      "termsLink": "Terms and Conditions"
+      "termsLink": "Terms and Conditions",
+      "errors": {
+        "invalidCredentials": "Incorrect username or password. Please check your credentials and try again.",
+        "network": "We couldn't reach the server. Check your connection and try again.",
+        "generic": "We couldn't sign you in right now. Please try again in a moment."
+      }
     },
     "terms": {
       "title": "Terms and Conditions",
@@ -320,7 +325,7 @@
           }
         }
       },
-      "submit": "Create company",
+      "submit": "Continue to secure payment",
       "submitting": "Registering...",
       "backToLogin": "Back to sign in",
       "errors": {
@@ -334,7 +339,33 @@
         "apiKey": "Telemetry API key",
         "copy": "Copy API key",
         "warning": "This API key is shown only once. Store it securely before leaving this screen — it is required to provision your sensors and smart-bands.",
-        "goToLogin": "Back to sign in"
+        "goToLogin": "Back to sign in",
+        "snack": "Company registered successfully. Your account is ready."
+      },
+      "checkout": {
+        "brand": "MineGuard Payments",
+        "secure": "Secure checkout",
+        "orderSummary": "Order summary",
+        "billingCycle": "Billed monthly · auto-renews",
+        "reference": "Reference",
+        "merchant": "Merchant",
+        "subtotal": "Subtotal",
+        "tax": "VAT / IGV (18%)",
+        "total": "Total due today",
+        "scanTitle": "Scan to pay",
+        "scanHint": "Scan this code with your banking app to complete the payment securely.",
+        "expiresIn": "Expires in",
+        "expiredTitle": "Payment window expired",
+        "expiredHint": "This QR code is no longer valid. Generate a new one to continue.",
+        "regenerate": "Generate new code",
+        "verify": "I've paid — Verify payment",
+        "verifying": "Verifying with your bank…",
+        "verifiedTitle": "Payment verified!",
+        "verifiedBody": "Your company account is now active. Setting up your workspace…",
+        "cancel": "Cancel and go back",
+        "encrypted": "256-bit SSL encrypted",
+        "poweredBy": "Payments secured by MineGuard Pay",
+        "qrAlt": "QR code to complete the payment with your banking app"
       }
     }
   },
@@ -609,8 +640,8 @@
         "blockedForUse": "Blocked for use",
         "column": {
           "identifier": "Identifier and type",
-          "status": "Status (US45)",
-          "assignment": "Current assignment (US02)",
+          "status": "Status ",
+          "assignment": "Current assignment ",
           "actions": "Actions"
         },
         "status": {
@@ -665,7 +696,7 @@
         "status": {
           "onShift": "On Shift",
           "offShift": "Off Shift",
-          "inactive": "Inactive (US47)"
+          "inactive": "Inactive "
         },
         "action": {
           "edit": "Edit",
@@ -818,5 +849,8 @@
       "time": "Event time",
       "markAttended": "Mark as attended"
     }
+  },
+  "common": {
+    "dismiss": "Dismiss"
   }
 }

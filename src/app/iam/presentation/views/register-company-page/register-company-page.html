@@ -118,17 +118,10 @@
           </div>
         </div>
 
-        <!-- Submit -->
-        <button mat-flat-button type="submit" class="auth-submit" [disabled]="submitting()">
-          @if (submitting()) {
-            <mat-spinner diameter="20" class="auth-spinner"></mat-spinner>
-            <span>{{ 'iam.registerCompany.submitting' | translate }}</span>
-          } @else {
-            <ng-container>
-              <mat-icon>rocket_launch</mat-icon>
-              <span>{{ 'iam.registerCompany.submit' | translate }}</span>
-            </ng-container>
-          }
+        <!-- Submit → opens the simulated payment gateway -->
+        <button mat-flat-button type="submit" class="auth-submit">
+          <mat-icon>lock</mat-icon>
+          <span>{{ 'iam.registerCompany.submit' | translate }}</span>
         </button>
       </form>
 
@@ -193,3 +186,13 @@
 
   </div>
 </div>
+
+<!-- ── Simulated payment gateway (Steps 2–5) ── -->
+@if (checkoutOpen()) {
+  <app-payment-checkout
+    [planNameKey]="checkoutPlan().nameKey"
+    [amount]="checkoutPlan().amount"
+    [processing]="submitting()"
+    (verify)="onPaymentVerified()"
+    (cancel)="onCheckoutCancel()" />
+}

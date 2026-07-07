@@ -13,6 +13,7 @@ import { IamStore } from '../../../application/iam.store';
 import { SignInCommand } from '../../../domain/model/sign-in.command';
 import { TermsDialog } from '../../components/terms-dialog/terms-dialog';
 import { BaseForm } from '../../../../shared/presentation/components/base-form/base-form';
+import { NotificationService } from '../../../../shared/presentation/services/notification.service';
 
 @Component({
   selector: 'app-sign-in-form',
@@ -35,6 +36,7 @@ export class SignInForm extends BaseForm implements OnInit {
   private readonly store     = inject(IamStore);
   private readonly translate = inject(TranslateService);
   private readonly dialog    = inject(MatDialog);
+  private readonly notify    = inject(NotificationService);
 
   readonly submitting   = signal(false);
   readonly hidePassword = signal(true);
@@ -72,12 +74,27 @@ export class SignInForm extends BaseForm implements OnInit {
   performSignIn(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.submitting.set(true);
-    this.store.signIn(
-      new SignInCommand({
-        username: this.form.getRawValue().username,
-        password: this.form.getRawValue().password,
-      }),
-      this.router,
-    );
+    this.store
+      .signIn(
+        new SignInCommand({
+          username: this.form.getRawValue().username,
+          password: this.form.getRawValue().password,
+        }),
+        this.router,
+      )
+      .subscribe({
+        next: () => this.submitting.set(false),
+        error: (err: { status?: number }) => {
+          this.submitting.set(false);
+          this.notify.error(this.signInErrorKey(err?.status));
+        },
+      });
+  }
+
+  /** Maps an auth HTTP status to an empathetic, localized error message key. */
+  private signInErrorKey(status?: number): string {
+    if (status === 404) return 'iam.signIn.errors.invalidCredentials';
+    if (status === 0) return 'iam.signIn.errors.network';
+    return 'iam.signIn.errors.generic';
   }
 }

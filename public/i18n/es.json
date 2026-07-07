@@ -136,7 +136,12 @@
       "noAccount": "¿No tienes una cuenta?",
       "registerCompany": "Registra tu empresa",
       "termsPrefix": "Al continuar aceptas los",
-      "termsLink": "Términos y Condiciones"
+      "termsLink": "Términos y Condiciones",
+      "errors": {
+        "invalidCredentials": "Usuario o contraseña incorrectos. Verifica tus credenciales e inténtalo de nuevo.",
+        "network": "No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.",
+        "generic": "No pudimos iniciar tu sesión en este momento. Inténtalo de nuevo en unos segundos."
+      }
     },
     "terms": {
       "title": "Términos y Condiciones",
@@ -320,7 +325,7 @@
           }
         }
       },
-      "submit": "Crear empresa",
+      "submit": "Continuar al pago seguro",
       "submitting": "Registrando...",
       "backToLogin": "Volver al inicio de sesión",
       "errors": {
@@ -334,7 +339,33 @@
         "apiKey": "API Key de telemetría",
         "copy": "Copiar API Key",
         "warning": "Esta API Key se muestra solo una vez. Guárdala de forma segura antes de salir de esta pantalla — es necesaria para aprovisionar tus sensores y smart-bands.",
-        "goToLogin": "Volver al inicio de sesión"
+        "goToLogin": "Volver al inicio de sesión",
+        "snack": "Empresa registrada correctamente. Tu cuenta está lista."
+      },
+      "checkout": {
+        "brand": "MineGuard Pagos",
+        "secure": "Pago seguro",
+        "orderSummary": "Resumen de compra",
+        "billingCycle": "Facturación mensual · renovación automática",
+        "reference": "Referencia",
+        "merchant": "Comercio",
+        "subtotal": "Subtotal",
+        "tax": "IGV / VAT (18%)",
+        "total": "Total a pagar hoy",
+        "scanTitle": "Escanea para pagar",
+        "scanHint": "Escanea este código con tu aplicación bancaria para completar el pago de forma segura.",
+        "expiresIn": "Expira en",
+        "expiredTitle": "Tiempo de pago expirado",
+        "expiredHint": "Este código QR ya no es válido. Genera uno nuevo para continuar.",
+        "regenerate": "Generar nuevo código",
+        "verify": "Ya realicé el pago — Verificar",
+        "verifying": "Verificando con tu banco…",
+        "verifiedTitle": "¡Pago verificado!",
+        "verifiedBody": "Tu cuenta de empresa está activa. Configurando tu espacio de trabajo…",
+        "cancel": "Cancelar y volver",
+        "encrypted": "Cifrado SSL de 256 bits",
+        "poweredBy": "Pagos protegidos por MineGuard Pay",
+        "qrAlt": "Código QR para completar el pago con tu aplicación bancaria"
       }
     }
   },
@@ -609,8 +640,8 @@
         "blockedForUse": "Bloqueado para uso",
         "column": {
           "identifier": "Identificador y tipo",
-          "status": "Estado (US45)",
-          "assignment": "Asignación actual (US02)",
+          "status": "Estado ",
+          "assignment": "Asignación actual ",
           "actions": "Acciones"
         },
         "status": {
@@ -665,7 +696,7 @@
         "status": {
           "onShift": "En Turno",
           "offShift": "Fuera de Turno",
-          "inactive": "Inactivo (US47)"
+          "inactive": "Inactivo "
         },
         "action": {
           "edit": "Editar",
@@ -818,5 +849,8 @@
       "time": "Hora del evento",
       "markAttended": "Marcar como atendida"
     }
+  },
+  "common": {
+    "dismiss": "Cerrar"
   }
 }
