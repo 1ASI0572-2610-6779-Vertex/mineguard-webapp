@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, catchError, map, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { AccessStatus } from '../domain/model/access-status';
@@ -233,10 +233,18 @@ export class IamStore {
    *
    * @param signInCommand - Domain command containing user credentials
    * @param router - Angular Router for post-authentication navigation
+   * @returns A cold Observable that completes once the session is persisted and
+   *   the post-auth navigation is dispatched, or errors with the original HTTP
+   *   failure so the caller can surface user feedback (e.g. a toast on `401`).
+   *   The session is left clean on failure.
+   *
+   * @remarks
+   * The success side effects (session persistence + redirect) run inside the
+   * pipeline, so the caller only needs to `subscribe` and handle loading/error.
    */
-  signIn(signInCommand: SignInCommand, router: Router) {
-    this.iamApi.signIn(signInCommand).subscribe({
-      next: (signInResource) => {
+  signIn(signInCommand: SignInCommand, router: Router): Observable<void> {
+    return this.iamApi.signIn(signInCommand).pipe(
+      tap((signInResource) => {
         const profile = this.lookupProfile(signInResource.username);
         const session: PersistedSession = {
           id:        signInResource.id,
@@ -257,14 +265,15 @@ export class IamStore {
         } else {
           router.navigate([this.landingForRole(session.role)]).then();
         }
-      },
-      error: (err) => {
+      }),
+      map(() => void 0),
+      catchError((err) => {
         console.error('Sign-in failed:', err);
         this.clearPersistedSession();
         this.clearSessionSignals();
-        router.navigate(['/login']).then();
-      },
-    });
+        return throwError(() => err);
+      }),
+    );
   }
 
   /**

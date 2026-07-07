@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, tap, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, of, tap, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 
 import { AssetsApi } from '../../assets/infrastructure/assets-api';
 import { Vehicle } from '../../assets/domain/model/vehicle.entity';
@@ -86,6 +86,74 @@ export class DevicesStore {
         return throwError(() => this.toRegistrationError(err));
       }),
     );
+  }
+
+  /**
+   * POST /api/v1/vehicles/{vehicleId}/sensor — links a device to an existing
+   * vehicle (server assigns the sequential deviceId).
+   *
+   * @remarks
+   * Used by the supervisor vehicle-creation flow as the second step after the
+   * vehicle is committed. On session expiry the user is signed out; any other
+   * failure is rethrown as a {@link DeviceRegistrationError} so the dialog can
+   * offer a focused retry without re-capturing the vehicle. Does not reload the
+   * (admin-scoped) devices table — the caller refreshes the tenant KPIs instead.
+   */
+  linkDevice$(vehicleId: number): Observable<Device> {
+    return this.devicesApi.linkDeviceToVehicle(vehicleId).pipe(
+      catchError((err: unknown) => this.mapDeviceError(err)),
+    );
+  }
+
+  /**
+   * Moves an existing device to another vehicle, **preserving its deviceId**.
+   *
+   * @remarks
+   * Resolves the source vehicle's device id first (nested GET), then PATCHes the
+   * association. This is the correct reassignment path — it never mints a new
+   * sequential id. A `409` means the target vehicle already has a device.
+   */
+  moveDeviceByVehicle$(sourceVehicleId: number, targetVehicleId: number): Observable<Device> {
+    return this.devicesApi.getVehicleDevice(sourceVehicleId).pipe(
+      switchMap((device) =>
+        device
+          ? this.devicesApi.patchDevice(device.id, { vehicleId: targetVehicleId })
+          : throwError(() => ({ key: 'devices.error.vehicleNotFound' } as DeviceRegistrationError)),
+      ),
+      catchError((err: unknown) => this.mapDeviceError(err)),
+    );
+  }
+
+  /**
+   * Retires the device linked to a vehicle (soft-delete): its `deviceId` stays
+   * reserved so the embedded layer never sees it reused.
+   */
+  retireDeviceByVehicle$(vehicleId: number): Observable<Device> {
+    return this.devicesApi.getVehicleDevice(vehicleId).pipe(
+      switchMap((device) =>
+        device
+          ? this.devicesApi.patchDevice(device.id, { status: 'retired' })
+          : throwError(() => ({ key: 'devices.error.vehicleNotFound' } as DeviceRegistrationError)),
+      ),
+      catchError((err: unknown) => this.mapDeviceError(err)),
+    );
+  }
+
+  /**
+   * Shared error mapping for device writes: sign out on session expiry, otherwise
+   * surface a {@link DeviceRegistrationError}. A {@link DeviceRegistrationError}
+   * that already flowed through (from the `switchMap` guards) is passed as-is.
+   */
+  private mapDeviceError(err: unknown): Observable<never> {
+    if (isDeviceApiError(err) && this.isSessionExpired(err)) {
+      this.iamStore.signOut(this.router);
+      return throwError(() => ({ key: 'devices.error.sessionExpired' } as DeviceRegistrationError));
+    }
+    if (isDeviceApiError(err)) {
+      return throwError(() => this.toRegistrationError(err));
+    }
+    // Already a DeviceRegistrationError (e.g. from a nested-GET 404 guard).
+    return throwError(() => err as DeviceRegistrationError);
   }
 
   private isSessionExpired(err: DeviceApiError): boolean {

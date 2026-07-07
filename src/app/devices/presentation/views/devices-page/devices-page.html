@@ -21,84 +21,13 @@
     </div>
   </header>
 
-  <div class="dv-body">
+  <div class="dv-body dv-body--audit">
 
-    <!-- ── Registration form card ─────────────────────────────────────── -->
-    <section class="dv-card dv-form-card">
-      <div class="dv-card-head">
-        <h2 class="dv-card-title">{{ 'devices.form.title' | translate }}</h2>
-        <p class="dv-card-sub">{{ 'devices.form.subtitle' | translate }}</p>
-      </div>
-
-      @if (formError()) {
-        <div class="dv-error" role="alert" aria-live="polite">
-          <mat-icon>error_outline</mat-icon>
-          <span>{{ errorMessage(formError()!) }}</span>
-        </div>
-      }
-
-      <form class="dv-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
-
-        <!-- Vehicle select -->
-        <div class="dv-field-wrap">
-          <label class="dv-label" for="dv-vehicle">{{ 'devices.form.vehicle.label' | translate }}</label>
-          <mat-form-field appearance="outline" class="dv-field">
-            <mat-icon matPrefix>local_shipping</mat-icon>
-            <mat-select
-              id="dv-vehicle"
-              formControlName="vehicleId"
-              [placeholder]="'devices.form.vehicle.placeholder' | translate">
-              @for (vehicle of vehicles(); track vehicle.id) {
-                <mat-option [value]="vehicle.id">{{ vehicle.code }}</mat-option>
-              }
-            </mat-select>
-            @if (form.controls.vehicleId.invalid && form.controls.vehicleId.touched) {
-              <mat-error>{{ 'devices.form.vehicle.required' | translate }}</mat-error>
-            }
-          </mat-form-field>
-          @if (vehicles().length === 0) {
-            <p class="dv-field-hint dv-field-hint--warn">
-              <mat-icon>info</mat-icon>
-              {{ 'devices.form.vehicle.empty' | translate }}
-            </p>
-          }
-        </div>
-
-        <!-- Device ID input -->
-        <div class="dv-field-wrap">
-          <label class="dv-label" for="dv-device-id">{{ 'devices.form.deviceId.label' | translate }}</label>
-          <mat-form-field appearance="outline" class="dv-field">
-            <mat-icon matPrefix>tag</mat-icon>
-            <input
-              matInput
-              id="dv-device-id"
-              formControlName="deviceId"
-              autocomplete="off"
-              [placeholder]="'devices.form.deviceId.placeholder' | translate" />
-            @if (form.controls.deviceId.invalid && form.controls.deviceId.touched) {
-              <mat-error>{{ 'devices.form.deviceId.required' | translate }}</mat-error>
-            }
-          </mat-form-field>
-          <p class="dv-field-hint">
-            <mat-icon>lightbulb</mat-icon>
-            {{ 'devices.form.deviceId.hint' | translate }}
-          </p>
-        </div>
-
-        <!-- Submit -->
-        <button mat-flat-button type="submit" class="dv-submit" [disabled]="submitting()">
-          @if (submitting()) {
-            <mat-spinner diameter="20" class="dv-spinner"></mat-spinner>
-            <span>{{ 'devices.form.submitting' | translate }}</span>
-          } @else {
-            <ng-container>
-              <mat-icon>add_link</mat-icon>
-              <span>{{ 'devices.form.submit' | translate }}</span>
-            </ng-container>
-          }
-        </button>
-      </form>
-    </section>
+    <!-- ── Read-only audit notice ─────────────────────────────────────── -->
+    <div class="dv-audit-note" role="note">
+      <mat-icon>visibility</mat-icon>
+      <span>{{ 'devices.audit.note' | translate }}</span>
+    </div>
 
     <!-- ── Device table card ──────────────────────────────────────────── -->
     <section class="dv-card dv-table-card">

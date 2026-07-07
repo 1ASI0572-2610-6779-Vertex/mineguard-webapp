@@ -8,6 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import { PaymentCheckout } from '../../components/payment-checkout/payment-checkout';
+import { NotificationService } from '../../../../shared/presentation/services/notification.service';
 import { IamStore } from '../../../application/iam.store';
 import { RegisterCompanyCommand } from '../../../domain/model/register-company.command';
 import { CompanyRegistrationResponse } from '../../../infrastructure/company-registration-response';
@@ -18,6 +20,8 @@ interface PlanOption {
   readonly nameKey: string;
   readonly descKey: string;
   readonly price: string;
+  /** Monthly base price in USD (numeric), used by the checkout price breakdown. */
+  readonly amount: number;
   /** i18n keys for the "what's included" feature list, revealed on demand. */
   readonly featureKeys: readonly string[];
 }
@@ -44,6 +48,7 @@ interface PlanOption {
     MatInputModule,
     MatProgressSpinnerModule,
     TranslatePipe,
+    PaymentCheckout,
   ],
   templateUrl: './register-company-page.html',
   styleUrls: ['../auth-shell.css', './register-company-page.css'],
@@ -51,6 +56,7 @@ interface PlanOption {
 export class RegisterCompanyPage {
   private readonly store = inject(IamStore);
   private readonly router = inject(Router);
+  private readonly notify = inject(NotificationService);
 
   readonly plans: readonly PlanOption[] = [
     {
@@ -58,6 +64,7 @@ export class RegisterCompanyPage {
       nameKey: 'iam.registerCompany.plans.starter.name',
       descKey: 'iam.registerCompany.plans.starter.desc',
       price: '$250',
+      amount: 250,
       featureKeys: [
         'iam.registerCompany.plans.starter.features.f1',
         'iam.registerCompany.plans.starter.features.f2',
@@ -70,6 +77,7 @@ export class RegisterCompanyPage {
       nameKey: 'iam.registerCompany.plans.standard.name',
       descKey: 'iam.registerCompany.plans.standard.desc',
       price: '$499',
+      amount: 499,
       featureKeys: [
         'iam.registerCompany.plans.standard.features.f1',
         'iam.registerCompany.plans.standard.features.f2',
@@ -82,6 +90,7 @@ export class RegisterCompanyPage {
       nameKey: 'iam.registerCompany.plans.enterprise.name',
       descKey: 'iam.registerCompany.plans.enterprise.desc',
       price: '$899',
+      amount: 899,
       featureKeys: [
         'iam.registerCompany.plans.enterprise.features.f1',
         'iam.registerCompany.plans.enterprise.features.f2',
@@ -107,6 +116,17 @@ export class RegisterCompanyPage {
   readonly result = signal<CompanyRegistrationResponse | null>(null);
   readonly apiKeyCopied = signal(false);
 
+  /**
+   * True while the simulated payment gateway overlay is open. Nothing is sent to
+   * the backend until the (fake) payment succeeds — the registration payload is
+   * held client-side in {@link pendingPayload}.
+   */
+  readonly checkoutOpen = signal(false);
+  /** Snapshot of the registration command captured when the checkout opens. */
+  private readonly pendingPayload = signal<RegisterCompanyCommand | null>(null);
+  /** Plan option purchased in the open checkout — drives the receipt/QR amount. */
+  readonly checkoutPlan = signal<PlanOption>(this.plans[1]);
+
   readonly form = new FormGroup({
     companyName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     adminFullName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -124,42 +144,85 @@ export class RegisterCompanyPage {
     this.form.controls.subscriptionPlan.setValue(plan);
   }
 
+  /**
+   * Step 1 → 2: validate the form and open the simulated payment gateway.
+   *
+   * @remarks
+   * No backend call happens here. The registration command is snapshotted into
+   * client state ({@link pendingPayload}) and the real `POST` is deferred until
+   * the (simulated) payment is verified — see {@link onPaymentVerified}.
+   */
   submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
     this.errorKey.set(null);
-    this.submitting.set(true);
 
     const raw = this.form.getRawValue();
-    this.store
-      .registerCompany(
-        new RegisterCompanyCommand({
-          companyName: raw.companyName,
-          adminFullName: raw.adminFullName,
-          adminEmail: raw.adminEmail,
-          subscriptionPlan: raw.subscriptionPlan,
-        }),
-      )
-      .subscribe({
-        next: (response) => {
-          this.submitting.set(false);
-          this.result.set(response);
-          // Bridge registration data to the sidebar: the sign-in endpoint does
-          // not echo the admin's name or company, so remember them locally keyed
-          // by the generated admin username.
-          this.store.rememberProfile(response.adminUsername, raw.adminFullName, raw.companyName);
-        },
-        error: (err: { status?: number }) => {
-          this.submitting.set(false);
-          this.errorKey.set(
-            err?.status === 409
-              ? 'iam.registerCompany.errors.conflict'
-              : 'iam.registerCompany.errors.generic',
-          );
-        },
-      });
+    this.pendingPayload.set(
+      new RegisterCompanyCommand({
+        companyName: raw.companyName,
+        adminFullName: raw.adminFullName,
+        adminEmail: raw.adminEmail,
+        subscriptionPlan: raw.subscriptionPlan,
+      }),
+    );
+    this.checkoutPlan.set(
+      this.plans.find((p) => p.key === raw.subscriptionPlan) ?? this.plans[1],
+    );
+    this.checkoutOpen.set(true);
+  }
+
+  /**
+   * Step 5: the simulated gateway reported a successful payment. Fire the single
+   * real request that atomically creates the company, admin user and subscription
+   * from the client-held payload.
+   *
+   * @remarks
+   * On success the checkout overlay is swapped for the credentials screen. If the
+   * backend rejects the (already "paid") registration, the overlay closes and the
+   * error is surfaced on the form so the user can correct and retry.
+   */
+  onPaymentVerified(): void {
+    const payload = this.pendingPayload();
+    if (!payload) return;
+
+    this.submitting.set(true);
+    this.store.registerCompany(payload).subscribe({
+      next: (response) => {
+        this.submitting.set(false);
+        this.checkoutOpen.set(false);
+        this.result.set(response);
+        // Bridge registration data to the sidebar: the sign-in endpoint does
+        // not echo the admin's name or company, so remember them locally keyed
+        // by the generated admin username.
+        this.store.rememberProfile(
+          response.adminUsername,
+          payload.adminFullName,
+          payload.companyName,
+        );
+        this.notify.success('iam.registerCompany.success.snack');
+      },
+      error: (err: { status?: number }) => {
+        this.submitting.set(false);
+        this.checkoutOpen.set(false);
+        const key =
+          err?.status === 409
+            ? 'iam.registerCompany.errors.conflict'
+            : 'iam.registerCompany.errors.generic';
+        // Surface it both inline (persistent banner) and as a toast (empathetic,
+        // immediately visible after the overlay closes).
+        this.errorKey.set(key);
+        this.notify.error(key);
+      },
+    });
+  }
+
+  /** Step 2 (abort): the user closed the gateway without paying. */
+  onCheckoutCancel(): void {
+    this.checkoutOpen.set(false);
+    this.pendingPayload.set(null);
   }
 
   copyApiKey(): void {

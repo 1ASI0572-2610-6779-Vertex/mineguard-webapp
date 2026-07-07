@@ -56,6 +56,9 @@
       "generic": "Could not link the device. Please try again.",
       "loadDevices": "Could not load devices.",
       "loadVehicles": "Could not load vehicles."
+    },
+    "audit": {
+      "note": "Read-only audit. Devices are now linked from Fleet when a supervisor creates a vehicle."
     }
   },
   "about": {
@@ -136,7 +139,12 @@
       "noAccount": "Don't have an account?",
       "registerCompany": "Register your company",
       "termsPrefix": "By continuing you accept the",
-      "termsLink": "Terms and Conditions"
+      "termsLink": "Terms and Conditions",
+      "errors": {
+        "invalidCredentials": "Incorrect username or password. Please check your credentials and try again.",
+        "network": "We couldn't reach the server. Check your connection and try again.",
+        "generic": "We couldn't sign you in right now. Please try again in a moment."
+      }
     },
     "terms": {
       "title": "Terms and Conditions",
@@ -320,7 +328,7 @@
           }
         }
       },
-      "submit": "Create company",
+      "submit": "Continue to secure payment",
       "submitting": "Registering...",
       "backToLogin": "Back to sign in",
       "errors": {
@@ -334,7 +342,33 @@
         "apiKey": "Telemetry API key",
         "copy": "Copy API key",
         "warning": "This API key is shown only once. Store it securely before leaving this screen — it is required to provision your sensors and smart-bands.",
-        "goToLogin": "Back to sign in"
+        "goToLogin": "Back to sign in",
+        "snack": "Company registered successfully. Your account is ready."
+      },
+      "checkout": {
+        "brand": "MineGuard Payments",
+        "secure": "Secure checkout",
+        "orderSummary": "Order summary",
+        "billingCycle": "Billed monthly · auto-renews",
+        "reference": "Reference",
+        "merchant": "Merchant",
+        "subtotal": "Subtotal",
+        "tax": "VAT / IGV (18%)",
+        "total": "Total due today",
+        "scanTitle": "Scan to pay",
+        "scanHint": "Scan this code with your banking app to complete the payment securely.",
+        "expiresIn": "Expires in",
+        "expiredTitle": "Payment window expired",
+        "expiredHint": "This QR code is no longer valid. Generate a new one to continue.",
+        "regenerate": "Generate new code",
+        "verify": "I've paid — Verify payment",
+        "verifying": "Verifying with your bank…",
+        "verifiedTitle": "Payment verified!",
+        "verifiedBody": "Your company account is now active. Setting up your workspace…",
+        "cancel": "Cancel and go back",
+        "encrypted": "256-bit SSL encrypted",
+        "poweredBy": "Payments secured by MineGuard Pay",
+        "qrAlt": "QR code to complete the payment with your banking app"
       }
     }
   },
@@ -609,8 +643,8 @@
         "blockedForUse": "Blocked for use",
         "column": {
           "identifier": "Identifier and type",
-          "status": "Status (US45)",
-          "assignment": "Current assignment (US02)",
+          "status": "Status ",
+          "assignment": "Current assignment ",
           "actions": "Actions"
         },
         "status": {
@@ -621,7 +655,12 @@
         "action": {
           "edit": "Edit",
           "sendToWorkshop": "Send to Workshop",
-          "markOperational": "Mark Operational"
+          "markOperational": "Mark Operational",
+          "linkDevice": "Link device",
+          "more": "More actions",
+          "moveDevice": "Move device",
+          "retireDevice": "Retire device",
+          "archive": "Decommission vehicle"
         },
         "form": {
           "titleCreate": "Register Vehicle",
@@ -645,11 +684,60 @@
           "cancel": "Cancel",
           "submitCreate": "Register vehicle",
           "submitEdit": "Save changes",
-          "saveError": "Error saving the vehicle"
+          "saveError": "Error saving the vehicle",
+          "device": {
+            "linkTitle": "Link MineGuard device",
+            "linkSubtitle": "The vehicle was created. Now we're linking its device.",
+            "sectionTitle": "MineGuard device",
+            "sectionSubtitle": "Link an edge device to this vehicle right now.",
+            "linkToggle": "Link a device now",
+            "autoIdLabel": "Device ID",
+            "autoIdValue": "Automatic",
+            "autoHint": "The system assigns the next sequential ID and links it to this vehicle when you save.",
+            "vehicleCreated": "Vehicle {{code}} was created successfully",
+            "linking": "Linking device…",
+            "linkFailedTitle": "We couldn't link the device",
+            "retry": "Retry link",
+            "closeAnyway": "Close anyway",
+            "linkedSnack": "Device #{{id}} linked to {{code}}"
+          }
         },
         "empty": {
           "title": "No vehicles registered",
           "sub": "Add the first vehicle to start managing the fleet."
+        },
+        "device": {
+          "filter": "Without device",
+          "linked": "Device #{{id}}",
+          "none": "No device",
+          "emptyFiltered": "All vehicles have a device linked."
+        },
+        "confirm": {
+          "archive": {
+            "title": "Decommission vehicle?",
+            "message": "{{code}} will be archived and hidden from the fleet. Its history is preserved. You can't do this while it has an active device.",
+            "confirm": "Decommission"
+          },
+          "retire": {
+            "title": "Retire device?",
+            "message": "Device #{{id}} will be retired and unlinked. Its id stays reserved and is never reused.",
+            "confirm": "Retire device"
+          }
+        },
+        "archivedSnack": "Vehicle {{code}} was decommissioned",
+        "retiredSnack": "Device #{{id}} was retired",
+        "archiveHasDevice": "Move or retire the device before decommissioning the vehicle.",
+        "archiveError": "We couldn't decommission the vehicle. Please try again.",
+        "moveDialog": {
+          "title": "Move device",
+          "subtitle": "Reassign this device to another vehicle, keeping its id.",
+          "currentlyOn": "Currently on {{code}}",
+          "targetLabel": "Destination vehicle",
+          "targetPlaceholder": "Select a vehicle without a device",
+          "noTargets": "There are no vehicles without a device to move it to.",
+          "confirm": "Move device",
+          "cancel": "Cancel",
+          "movedSnack": "Device #{{id}} moved to {{code}}"
         }
       },
       "drivers": {
@@ -665,7 +753,7 @@
         "status": {
           "onShift": "On Shift",
           "offShift": "Off Shift",
-          "inactive": "Inactive (US47)"
+          "inactive": "Inactive "
         },
         "action": {
           "edit": "Edit",
@@ -706,7 +794,16 @@
         "empty": {
           "title": "No drivers registered",
           "sub": "Add the first driver to the operational directory."
-        }
+        },
+        "confirm": {
+          "deactivate": {
+            "title": "Deactivate driver?",
+            "message": "{{name}} will be deactivated. Their session and report history is preserved.",
+            "confirm": "Deactivate"
+          }
+        },
+        "deactivatedSnack": "{{name}} was deactivated",
+        "deactivateError": "We couldn't deactivate the driver. Please try again."
       }
     }
   },
@@ -818,5 +915,9 @@
       "time": "Event time",
       "markAttended": "Mark as attended"
     }
+  },
+  "common": {
+    "dismiss": "Dismiss",
+    "cancel": "Cancel"
   }
 }

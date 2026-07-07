@@ -7,14 +7,22 @@
   <!-- Header -->
   <div class="dialog-header">
     <div class="dialog-icon">
-      <mat-icon>local_shipping</mat-icon>
+      <mat-icon>{{ awaitingDeviceLink() ? 'sensors' : 'local_shipping' }}</mat-icon>
     </div>
     <div>
       <h2 mat-dialog-title class="dialog-title">
-        {{ (isEdit ? 'assets.fleet.vehicles.form.titleEdit' : 'assets.fleet.vehicles.form.titleCreate') | translate }}
+        @if (awaitingDeviceLink()) {
+          {{ 'assets.fleet.vehicles.form.device.linkTitle' | translate }}
+        } @else {
+          {{ (isEdit ? 'assets.fleet.vehicles.form.titleEdit' : 'assets.fleet.vehicles.form.titleCreate') | translate }}
+        }
       </h2>
       <p class="dialog-subtitle">
-        {{ (isEdit ? 'assets.fleet.vehicles.form.subtitleEdit' : 'assets.fleet.vehicles.form.subtitleCreate') | translate }}
+        @if (awaitingDeviceLink()) {
+          {{ 'assets.fleet.vehicles.form.device.linkSubtitle' | translate }}
+        } @else {
+          {{ (isEdit ? 'assets.fleet.vehicles.form.subtitleEdit' : 'assets.fleet.vehicles.form.subtitleCreate') | translate }}
+        }
       </p>
     </div>
     <button mat-icon-button class="close-btn" (click)="cancel()" [disabled]="loading()">
@@ -22,73 +30,146 @@
     </button>
   </div>
 
-  <!-- Form body -->
+  <!-- Body -->
   <mat-dialog-content>
-    <form [formGroup]="form" class="dialog-form">
-      <div class="form-row">
-        <mat-form-field appearance="outline" class="field-half">
-          <mat-label>{{ 'assets.fleet.vehicles.form.code' | translate }}</mat-label>
-          <input matInput formControlName="code" [placeholder]="'assets.fleet.vehicles.form.codePlaceholder' | translate" />
-          @if (form.controls.code.hasError('required') && form.controls.code.touched) {
-            <mat-error>{{ 'assets.fleet.vehicles.form.codeRequired' | translate }}</mat-error>
-          }
-        </mat-form-field>
 
-        <mat-form-field appearance="outline" class="field-half">
-          <mat-label>{{ 'assets.fleet.vehicles.form.model' | translate }}</mat-label>
-          <input matInput formControlName="model" [placeholder]="'assets.fleet.vehicles.form.modelPlaceholder' | translate" />
-          @if (form.controls.model.hasError('required') && form.controls.model.touched) {
-            <mat-error>{{ 'assets.fleet.vehicles.form.modelRequired' | translate }}</mat-error>
-          }
-        </mat-form-field>
-      </div>
-
-      <div class="form-row">
-        <mat-form-field appearance="outline" class="field-half">
-          <mat-label>{{ 'assets.fleet.vehicles.form.category' | translate }}</mat-label>
-          <input matInput formControlName="category" [placeholder]="'assets.fleet.vehicles.form.categoryPlaceholder' | translate" />
-          @if (form.controls.category.hasError('required') && form.controls.category.touched) {
-            <mat-error>{{ 'assets.fleet.vehicles.form.categoryRequired' | translate }}</mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="field-half">
-          <mat-label>{{ 'assets.fleet.vehicles.form.status' | translate }}</mat-label>
-          <mat-select formControlName="status">
-            @for (opt of statusOptions; track opt.value) {
-              <mat-option [value]="opt.value">{{ opt.label | translate }}</mat-option>
+    @if (!awaitingDeviceLink()) {
+      <!-- ── Vehicle form ── -->
+      <form [formGroup]="form" class="dialog-form">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="field-half">
+            <mat-label>{{ 'assets.fleet.vehicles.form.code' | translate }}</mat-label>
+            <input matInput formControlName="code" [placeholder]="'assets.fleet.vehicles.form.codePlaceholder' | translate" />
+            @if (form.controls.code.hasError('required') && form.controls.code.touched) {
+              <mat-error>{{ 'assets.fleet.vehicles.form.codeRequired' | translate }}</mat-error>
             }
-          </mat-select>
-        </mat-form-field>
-      </div>
+          </mat-form-field>
 
-      <mat-form-field appearance="outline" class="field-full">
-        <mat-label>{{ 'assets.fleet.vehicles.form.assignedDriver' | translate }}</mat-label>
-        <input matInput formControlName="assignedDriverName" [placeholder]="'assets.fleet.vehicles.form.assignedDriverPlaceholder' | translate" />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="field-full">
-        <mat-label>{{ 'assets.fleet.vehicles.form.shift' | translate }}</mat-label>
-        <input matInput formControlName="shiftLabel" [placeholder]="'assets.fleet.vehicles.form.shiftPlaceholder' | translate" />
-      </mat-form-field>
-
-      @if (errorMsg()) {
-        <div class="error-banner">
-          <mat-icon>error_outline</mat-icon>
-          <span>{{ errorMsg() }}</span>
+          <mat-form-field appearance="outline" class="field-half">
+            <mat-label>{{ 'assets.fleet.vehicles.form.model' | translate }}</mat-label>
+            <input matInput formControlName="model" [placeholder]="'assets.fleet.vehicles.form.modelPlaceholder' | translate" />
+            @if (form.controls.model.hasError('required') && form.controls.model.touched) {
+              <mat-error>{{ 'assets.fleet.vehicles.form.modelRequired' | translate }}</mat-error>
+            }
+          </mat-form-field>
         </div>
-      }
-    </form>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="field-half">
+            <mat-label>{{ 'assets.fleet.vehicles.form.category' | translate }}</mat-label>
+            <input matInput formControlName="category" [placeholder]="'assets.fleet.vehicles.form.categoryPlaceholder' | translate" />
+            @if (form.controls.category.hasError('required') && form.controls.category.touched) {
+              <mat-error>{{ 'assets.fleet.vehicles.form.categoryRequired' | translate }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="field-half">
+            <mat-label>{{ 'assets.fleet.vehicles.form.status' | translate }}</mat-label>
+            <mat-select formControlName="status">
+              @for (opt of statusOptions; track opt.value) {
+                <mat-option [value]="opt.value">{{ opt.label | translate }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="field-full">
+          <mat-label>{{ 'assets.fleet.vehicles.form.assignedDriver' | translate }}</mat-label>
+          <input matInput formControlName="assignedDriverName" [placeholder]="'assets.fleet.vehicles.form.assignedDriverPlaceholder' | translate" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="field-full">
+          <mat-label>{{ 'assets.fleet.vehicles.form.shift' | translate }}</mat-label>
+          <input matInput formControlName="shiftLabel" [placeholder]="'assets.fleet.vehicles.form.shiftPlaceholder' | translate" />
+        </mat-form-field>
+
+        <!-- ── Device linking section (create only) ── -->
+        @if (!isEdit) {
+          <div class="device-section" [class.device-section--on]="linkDeviceNow()">
+            <div class="device-section-head">
+              <span class="device-section-mark"><mat-icon>sensors</mat-icon></span>
+              <div class="device-section-copy">
+                <p class="device-section-title">{{ 'assets.fleet.vehicles.form.device.sectionTitle' | translate }}</p>
+                <p class="device-section-sub">{{ 'assets.fleet.vehicles.form.device.sectionSubtitle' | translate }}</p>
+              </div>
+              <mat-slide-toggle
+                color="primary"
+                [checked]="linkDeviceNow()"
+                (change)="linkDeviceNow.set($event.checked)"
+                [aria-label]="'assets.fleet.vehicles.form.device.linkToggle' | translate">
+              </mat-slide-toggle>
+            </div>
+
+            @if (linkDeviceNow()) {
+              <div class="device-auto">
+                <div class="device-auto-row">
+                  <span class="device-auto-label">{{ 'assets.fleet.vehicles.form.device.autoIdLabel' | translate }}</span>
+                  <span class="device-auto-value">
+                    <mat-icon>bolt</mat-icon>
+                    {{ 'assets.fleet.vehicles.form.device.autoIdValue' | translate }}
+                  </span>
+                </div>
+                <p class="device-auto-hint">
+                  <mat-icon>info</mat-icon>
+                  {{ 'assets.fleet.vehicles.form.device.autoHint' | translate }}
+                </p>
+              </div>
+            }
+          </div>
+        }
+
+        @if (errorMsg()) {
+          <div class="error-banner">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ errorMsg() }}</span>
+          </div>
+        }
+      </form>
+
+    } @else {
+      <!-- ── Focused device-link retry panel (vehicle already committed) ── -->
+      <div class="link-panel">
+        <div class="link-created">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ 'assets.fleet.vehicles.form.device.vehicleCreated' | translate: { code: committedVehicle()!.code } }}</span>
+        </div>
+
+        @if (loading()) {
+          <div class="link-progress">
+            <mat-icon>sensors</mat-icon>
+            <span>{{ 'assets.fleet.vehicles.form.device.linking' | translate }}</span>
+          </div>
+        } @else if (linkError()) {
+          <div class="link-error">
+            <mat-icon>error_outline</mat-icon>
+            <div class="link-error-copy">
+              <p class="link-error-title">{{ 'assets.fleet.vehicles.form.device.linkFailedTitle' | translate }}</p>
+              <p class="link-error-msg">{{ linkErrorMessage(linkError()!) }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    }
   </mat-dialog-content>
 
   <!-- Actions -->
   <mat-dialog-actions align="end">
-    <button mat-button class="btn-cancel" (click)="cancel()" [disabled]="loading()">
-      {{ 'assets.fleet.vehicles.form.cancel' | translate }}
-    </button>
-    <button mat-flat-button class="btn-submit" (click)="submit()" [disabled]="loading()">
-      <mat-icon>{{ isEdit ? 'save' : 'add_circle' }}</mat-icon>
-      {{ (isEdit ? 'assets.fleet.vehicles.form.submitEdit' : 'assets.fleet.vehicles.form.submitCreate') | translate }}
-    </button>
+    @if (!awaitingDeviceLink()) {
+      <button mat-button class="btn-cancel" (click)="cancel()" [disabled]="loading()">
+        {{ 'assets.fleet.vehicles.form.cancel' | translate }}
+      </button>
+      <button mat-flat-button class="btn-submit" (click)="submit()" [disabled]="loading()">
+        <mat-icon>{{ isEdit ? 'save' : 'add_circle' }}</mat-icon>
+        {{ (isEdit ? 'assets.fleet.vehicles.form.submitEdit' : 'assets.fleet.vehicles.form.submitCreate') | translate }}
+      </button>
+    } @else {
+      <button mat-button class="btn-cancel" (click)="cancel()" [disabled]="loading()">
+        {{ 'assets.fleet.vehicles.form.device.closeAnyway' | translate }}
+      </button>
+      <button mat-flat-button class="btn-submit" (click)="retryLink()" [disabled]="loading()">
+        <mat-icon>autorenew</mat-icon>
+        {{ 'assets.fleet.vehicles.form.device.retry' | translate }}
+      </button>
+    }
   </mat-dialog-actions>
 </div>
