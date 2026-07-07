@@ -98,7 +98,7 @@
         <div class="header-right">
           <div class="sensor-pill">
             <span class="sensor-dot" aria-hidden="true"></span>
-            <span>{{ 'layout.sensors' | translate: { active: 142, total: 142 } }}</span>
+            <span>{{ 'layout.sensors' | translate: { active: sensorsActive(), total: sensorsTotal() } }}</span>
           </div>
           <button mat-icon-button class="notif-btn" aria-label="Notifications">
             <mat-icon>notifications</mat-icon>

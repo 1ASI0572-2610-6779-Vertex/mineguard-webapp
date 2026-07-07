@@ -12,6 +12,7 @@ export class Vehicle implements BaseEntity {
   private _status: VehicleStatus;
   private _assignedDriverName: string | null;
   private _shiftLabel: string | null;
+  private _deviceId: string | null;
 
   constructor(props: {
     id: number;
@@ -21,6 +22,8 @@ export class Vehicle implements BaseEntity {
     status: VehicleStatus;
     assignedDriverName: string | null;
     shiftLabel: string | null;
+    /** Sequential id of the linked MineGuard device, or null when unlinked ("sin device"). */
+    deviceId?: string | null;
   }) {
     this._id = props.id;
     this._code = props.code;
@@ -29,6 +32,7 @@ export class Vehicle implements BaseEntity {
     this._status = props.status;
     this._assignedDriverName = props.assignedDriverName;
     this._shiftLabel = props.shiftLabel;
+    this._deviceId = props.deviceId ?? null;
   }
 
   get id(): number {
@@ -85,5 +89,18 @@ export class Vehicle implements BaseEntity {
 
   set shiftLabel(value: string | null) {
     this._shiftLabel = value;
+  }
+
+  get deviceId(): string | null {
+    return this._deviceId;
+  }
+
+  set deviceId(value: string | null) {
+    this._deviceId = value;
+  }
+
+  /** True when no MineGuard device is linked yet — surfaced by the "sin device" filter. */
+  get hasDevice(): boolean {
+    return this._deviceId != null && this._deviceId !== '';
   }
 }

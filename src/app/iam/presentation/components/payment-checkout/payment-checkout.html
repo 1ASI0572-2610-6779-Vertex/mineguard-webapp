@@ -1,0 +1,160 @@
+<!--
+  Simulated payment gateway overlay. Full-viewport backdrop + centered modal.
+  Left column: itemized receipt. Right column: QR, countdown, verify action.
+-->
+<div class="pc-backdrop" role="dialog" aria-modal="true" aria-labelledby="pc-title">
+  <div class="pc-modal" [class.pc-modal--done]="verified()">
+
+    <!-- ── Brand bar ── -->
+    <div class="pc-brand">
+      <div class="pc-brand-left">
+        <span class="pc-brand-mark"><mat-icon>shield</mat-icon></span>
+        <span class="pc-brand-name">{{ 'iam.registerCompany.checkout.brand' | translate }}</span>
+      </div>
+      <span class="pc-secure-chip">
+        <mat-icon>lock</mat-icon>
+        {{ 'iam.registerCompany.checkout.secure' | translate }}
+      </span>
+    </div>
+
+    @if (!verified()) {
+      <div class="pc-body">
+
+        <!-- ══ Left: itemized receipt ══ -->
+        <section class="pc-receipt" aria-label="Order summary">
+          <h2 class="pc-section-label">{{ 'iam.registerCompany.checkout.orderSummary' | translate }}</h2>
+
+          <div class="pc-plan-row">
+            <div>
+              <p class="pc-plan-name">{{ planNameKey() | translate }}</p>
+              <p class="pc-plan-cycle">{{ 'iam.registerCompany.checkout.billingCycle' | translate }}</p>
+            </div>
+            <span class="pc-plan-badge">{{ 'iam.registerCompany.plan.label' | translate }}</span>
+          </div>
+
+          <dl class="pc-lines">
+            <div class="pc-line">
+              <dt>{{ 'iam.registerCompany.checkout.subtotal' | translate }}</dt>
+              <dd>{{ subtotalLabel() }}</dd>
+            </div>
+            <div class="pc-line">
+              <dt>{{ 'iam.registerCompany.checkout.tax' | translate }}</dt>
+              <dd>{{ taxLabel() }}</dd>
+            </div>
+          </dl>
+
+          <div class="pc-total">
+            <span class="pc-total-label">{{ 'iam.registerCompany.checkout.total' | translate }}</span>
+            <span class="pc-total-value">{{ totalLabel() }}</span>
+          </div>
+
+          <div class="pc-meta">
+            <div class="pc-meta-row">
+              <span>{{ 'iam.registerCompany.checkout.reference' | translate }}</span>
+              <code>{{ reference }}</code>
+            </div>
+            <div class="pc-meta-row">
+              <span>{{ 'iam.registerCompany.checkout.merchant' | translate }}</span>
+              <strong>MineGuard SAC</strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ Right: QR + timer + action ══ -->
+        <section class="pc-pay" aria-label="Scan to pay">
+          <header class="pc-pay-head">
+            <h1 id="pc-title" class="pc-pay-title">{{ 'iam.registerCompany.checkout.scanTitle' | translate }}</h1>
+            <p class="pc-pay-sub">{{ 'iam.registerCompany.checkout.scanHint' | translate }}</p>
+          </header>
+
+          <!-- Framed QR -->
+          <div class="pc-qr-frame" [class.pc-qr-frame--dim]="expired()">
+            <span class="pc-qr-corner pc-qr-corner--tl"></span>
+            <span class="pc-qr-corner pc-qr-corner--tr"></span>
+            <span class="pc-qr-corner pc-qr-corner--bl"></span>
+            <span class="pc-qr-corner pc-qr-corner--br"></span>
+
+            <img
+              class="pc-qr"
+              src="/codigo-pago.jpeg"
+              [alt]="'iam.registerCompany.checkout.qrAlt' | translate"
+              width="172"
+              height="172" />
+
+            @if (expired()) {
+              <div class="pc-qr-expired-veil">
+                <mat-icon>timer_off</mat-icon>
+              </div>
+            }
+          </div>
+
+          <!-- Countdown / expiry -->
+          @if (!expired()) {
+            <div class="pc-timer" [class.pc-timer--urgent]="urgent()">
+              <mat-icon>schedule</mat-icon>
+              <span class="pc-timer-label">{{ 'iam.registerCompany.checkout.expiresIn' | translate }}</span>
+              <span class="pc-timer-value">{{ timeLabel() }}</span>
+            </div>
+          } @else {
+            <div class="pc-expired" role="alert">
+              <p class="pc-expired-title">
+                <mat-icon>error_outline</mat-icon>
+                {{ 'iam.registerCompany.checkout.expiredTitle' | translate }}
+              </p>
+              <p class="pc-expired-hint">{{ 'iam.registerCompany.checkout.expiredHint' | translate }}</p>
+            </div>
+          }
+
+          <!-- Primary action -->
+          @if (!expired()) {
+            <button
+              type="button"
+              class="pc-verify"
+              [disabled]="verifying()"
+              (click)="onVerify()">
+              @if (verifying()) {
+                <mat-spinner diameter="20" class="pc-verify-spinner"></mat-spinner>
+                <span>{{ 'iam.registerCompany.checkout.verifying' | translate }}</span>
+              } @else {
+                <mat-icon>verified_user</mat-icon>
+                <span>{{ 'iam.registerCompany.checkout.verify' | translate }}</span>
+              }
+            </button>
+          } @else {
+            <button type="button" class="pc-verify pc-verify--regen" (click)="regenerate()">
+              <mat-icon>autorenew</mat-icon>
+              <span>{{ 'iam.registerCompany.checkout.regenerate' | translate }}</span>
+            </button>
+          }
+
+          <button
+            type="button"
+            class="pc-cancel"
+            [disabled]="verifying()"
+            (click)="onCancel()">
+            {{ 'iam.registerCompany.checkout.cancel' | translate }}
+          </button>
+        </section>
+      </div>
+
+    } @else {
+
+      <!-- ══ Verified success micro-screen ══ -->
+      <div class="pc-done">
+        <div class="pc-done-ring">
+          <div class="pc-done-check"><mat-icon>check</mat-icon></div>
+        </div>
+        <h1 class="pc-done-title">{{ 'iam.registerCompany.checkout.verifiedTitle' | translate }}</h1>
+        <p class="pc-done-body">{{ 'iam.registerCompany.checkout.verifiedBody' | translate }}</p>
+        <div class="pc-done-progress"><span></span></div>
+      </div>
+    }
+
+    <!-- ── Trust footer ── -->
+    <div class="pc-footer">
+      <span class="pc-footer-item"><mat-icon>lock</mat-icon>{{ 'iam.registerCompany.checkout.encrypted' | translate }}</span>
+      <span class="pc-footer-sep">·</span>
+      <span class="pc-footer-item">{{ 'iam.registerCompany.checkout.poweredBy' | translate }}</span>
+    </div>
+  </div>
+</div>

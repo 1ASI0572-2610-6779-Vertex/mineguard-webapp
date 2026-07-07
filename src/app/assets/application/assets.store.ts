@@ -98,6 +98,24 @@ export class AssetsStore {
     );
   }
 
+  /**
+   * Soft-deletes (archives) a vehicle and drops it from the local list on success.
+   * The backend rejects this with `409` when the vehicle still has an active
+   * device — the caller surfaces that message and leaves the list untouched.
+   */
+  archiveVehicle$(id: number): Observable<void> {
+    return this.assetsApi.archiveVehicle(id).pipe(
+      tap(() => this.vehiclesSignal.update((list) => list.filter((v) => v.id !== id))),
+    );
+  }
+
+  /** Soft-deletes (deactivates) a driver and drops it from the local directory. */
+  deactivateDriver$(id: number): Observable<void> {
+    return this.assetsApi.deactivateDriver(id).pipe(
+      tap(() => this.driversSignal.update((list) => list.filter((d) => d.id !== id))),
+    );
+  }
+
   /** POST /drivers — creates a driver and refreshes the local directory list. */
   createDriver$(command: SaveDriverCommand): Observable<DriverResource> {
     return this.assetsApi.createDriver(command).pipe(

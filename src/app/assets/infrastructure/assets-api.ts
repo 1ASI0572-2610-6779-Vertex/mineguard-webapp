@@ -36,6 +36,11 @@ export class AssetsApi extends BaseApi {
     return this.vehiclesEndpoint.update(vehicle, vehicle.id);
   }
 
+  /** DELETE /vehicles/{id} — soft-delete (archive). */
+  archiveVehicle(id: number): Observable<void> {
+    return this.vehiclesEndpoint.archive(id);
+  }
+
   /** GET /driversDirectory — read-only directory projection for the web view. */
   getDrivers(): Observable<Driver[]> {
     return this.driversEndpoint.getAll();
@@ -49,6 +54,11 @@ export class AssetsApi extends BaseApi {
   /** PATCH /drivers/{id} — partial update of a driver (tenant resolved from JWT). */
   updateDriver(command: SaveDriverCommand): Observable<DriverResource> {
     return this.driversWriteEndpoint.update(command);
+  }
+
+  /** DELETE /drivers/{id} — soft-delete (deactivate). */
+  deactivateDriver(id: number): Observable<void> {
+    return this.driversWriteEndpoint.deactivate(id);
   }
 
   /** GET /drivers/{id} — fetch a single driver record. */

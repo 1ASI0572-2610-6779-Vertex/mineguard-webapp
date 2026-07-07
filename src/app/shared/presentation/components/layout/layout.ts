@@ -11,6 +11,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 
 import { IamStore } from '../../../../iam/application/iam.store';
+import { CompanyKpisStore } from '../../../application/company-kpis.store';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 
 interface MenuOption {
@@ -120,6 +121,12 @@ export class Layout implements OnInit {
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   protected store = inject(IamStore);
+  private kpisStore = inject(CompanyKpisStore);
+
+  /** Live "active / total sensors" counter for the toolbar pill, from the shared
+   * tenant-KPIs cache. Falls back to 0 until the first successful KPIs load. */
+  readonly sensorsActive = computed(() => this.kpisStore.kpis()?.activeSensors ?? 0);
+  readonly sensorsTotal = computed(() => this.kpisStore.kpis()?.totalSensors ?? 0);
 
   constructor() {
     // Resolve shell visibility synchronously from the current URL + auth state,
@@ -129,9 +136,15 @@ export class Layout implements OnInit {
     // Re-configure sidenav mode whenever the shell becomes visible after login.
     // ngAfterViewInit already ran (sidenav was undefined then), so we must
     // re-trigger synchronously once the @if block renders the mat-sidenav.
+    // The same transition is a good moment to warm the tenant-KPIs cache that
+    // feeds the toolbar's sensor counter (deferred out of the effect so the
+    // store's signal writes don't run inside change detection).
     effect(() => {
       if (this.showShell()) {
-        Promise.resolve().then(() => this.reconfigureSidenav());
+        Promise.resolve().then(() => {
+          this.reconfigureSidenav();
+          this.kpisStore.load();
+        });
       }
     });
   }

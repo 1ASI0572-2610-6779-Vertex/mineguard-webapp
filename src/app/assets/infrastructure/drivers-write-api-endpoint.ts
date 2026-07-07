@@ -64,6 +64,14 @@ export class DriversWriteApiEndpoint extends ErrorHandlingEnabledBaseType {
     );
   }
 
+  /**
+   * DELETE /api/v1/drivers/{id} — soft-delete (sets shiftStatus=INACTIVE).
+   * The raw error is left unwrapped so the caller can read `status`/`details`.
+   */
+  deactivate(id: number): Observable<void> {
+    return this.http.delete<void>(`${endpointUrl}/${id}`);
+  }
+
   private toCreateBody(command: SaveDriverCommand): CreateDriverBody {
     return {
       fullName:      command.fullName,

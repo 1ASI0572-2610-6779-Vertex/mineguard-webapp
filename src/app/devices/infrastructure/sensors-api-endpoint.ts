@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, catchError, map, throwError } from 'rxjs';
+import { Observable, catchError, map, of, throwError } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Device } from '../domain/model/device.entity';
@@ -15,6 +15,10 @@ interface RegisterDeviceBody {
 }
 
 const endpointUrl = `${environment.platformProviderApiBaseUrl}${environment.platformProviderSensorsEndpointPath}`;
+
+/** Builds the RESTful nested device sub-resource URL: `.../vehicles/{vehicleId}/sensor`. */
+const vehicleSensorUrl = (vehicleId: number): string =>
+  `${environment.platformProviderApiBaseUrl}${environment.platformProviderVehiclesInventoryEndpointPath}/${vehicleId}/sensor`;
 
 /**
  * HTTP endpoint client for GET /api/v1/sensors and POST /api/v1/sensors.
@@ -43,6 +47,49 @@ export class SensorsApiEndpoint {
     };
     return this.http.post<DeviceResource>(endpointUrl, body).pipe(
       map((created) => this.assembler.toEntityFromResource(created)),
+      catchError(this.rethrow),
+    );
+  }
+
+  /**
+   * POST /api/v1/vehicles/{vehicleId}/sensor — links a MineGuard device to a
+   * vehicle as a 1:1 nested sub-resource.
+   *
+   * @remarks
+   * The body is intentionally **empty**: the backend owns the `deviceId` sequence
+   * (a monotonic integer 1, 2, 3…) and assigns the next value atomically, then
+   * echoes the created device back. This removes any client-side guessing or
+   * duplicate/race risk. A `409` means the vehicle already has a device.
+   */
+  linkToVehicle(vehicleId: number): Observable<Device> {
+    return this.http.post<DeviceResource>(vehicleSensorUrl(vehicleId), {}).pipe(
+      map((created) => this.assembler.toEntityFromResource(created)),
+      catchError(this.rethrow),
+    );
+  }
+
+  /**
+   * GET /api/v1/vehicles/{vehicleId}/sensor — the device linked to a vehicle, or
+   * `null` when it has none (the backend answers `404`). Used to resolve a
+   * device's primary id before a move/retire PATCH.
+   */
+  getForVehicle(vehicleId: number): Observable<Device | null> {
+    return this.http.get<DeviceResource>(vehicleSensorUrl(vehicleId)).pipe(
+      map((resource) => this.assembler.toEntityFromResource(resource)),
+      catchError((error: HttpErrorResponse) =>
+        error.status === 404 ? of(null) : this.rethrow(error),
+      ),
+    );
+  }
+
+  /**
+   * PATCH /api/v1/sensors/{id} — partial update of a device: move it to another
+   * vehicle (`vehicleId`, preserving the deviceId) and/or change its `status`
+   * (`active` | `inactive` | `retired`).
+   */
+  patch(id: number, body: { vehicleId?: number; status?: string }): Observable<Device> {
+    return this.http.patch<DeviceResource>(`${endpointUrl}/${id}`, body).pipe(
+      map((updated) => this.assembler.toEntityFromResource(updated)),
       catchError(this.rethrow),
     );
   }

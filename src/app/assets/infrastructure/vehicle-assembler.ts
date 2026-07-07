@@ -14,6 +14,7 @@ export class VehicleAssembler
       status: resource.status,
       assignedDriverName: resource.assignedDriverName,
       shiftLabel: resource.shiftLabel,
+      deviceId: resource.deviceId ?? null,
     });
   }
 
@@ -26,6 +27,7 @@ export class VehicleAssembler
       status: entity.status,
       assignedDriverName: entity.assignedDriverName,
       shiftLabel: entity.shiftLabel,
+      deviceId: entity.deviceId,
     };
   }
 

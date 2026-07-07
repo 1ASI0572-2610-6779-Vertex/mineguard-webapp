@@ -1,4 +1,19 @@
 <div class="vehicles-inventory">
+  <!-- Filter bar -->
+  <div class="inv-toolbar">
+    <button
+      type="button"
+      class="inv-filter"
+      [class.inv-filter--on]="showOnlyNoDevice()"
+      (click)="toggleNoDeviceFilter()">
+      <mat-icon>{{ showOnlyNoDevice() ? 'filter_alt' : 'filter_alt_off' }}</mat-icon>
+      <span>{{ 'assets.fleet.vehicles.device.filter' | translate }}</span>
+      @if (noDeviceCount > 0) {
+        <span class="inv-filter-badge">{{ noDeviceCount }}</span>
+      }
+    </button>
+  </div>
+
   <!-- Column headers -->
   <div class="col-headers" role="rowgroup">
     <span>{{ 'assets.fleet.vehicles.column.identifier' | translate }}</span>
@@ -7,8 +22,19 @@
     <span class="col-right">{{ 'assets.fleet.vehicles.column.actions' | translate }}</span>
   </div>
 
+  @if (displayedVehicles.length === 0) {
+    <div class="inv-empty">
+      <mat-icon>{{ showOnlyNoDevice() ? 'check_circle' : 'local_shipping' }}</mat-icon>
+      <span>
+        {{ (showOnlyNoDevice()
+            ? 'assets.fleet.vehicles.device.emptyFiltered'
+            : 'assets.fleet.vehicles.empty') | translate }}
+      </span>
+    </div>
+  }
+
   <ul class="vehicles-list" role="list">
-    @for (vehicle of vehicles; track vehicle.id; let i = $index) {
+    @for (vehicle of displayedVehicles; track vehicle.id; let i = $index) {
       <li class="vehicle-row" [style.animation-delay]="(i * 40) + 'ms'" role="listitem">
 
         <!-- Identity -->
@@ -19,6 +45,17 @@
           <div class="identity-text">
             <strong class="v-code">{{ vehicle.code }}</strong>
             <span class="v-model">{{ vehicle.model }} · {{ vehicle.category }}</span>
+            @if (vehicle.hasDevice) {
+              <span class="dev-chip dev-chip--on">
+                <mat-icon>sensors</mat-icon>
+                {{ 'assets.fleet.vehicles.device.linked' | translate: { id: vehicle.deviceId } }}
+              </span>
+            } @else {
+              <span class="dev-chip dev-chip--off">
+                <mat-icon>sensors_off</mat-icon>
+                {{ 'assets.fleet.vehicles.device.none' | translate }}
+              </span>
+            }
           </div>
         </div>
 
@@ -63,6 +100,19 @@
 
         <!-- Actions -->
         <div class="actions-cell">
+          @if (!vehicle.hasDevice) {
+            <button mat-stroked-button class="action-btn btn-link-device"
+              [disabled]="linkingVehicleId() !== null"
+              (click)="linkDevice(vehicle)">
+              @if (linkingVehicleId() === vehicle.id) {
+                <mat-spinner diameter="16"></mat-spinner>
+              } @else {
+                <mat-icon>sensors</mat-icon>
+              }
+              {{ 'assets.fleet.vehicles.action.linkDevice' | translate }}
+            </button>
+          }
+
           <button mat-icon-button class="icon-btn" (click)="openEdit(vehicle)"
             [title]="'assets.fleet.vehicles.action.edit' | translate">
             <mat-icon>edit</mat-icon>
@@ -84,6 +134,29 @@
               </button>
             }
           }
+
+          <!-- Lifecycle overflow menu -->
+          <button mat-icon-button class="icon-btn"
+            [matMenuTriggerFor]="lifecycleMenu"
+            [title]="'assets.fleet.vehicles.action.more' | translate">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #lifecycleMenu="matMenu">
+            @if (vehicle.hasDevice) {
+              <button mat-menu-item (click)="openMoveDevice(vehicle)">
+                <mat-icon>swap_horiz</mat-icon>
+                <span>{{ 'assets.fleet.vehicles.action.moveDevice' | translate }}</span>
+              </button>
+              <button mat-menu-item (click)="retireDevice(vehicle)">
+                <mat-icon>power_settings_new</mat-icon>
+                <span>{{ 'assets.fleet.vehicles.action.retireDevice' | translate }}</span>
+              </button>
+            }
+            <button mat-menu-item class="menu-item--danger" (click)="archiveVehicle(vehicle)">
+              <mat-icon>archive</mat-icon>
+              <span>{{ 'assets.fleet.vehicles.action.archive' | translate }}</span>
+            </button>
+          </mat-menu>
         </div>
 
       </li>

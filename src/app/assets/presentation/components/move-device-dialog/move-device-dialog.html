@@ -1,0 +1,71 @@
+<div class="dialog-shell">
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" class="dialog-progress"></mat-progress-bar>
+  }
+
+  <!-- Header -->
+  <div class="dialog-header">
+    <div class="dialog-icon"><mat-icon>swap_horiz</mat-icon></div>
+    <div>
+      <h2 mat-dialog-title class="dialog-title">{{ 'assets.fleet.vehicles.moveDialog.title' | translate }}</h2>
+      <p class="dialog-subtitle">{{ 'assets.fleet.vehicles.moveDialog.subtitle' | translate }}</p>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="cancel()" [disabled]="loading()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content>
+    <!-- Source device summary -->
+    <div class="md-source">
+      <span class="md-source-chip">
+        <mat-icon>sensors</mat-icon>
+        {{ 'assets.fleet.vehicles.device.linked' | translate: { id: data.source.deviceId } }}
+      </span>
+      <span class="md-source-from">
+        {{ 'assets.fleet.vehicles.moveDialog.currentlyOn' | translate: { code: data.source.code } }}
+      </span>
+    </div>
+
+    @if (data.candidates.length === 0) {
+      <div class="md-empty">
+        <mat-icon>info</mat-icon>
+        <span>{{ 'assets.fleet.vehicles.moveDialog.noTargets' | translate }}</span>
+      </div>
+    } @else {
+      <mat-form-field appearance="outline" class="md-field">
+        <mat-label>{{ 'assets.fleet.vehicles.moveDialog.targetLabel' | translate }}</mat-label>
+        <mat-icon matPrefix>local_shipping</mat-icon>
+        <mat-select
+          [value]="targetId()"
+          (selectionChange)="targetId.set($event.value)"
+          [placeholder]="'assets.fleet.vehicles.moveDialog.targetPlaceholder' | translate">
+          @for (v of data.candidates; track v.id) {
+            <mat-option [value]="v.id">{{ v.code }} · {{ v.model }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+
+    @if (errorMsg()) {
+      <div class="error-banner">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMsg() }}</span>
+      </div>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button class="btn-cancel" (click)="cancel()" [disabled]="loading()">
+      {{ 'assets.fleet.vehicles.moveDialog.cancel' | translate }}
+    </button>
+    <button
+      mat-flat-button
+      class="btn-submit"
+      (click)="confirm()"
+      [disabled]="loading() || targetId() === null">
+      <mat-icon>swap_horiz</mat-icon>
+      {{ 'assets.fleet.vehicles.moveDialog.confirm' | translate }}
+    </button>
+  </mat-dialog-actions>
+</div>

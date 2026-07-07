@@ -56,6 +56,9 @@
       "generic": "No se pudo vincular el dispositivo. Inténtalo de nuevo.",
       "loadDevices": "No se pudieron cargar los dispositivos.",
       "loadVehicles": "No se pudieron cargar los vehículos."
+    },
+    "audit": {
+      "note": "Auditoría de solo lectura. Los devices ahora se vinculan desde Flota cuando un supervisor crea un vehículo."
     }
   },
   "about": {
@@ -136,7 +139,12 @@
       "noAccount": "¿No tienes una cuenta?",
       "registerCompany": "Registra tu empresa",
       "termsPrefix": "Al continuar aceptas los",
-      "termsLink": "Términos y Condiciones"
+      "termsLink": "Términos y Condiciones",
+      "errors": {
+        "invalidCredentials": "Usuario o contraseña incorrectos. Verifica tus credenciales e inténtalo de nuevo.",
+        "network": "No pudimos conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.",
+        "generic": "No pudimos iniciar tu sesión en este momento. Inténtalo de nuevo en unos segundos."
+      }
     },
     "terms": {
       "title": "Términos y Condiciones",
@@ -320,7 +328,7 @@
           }
         }
       },
-      "submit": "Crear empresa",
+      "submit": "Continuar al pago seguro",
       "submitting": "Registrando...",
       "backToLogin": "Volver al inicio de sesión",
       "errors": {
@@ -334,7 +342,33 @@
         "apiKey": "API Key de telemetría",
         "copy": "Copiar API Key",
         "warning": "Esta API Key se muestra solo una vez. Guárdala de forma segura antes de salir de esta pantalla — es necesaria para aprovisionar tus sensores y smart-bands.",
-        "goToLogin": "Volver al inicio de sesión"
+        "goToLogin": "Volver al inicio de sesión",
+        "snack": "Empresa registrada correctamente. Tu cuenta está lista."
+      },
+      "checkout": {
+        "brand": "MineGuard Pagos",
+        "secure": "Pago seguro",
+        "orderSummary": "Resumen de compra",
+        "billingCycle": "Facturación mensual · renovación automática",
+        "reference": "Referencia",
+        "merchant": "Comercio",
+        "subtotal": "Subtotal",
+        "tax": "IGV / VAT (18%)",
+        "total": "Total a pagar hoy",
+        "scanTitle": "Escanea para pagar",
+        "scanHint": "Escanea este código con tu aplicación bancaria para completar el pago de forma segura.",
+        "expiresIn": "Expira en",
+        "expiredTitle": "Tiempo de pago expirado",
+        "expiredHint": "Este código QR ya no es válido. Genera uno nuevo para continuar.",
+        "regenerate": "Generar nuevo código",
+        "verify": "Ya realicé el pago — Verificar",
+        "verifying": "Verificando con tu banco…",
+        "verifiedTitle": "¡Pago verificado!",
+        "verifiedBody": "Tu cuenta de empresa está activa. Configurando tu espacio de trabajo…",
+        "cancel": "Cancelar y volver",
+        "encrypted": "Cifrado SSL de 256 bits",
+        "poweredBy": "Pagos protegidos por MineGuard Pay",
+        "qrAlt": "Código QR para completar el pago con tu aplicación bancaria"
       }
     }
   },
@@ -609,8 +643,8 @@
         "blockedForUse": "Bloqueado para uso",
         "column": {
           "identifier": "Identificador y tipo",
-          "status": "Estado (US45)",
-          "assignment": "Asignación actual (US02)",
+          "status": "Estado ",
+          "assignment": "Asignación actual ",
           "actions": "Acciones"
         },
         "status": {
@@ -621,7 +655,12 @@
         "action": {
           "edit": "Editar",
           "sendToWorkshop": "Enviar a Taller",
-          "markOperational": "Marcar Operativo"
+          "markOperational": "Marcar Operativo",
+          "linkDevice": "Vincular device",
+          "more": "Más acciones",
+          "moveDevice": "Mover device",
+          "retireDevice": "Retirar device",
+          "archive": "Dar de baja vehículo"
         },
         "form": {
           "titleCreate": "Registrar Vehículo",
@@ -645,11 +684,60 @@
           "cancel": "Cancelar",
           "submitCreate": "Registrar vehículo",
           "submitEdit": "Guardar cambios",
-          "saveError": "Error al guardar el vehículo"
+          "saveError": "Error al guardar el vehículo",
+          "device": {
+            "linkTitle": "Vincular device MineGuard",
+            "linkSubtitle": "El vehículo se creó. Ahora estamos vinculando su device.",
+            "sectionTitle": "Device MineGuard",
+            "sectionSubtitle": "Vincula un device edge a este vehículo ahora mismo.",
+            "linkToggle": "Vincular un device ahora",
+            "autoIdLabel": "ID del Device",
+            "autoIdValue": "Automático",
+            "autoHint": "El sistema asigna el siguiente ID secuencial y lo vincula a este vehículo al guardar.",
+            "vehicleCreated": "El vehículo {{code}} se creó correctamente",
+            "linking": "Vinculando device…",
+            "linkFailedTitle": "No pudimos vincular el device",
+            "retry": "Reintentar vinculación",
+            "closeAnyway": "Cerrar de todos modos",
+            "linkedSnack": "Device #{{id}} vinculado a {{code}}"
+          }
         },
         "empty": {
           "title": "Sin vehículos registrados",
           "sub": "Agrega el primer vehículo para comenzar a gestionar la flota."
+        },
+        "device": {
+          "filter": "Sin device",
+          "linked": "Device #{{id}}",
+          "none": "Sin device",
+          "emptyFiltered": "Todos los vehículos tienen un device vinculado."
+        },
+        "confirm": {
+          "archive": {
+            "title": "¿Dar de baja el vehículo?",
+            "message": "{{code}} se archivará y se ocultará de la flota. Su historial se conserva. No puedes hacerlo mientras tenga un device activo.",
+            "confirm": "Dar de baja"
+          },
+          "retire": {
+            "title": "¿Retirar el device?",
+            "message": "El device #{{id}} se retirará y desvinculará. Su id queda reservado y nunca se reutiliza.",
+            "confirm": "Retirar device"
+          }
+        },
+        "archivedSnack": "El vehículo {{code}} se dio de baja",
+        "retiredSnack": "El device #{{id}} se retiró",
+        "archiveHasDevice": "Mueve o retira el device antes de dar de baja el vehículo.",
+        "archiveError": "No pudimos dar de baja el vehículo. Inténtalo de nuevo.",
+        "moveDialog": {
+          "title": "Mover device",
+          "subtitle": "Reasigna este device a otro vehículo, conservando su id.",
+          "currentlyOn": "Actualmente en {{code}}",
+          "targetLabel": "Vehículo destino",
+          "targetPlaceholder": "Selecciona un vehículo sin device",
+          "noTargets": "No hay vehículos sin device a los que moverlo.",
+          "confirm": "Mover device",
+          "cancel": "Cancelar",
+          "movedSnack": "Device #{{id}} movido a {{code}}"
         }
       },
       "drivers": {
@@ -665,7 +753,7 @@
         "status": {
           "onShift": "En Turno",
           "offShift": "Fuera de Turno",
-          "inactive": "Inactivo (US47)"
+          "inactive": "Inactivo "
         },
         "action": {
           "edit": "Editar",
@@ -706,7 +794,16 @@
         "empty": {
           "title": "Sin conductores registrados",
           "sub": "Incorpora el primer conductor al directorio operativo."
-        }
+        },
+        "confirm": {
+          "deactivate": {
+            "title": "¿Desactivar conductor?",
+            "message": "{{name}} se desactivará. Su historial de sesiones y reportes se conserva.",
+            "confirm": "Desactivar"
+          }
+        },
+        "deactivatedSnack": "{{name}} se desactivó",
+        "deactivateError": "No pudimos desactivar al conductor. Inténtalo de nuevo."
       }
     }
   },
@@ -818,5 +915,9 @@
       "time": "Hora del evento",
       "markAttended": "Marcar como atendida"
     }
+  },
+  "common": {
+    "dismiss": "Cerrar",
+    "cancel": "Cancelar"
   }
 }
