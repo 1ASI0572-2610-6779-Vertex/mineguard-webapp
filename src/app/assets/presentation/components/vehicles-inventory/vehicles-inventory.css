@@ -204,3 +204,97 @@
 }
 
 .btn-success:hover { background: var(--color-success-surface) !important; }
+
+/* ── Filter toolbar ──────────────────────────────────────────────── */
+.inv-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 12px 12px;
+}
+
+.inv-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border: 1px solid var(--color-neutral-gray-300);
+  border-radius: 999px;
+  background: #fff;
+  color: #475569;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.14s, color 0.14s, background 0.14s;
+}
+
+.inv-filter:hover { border-color: #94a3b8; }
+
+.inv-filter mat-icon { font-size: 17px; width: 17px; height: 17px; }
+
+.inv-filter--on {
+  border-color: var(--color-accent-main);
+  color: var(--color-accent-main);
+  background: var(--color-accent-surface);
+}
+
+.inv-filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--color-warning-main);
+  color: #1f2937;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* ── Device chip (per row) ───────────────────────────────────────── */
+.dev-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 5px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.dev-chip mat-icon { font-size: 13px; width: 13px; height: 13px; }
+
+.dev-chip--on {
+  background: var(--color-success-surface, rgba(34, 197, 94, 0.12));
+  color: #15803d;
+}
+
+.dev-chip--off {
+  background: var(--color-warning-surface);
+  color: #92600a;
+}
+
+/* ── Inline "link device" action ─────────────────────────────────── */
+.btn-link-device {
+  color: var(--color-accent-main) !important;
+  border-color: var(--color-accent-main) !important;
+}
+
+.btn-link-device:hover:not([disabled]) { background: var(--color-accent-surface) !important; }
+
+.btn-link-device mat-spinner { display: inline-block; }
+
+/* ── Empty state ─────────────────────────────────────────────────── */
+.inv-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 40px 20px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.inv-empty mat-icon { font-size: 34px; width: 34px; height: 34px; opacity: 0.6; }

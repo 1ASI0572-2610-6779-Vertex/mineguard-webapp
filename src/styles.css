@@ -108,3 +108,25 @@ body {
   background: var(--color-accent-main) !important;
   color: #ffffff !important;
 }
+
+.mg-snack--error .mdc-snackbar__surface {
+  background: var(--color-danger-main) !important;
+  color: #ffffff !important;
+}
+
+.mg-snack--warning .mdc-snackbar__surface {
+  background: var(--color-warning-main) !important;
+  color: #1f2937 !important;
+}
+
+/* Snackbar action button stays legible on the colored surfaces above. */
+.mg-snack .mdc-button__label,
+.mg-snack .mat-mdc-snack-bar-action {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.mg-snack--warning .mdc-button__label,
+.mg-snack--warning .mat-mdc-snack-bar-action {
+  color: #1f2937 !important;
+}

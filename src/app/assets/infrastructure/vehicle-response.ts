@@ -9,6 +9,8 @@ export interface VehicleResource extends BaseResource {
   status: VehicleStatus;
   assignedDriverName: string | null;
   shiftLabel: string | null;
+  /** Sequential id of the linked device, or null/absent when the vehicle has none. */
+  deviceId?: string | null;
 }
 
 export interface VehiclesResponse extends BaseResponse {}

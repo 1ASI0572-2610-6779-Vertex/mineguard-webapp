@@ -32,4 +32,14 @@ export class VehiclesApiEndpoint extends BaseApiEndpoint<
       catchError(this.handleError('Failed to fetch vehicles inventory')),
     );
   }
+
+  /**
+   * DELETE /api/v1/vehicles/{id} — soft-delete (archive). The raw
+   * `HttpErrorResponse` is intentionally left unwrapped so the caller can read
+   * `status` (e.g. `409` when the vehicle still has an active device) and the
+   * backend's clean `details` text.
+   */
+  archive(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.endpointUrl}/${id}`);
+  }
 }
