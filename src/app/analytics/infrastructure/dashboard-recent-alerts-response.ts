@@ -5,6 +5,7 @@ export interface DashboardRecentAlertResource extends BaseResource {
   alertCode: string;
   severity: string;
   category: string;
+  title: string;
   driverName: string;
   vehicleCode: string;
   vehicleType: string;

@@ -64,6 +64,83 @@ function hourlyAlertTrend(alerts: DashboardRecentAlert[]): DashboardTrend[] {
   return series;
 }
 
+/** Donut palette slots understood by `reports-incident-distribution`. */
+const DISTRIBUTION_CLASSES = ['color-1', 'color-2', 'color-3', 'color-4', 'color-5'];
+
+/**
+ * Groups the operational alert feed by alert type into donut slices.
+ *
+ * @remarks
+ * Stands in for `GET /companies/{id}/metrics/incidents`, which projects over
+ * `Incident` records the telemetry pipeline never materializes and therefore
+ * returns an empty array — same gap `hourlyAlertTrend` covers for the trend
+ * chart. Slices are ranked by count so the palette assigns the hottest colour
+ * to the most frequent type.
+ */
+function incidentDistributionFromAlerts(
+  alerts: DashboardRecentAlert[],
+): AnalyticsIncidentDistribution[] {
+  if (!alerts.length) return [];
+
+  const byCategory = new Map<string, { count: number; label: string }>();
+  for (const alert of alerts) {
+    const bucket = byCategory.get(alert.category);
+    if (bucket) bucket.count++;
+    else byCategory.set(alert.category, { count: 1, label: alert.title || alert.category });
+  }
+
+  const ranked = [...byCategory.entries()].sort((a, b) => b[1].count - a[1].count);
+  return ranked.map(([, { count, label }], index) => new AnalyticsIncidentDistribution({
+    id: index + 1,
+    label,
+    count,
+    percent: Math.round((count / alerts.length) * 100),
+    className: DISTRIBUTION_CLASSES[index % DISTRIBUTION_CLASSES.length],
+  }));
+}
+
+/** Table criticality buckets, keyed off the alert priority. */
+const CRITICALITY_BY_PRIORITY: Record<string, { key: string; label: string }> = {
+  critical: { key: 'high', label: 'Crítico' },
+  high: { key: 'high', label: 'Crítico' },
+  medium: { key: 'medium', label: 'Medio' },
+  low: { key: 'low', label: 'Bajo' },
+};
+
+/**
+ * Projects the operational alert feed onto the history table's rows.
+ *
+ * @remarks
+ * Stands in for `GET /companies/{id}/history`, which pages over `Incident`
+ * records that are never written. Alerts carry no operational zone, so
+ * `location` renders a dash rather than inventing one, and no report exists to
+ * download (`driverId`/`reportId` stay null, which disables the export button).
+ */
+function historyRowsFromAlerts(alerts: DashboardRecentAlert[]): AnalyticsHistoryRow[] {
+  const rows: AnalyticsHistoryRow[] = [];
+  for (const alert of alerts) {
+    const occurredAt = new Date(alert.time);
+    if (isNaN(occurredAt.getTime())) continue;
+
+    const criticality = CRITICALITY_BY_PRIORITY[alert.severity] ?? { key: 'low', label: 'Bajo' };
+    const involved = [alert.driverName, alert.vehicleCode].filter(Boolean).join(' · ');
+
+    rows.push(
+      new AnalyticsHistoryRow({
+        id: alert.id,
+        date: occurredAt.toLocaleDateString(),
+        time: occurredAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        criticality: criticality.key,
+        criticalityLabel: criticality.label,
+        incidentType: alert.title || alert.category,
+        involved: involved || '—',
+        location: '—',
+      }),
+    );
+  }
+  return rows;
+}
+
 /**
  * Application service (store) for the analytics bounded context.
  *
@@ -130,8 +207,20 @@ export class AnalyticsStore {
   readonly performanceMetrics = this.performanceMetricsSignal.asReadonly();
   readonly reports = this.reportsSignal.asReadonly();
   readonly fatigueBars = this.fatigueBarsSignal.asReadonly();
-  readonly incidentDistribution = this.incidentDistributionSignal.asReadonly();
-  readonly historyRows = this.historyRowsSignal.asReadonly();
+
+  /** Backend breakdown when populated, else one grouped from the alert feed. */
+  readonly incidentDistribution = computed(() => {
+    const fromBackend = this.incidentDistributionSignal();
+    return fromBackend.length
+      ? fromBackend
+      : incidentDistributionFromAlerts(this.operationalAlertsSignal());
+  });
+
+  /** Backend history page when populated, else the alert feed projected as rows. */
+  readonly historyRows = computed(() => {
+    const fromBackend = this.historyRowsSignal();
+    return fromBackend.length ? fromBackend : historyRowsFromAlerts(this.operationalAlertsSignal());
+  });
   readonly insights = this.insightsSignal.asReadonly();
   readonly adminSummary = this.adminSummarySignal.asReadonly();
   readonly adminNotices = this.adminNoticesSignal.asReadonly();

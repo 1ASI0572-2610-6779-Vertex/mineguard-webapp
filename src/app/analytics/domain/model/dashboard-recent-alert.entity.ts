@@ -8,6 +8,8 @@ export class DashboardRecentAlert implements BaseEntity {
   alertCode: string;
   severity: string;
   category: string;
+  /** Human-readable headline of the alert, e.g. "Proximity warning". */
+  title: string;
   driverName: string;
   vehicleCode: string;
   vehicleType: string;
@@ -20,6 +22,7 @@ export class DashboardRecentAlert implements BaseEntity {
     alertCode: string;
     severity: string;
     category: string;
+    title?: string;
     driverName: string;
     vehicleCode: string;
     vehicleType: string;
@@ -31,6 +34,7 @@ export class DashboardRecentAlert implements BaseEntity {
     this.alertCode = props.alertCode;
     this.severity = props.severity;
     this.category = props.category;
+    this.title = props.title ?? '';
     this.driverName = props.driverName;
     this.vehicleCode = props.vehicleCode;
     this.vehicleType = props.vehicleType;

@@ -34,6 +34,13 @@ export class ReportsFatigueBars {
 
   readonly visibleBars = this.barsSignal.asReadonly();
 
+  /**
+   * False when every driver sits at zero events. The backend still returns one
+   * row per driver in that case, which would otherwise render a list of empty
+   * tracks instead of the "no fatigue recorded" state.
+   */
+  readonly hasEvents = computed(() => this.barsSignal().some((b) => b.fatigueEvents > 0));
+
   widthFor(events: number): number {
     return Math.round((events / this.maxFatigueEvents()) * 100);
   }

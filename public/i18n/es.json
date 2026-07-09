@@ -384,7 +384,7 @@
     },
     "incidentDistribution": {
       "title": "Distribución de Incidentes",
-      "subtitle": "Alertas agrupadas por Zona Operativa",
+      "subtitle": "Alertas agrupadas por tipo de alerta",
       "total": "Incidentes"
     },
     "history": {
