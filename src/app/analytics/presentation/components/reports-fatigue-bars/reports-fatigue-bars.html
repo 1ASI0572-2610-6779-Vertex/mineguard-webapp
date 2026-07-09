@@ -21,7 +21,7 @@
 
   <!-- Bar chart -->
   <ul class="bars-list" role="list">
-    @for (bar of visibleBars(); track bar.id; let i = $index) {
+    @for (bar of hasEvents() ? visibleBars() : []; track bar.id; let i = $index) {
       <li
         class="bar-row"
         [class.bar-row--dimmed]="isDimmed(bar.id)"
@@ -58,7 +58,7 @@
     }
   </ul>
 
-  @if (!visibleBars().length) {
+  @if (!hasEvents()) {
     <div class="empty-state">
       <mat-icon>check_circle</mat-icon>
       <span>{{ 'reports.fatigueBars.empty' | translate }}</span>
