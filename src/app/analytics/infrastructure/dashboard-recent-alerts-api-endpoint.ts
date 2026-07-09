@@ -60,6 +60,7 @@ export class DashboardRecentAlertsApiEndpoint extends BaseApiEndpoint<
         severity: a.priority,
         category: a.type,
         title: a.title ?? '',
+        description: a.description ?? '',
         // Null whenever the alert was raised without an active driving session.
         driverName: a.driverName ?? '',
         vehicleCode: a.vehicleCode ?? '',
@@ -67,6 +68,7 @@ export class DashboardRecentAlertsApiEndpoint extends BaseApiEndpoint<
         route: '',
         time: a.occurredAt,
         status: a.status,
+        resolutionNotes: a.resolutionNotes ?? '',
       }))),
       catchError(this.handleError('Failed to fetch recent alerts')),
     );

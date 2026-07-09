@@ -42,6 +42,7 @@ export class DashboardPage {
   readonly riskDrivers          = this.store.riskDrivers;
   readonly performanceMetrics   = this.store.performanceMetrics;
   readonly recentAlerts = this.store.recentAlerts;
+  readonly operationalAlerts = this.store.operationalAlerts;
 
   get todayLabel(): string {
     const locale = this.translate.currentLang === 'en' ? 'en-US' : 'es-PE';

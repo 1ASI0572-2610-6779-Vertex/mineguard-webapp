@@ -1,12 +1,13 @@
 // Removed unused NgClass import
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { ChangeDetectorRef, Component, OnInit, ViewChild, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 
@@ -113,9 +114,11 @@ export class Layout implements OnInit {
   private observer = inject(BreakpointObserver);
   private router = inject(Router);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
   protected store = inject(IamStore);
   private kpisStore = inject(CompanyKpisStore);
+  private readonly translationRevision = signal(0);
 
   /** Live "active / total sensors" counter for the toolbar pill, from the shared
    * tenant-KPIs cache. Falls back to 0 until the first successful KPIs load. */
@@ -126,6 +129,10 @@ export class Layout implements OnInit {
     // Resolve shell visibility synchronously from the current URL + auth state,
     // before the first change detection, to avoid a shell flash on hard refresh.
     this.updateShellVisibility(window.location.pathname);
+
+    this.translate.onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.translationRevision.update((revision) => revision + 1));
 
     // Re-configure sidenav mode whenever the shell becomes visible after login.
     // ngAfterViewInit already ran (sidenav was undefined then), so we must
@@ -149,18 +156,26 @@ export class Layout implements OnInit {
   });
 
   readonly displayName = computed(
-    () =>
-      this.store.currentFullName() ??
-      this.store.currentUsername() ??
-      this.translate.instant('layout.user.placeholder.name'),
+    () => {
+      this.translationRevision();
+      return (
+        this.store.currentFullName() ??
+        this.store.currentUsername() ??
+        this.translate.instant('layout.user.placeholder.name')
+      );
+    },
   );
 
   readonly displayRole = computed(
-    () => this.store.currentRole() ?? this.translate.instant('layout.user.placeholder.role'),
+    () => {
+      this.translationRevision();
+      return this.store.currentRole() ?? this.translate.instant('layout.user.placeholder.role');
+    },
   );
 
   /** Company name for the sidebar; falls back to "Company #<id>" when unknown. */
   readonly displayCompany = computed(() => {
+    this.translationRevision();
     const name = this.store.currentCompanyName();
     if (name) return name;
     const id = this.store.currentCompanyId();
@@ -175,9 +190,10 @@ export class Layout implements OnInit {
   );
 
   /** Localized subscription-plan label (e.g. "Plan Enterprise"). Defaults to Standard. */
-  readonly displayPlan = computed(() =>
-    this.translate.instant(`layout.subscription.${this.planTier()}`),
-  );
+  readonly displayPlan = computed(() => {
+    this.translationRevision();
+    return this.translate.instant(`layout.subscription.${this.planTier()}`);
+  });
 
   readonly avatarInitials = computed(() => {
     const name = this.store.currentUsername() ?? 'JP';

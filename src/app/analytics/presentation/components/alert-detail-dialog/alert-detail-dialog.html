@@ -8,7 +8,7 @@
       </div>
       <div>
         <h2 class="dialog-title">{{ alert.alertCode }}</h2>
-        <span class="dialog-category">{{ alert.category }}</span>
+        <span class="dialog-category">{{ getCategoryKey(alert.category) | translate }}</span>
       </div>
     </div>
     <button mat-icon-button class="close-btn" (click)="close()" [attr.aria-label]="'analytics.alertDetail.close' | translate">
@@ -74,9 +74,9 @@
     <button mat-stroked-button class="btn-cancel" (click)="close()">
       {{ 'analytics.alertDetail.close' | translate }}
     </button>
-    <button mat-flat-button class="btn-attend" (click)="close()">
+    <button mat-flat-button class="btn-attend" (click)="manageAlert()">
       <mat-icon>assignment_turned_in</mat-icon>
-      {{ 'analytics.alertDetail.markAttended' | translate }}
+      {{ 'analytics.alertDetail.manageAlert' | translate }}
     </button>
   </div>
 
