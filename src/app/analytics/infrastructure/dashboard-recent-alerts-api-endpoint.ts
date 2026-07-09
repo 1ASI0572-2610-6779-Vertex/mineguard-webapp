@@ -59,6 +59,7 @@ export class DashboardRecentAlertsApiEndpoint extends BaseApiEndpoint<
         alertCode: a.code,
         severity: a.priority,
         category: a.type,
+        title: a.title ?? '',
         // Null whenever the alert was raised without an active driving session.
         driverName: a.driverName ?? '',
         vehicleCode: a.vehicleCode ?? '',
