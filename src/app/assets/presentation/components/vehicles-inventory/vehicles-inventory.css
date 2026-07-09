@@ -121,6 +121,21 @@
   color: #92400e;
 }
 
+.badge-info {
+  background: var(--color-info-surface);
+  color: var(--color-info-main);
+}
+
+.badge-danger {
+  background: var(--color-danger-surface);
+  color: var(--color-danger-main);
+}
+
+.badge-muted {
+  background: var(--color-neutral-gray-100);
+  color: #52525b;
+}
+
 .badge-icon { font-size: 13px; width: 13px; height: 13px; }
 
 /* ── Assignment cell ─────────────────────────────────────────────── */
@@ -177,33 +192,55 @@
 
 .icon-btn:hover mat-icon { color: var(--color-accent-main); }
 
+/* Row actions share the app's button language: 10px radius, 700 weight, and a
+   filled brand-blue primary paired with tonal state buttons — the same
+   surface+main color pairs the status badges in this table already use. */
 .action-btn {
-  font-size: 11.5px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
-  border-radius: 8px !important;
-  height: 32px !important;
-  padding: 0 12px !important;
+  letter-spacing: 0.1px;
+  border-radius: 10px !important;
+  height: 34px !important;
+  padding: 0 14px !important;
+  border: none !important;
   display: inline-flex !important;
   align-items: center;
-  gap: 5px;
-  transition: opacity 0.16s ease !important;
+  gap: 6px;
+  white-space: nowrap;
+  transition: background 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease !important;
 }
 
-.action-btn mat-icon { font-size: 14px; width: 14px; height: 14px; }
+.action-btn mat-icon { font-size: 15px; width: 15px; height: 15px; }
 
+.action-btn:hover:not([disabled]) { transform: translateY(-1px); }
+.action-btn:active:not([disabled]) { transform: translateY(0); }
+
+.action-btn:focus-visible {
+  outline: 2px solid var(--color-accent-main);
+  outline-offset: 2px;
+}
+
+/* Tonal — matches .badge-warning */
 .btn-warning {
+  background: var(--color-warning-surface) !important;
   color: #92400e !important;
-  border-color: var(--color-warning-main) !important;
 }
 
-.btn-warning:hover { background: var(--color-warning-surface) !important; }
+.btn-warning:hover:not([disabled]) {
+  background: #FCE8B8 !important;
+  box-shadow: 0 2px 6px rgba(146, 64, 14, 0.16);
+}
 
+/* Tonal — matches .badge-success */
 .btn-success {
+  background: var(--color-success-surface) !important;
   color: #14532d !important;
-  border-color: var(--color-success-main) !important;
 }
 
-.btn-success:hover { background: var(--color-success-surface) !important; }
+.btn-success:hover:not([disabled]) {
+  background: #A9E3C0 !important;
+  box-shadow: 0 2px 6px rgba(20, 83, 45, 0.16);
+}
 
 /* ── Filter toolbar ──────────────────────────────────────────────── */
 .inv-toolbar {
@@ -277,14 +314,41 @@
 }
 
 /* ── Inline "link device" action ─────────────────────────────────── */
+/* Filled primary — the one action a device-less row is asking the user to take. */
 .btn-link-device {
-  color: var(--color-accent-main) !important;
-  border-color: var(--color-accent-main) !important;
+  background: var(--color-accent-main) !important;
+  color: var(--color-neutral-white) !important;
+  box-shadow: 0 1px 2px rgba(31, 65, 175, 0.24);
 }
 
-.btn-link-device:hover:not([disabled]) { background: var(--color-accent-surface) !important; }
+.btn-link-device:hover:not([disabled]) {
+  background: #18348C !important; /* accent-main, ~12% darker */
+  box-shadow: 0 3px 10px rgba(31, 65, 175, 0.32);
+}
+
+/* Rows other than the one being linked are disabled meanwhile — mute them. */
+.btn-link-device[disabled]:not(.btn-link-device--loading) {
+  background: var(--color-neutral-gray-100) !important;
+  color: #9ca3af !important;
+  box-shadow: none;
+}
+
+/* The row actually in flight keeps its brand fill so the spinner reads as
+   progress rather than as a disabled control. */
+.btn-link-device--loading[disabled] {
+  background: var(--color-accent-main) !important;
+  color: var(--color-neutral-white) !important;
+  opacity: 1;
+}
 
 .btn-link-device mat-spinner { display: inline-block; }
+
+/* The spinner lives in MatProgressSpinner's own DOM, so view encapsulation
+   blocks a descendant selector. Custom properties still inherit across that
+   boundary, and Material reads this token for the indicator color. */
+.btn-link-device--loading {
+  --mdc-circular-progress-active-indicator-color: var(--color-neutral-white);
+}
 
 /* ── Empty state ─────────────────────────────────────────────────── */
 .inv-empty {

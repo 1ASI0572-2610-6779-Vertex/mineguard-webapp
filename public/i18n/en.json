@@ -9,7 +9,6 @@
     "auditAndAssets": "Audit & Assets",
     "devices": "Devices",
     "fleetAndDrivers": "Fleet & Drivers",
-    "routeDesign": "Route Design",
     "alerts": "Alert Management",
     "liveMap": "Live Map"
   },
@@ -492,7 +491,15 @@
         },
         "supervisorCreated": {
           "title": "New Supervisor Created",
-          "description": "Profile created for {{fullName}} ({{corporateId}}) and temporary credentials were sent to the corporate email."
+          "description": "Profile created for {{fullName}} (ID {{supervisorId}}) and temporary credentials were sent to the corporate email."
+        },
+        "driverCreated": {
+          "title": "New Driver Registered",
+          "description": "Driver profile created for {{fullName}} (ID {{driverId}}); worker credentials were issued."
+        },
+        "alertAction": {
+          "title": "Alert Classified",
+          "description": "Alert #{{alertId}} was marked as {{action}} by {{performedBy}}."
         }
       },
       "subtitle": "{{count}} event(s) recorded",
@@ -503,6 +510,11 @@
         "title": "No events",
         "noMatch": "No event matches the applied filters.",
         "none": "The audit log is empty."
+      },
+      "alertActions": {
+        "resolved": "resolved",
+        "reviewed": "reviewed",
+        "false_alarm": "false alarm"
       }
     },
     "alerts": {
@@ -608,7 +620,12 @@
         "bpm": "{{rate}} bpm",
         "empty": "No cardiac readings available"
       },
-      "noVehicles": "No vehicles in the field"
+      "noVehicles": "No vehicles in the field",
+      "noDriver": "No driver assigned",
+      "gps": {
+        "live": "LIVE",
+        "noSignal": "No GPS signal"
+      }
     }
   },
   "assets": {
@@ -648,9 +665,12 @@
           "actions": "Actions"
         },
         "status": {
-          "available": "Available",
-          "inUse": "In Use",
-          "maintenance": "Maintenance"
+          "operational": "Operational",
+          "inTransit": "In Transit",
+          "maintenance": "Maintenance",
+          "alert": "Alert",
+          "inactive": "Inactive",
+          "restrictedRoute": "Restricted Route"
         },
         "action": {
           "edit": "Edit",

@@ -89,16 +89,18 @@ export class VehicleFormDialog {
 
   // Labels are i18n keys resolved with the `translate` pipe in the template.
   readonly statusOptions: { value: VehicleStatus; label: string }[] = [
-    { value: 'available',   label: 'assets.fleet.vehicles.status.available' },
-    { value: 'in_use',      label: 'assets.fleet.vehicles.status.inUse' },
+    { value: 'operational', label: 'assets.fleet.vehicles.status.operational' },
+    { value: 'in_transit',  label: 'assets.fleet.vehicles.status.inTransit' },
     { value: 'maintenance', label: 'assets.fleet.vehicles.status.maintenance' },
+    { value: 'alert',       label: 'assets.fleet.vehicles.status.alert' },
+    { value: 'inactive',    label: 'assets.fleet.vehicles.status.inactive' },
   ];
 
   form = this.fb.nonNullable.group({
     code:               [this.data.vehicle?.code              ?? '', Validators.required],
     model:              [this.data.vehicle?.model             ?? '', Validators.required],
     category:           [this.data.vehicle?.category          ?? '', Validators.required],
-    status:             [this.data.vehicle?.status            ?? ('available' as VehicleStatus), Validators.required],
+    status:             [this.data.vehicle?.status            ?? ('operational' as VehicleStatus), Validators.required],
     assignedDriverName: [this.data.vehicle?.assignedDriverName ?? ''],
     shiftLabel:         [this.data.vehicle?.shiftLabel        ?? ''],
   });

@@ -301,10 +301,16 @@
 
 .v-status-dot--operational { background: var(--color-success-main); }
 .v-status-dot--maintenance  { background: var(--color-warning-main); }
+.v-status-dot--untracked   { background: var(--color-neutral-gray-300); }
 .v-status-dot--alert {
   background: var(--color-danger-main);
   animation: alert-pulse-dot 1.5s ease-in-out infinite;
 }
+
+/* A unit with no GPS fix has no marker to highlight — mute it and drop the
+   pointer affordance so hovering it doesn't imply a link to the map. */
+.tp-vehicle--untracked { opacity: 0.62; }
+.tp-vehicle--untracked:hover { box-shadow: none; }
 
 .v-info {
   flex: 1;
@@ -339,7 +345,48 @@
 }
 
 .v-type-icon  { font-size: 12px; width: 12px; height: 12px; color: #d1d5db; }
-.v-type-label { font-size: 9px;  color: #9ca3af; font-weight: 500; white-space: nowrap; }
+.v-type-label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  color: #9ca3af;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* GPS tracking badge */
+.v-gps {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 2px 6px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.v-gps--live {
+  background: var(--color-success-surface);
+  color: #15803d;
+}
+
+/* The shared .live-dot is accent-blue for the header badge; recolor it to match
+   this green badge instead of pulsing a mismatched hue inside it. */
+.v-gps--live .live-dot {
+  width: 5px;
+  height: 5px;
+  background: #15803d;
+}
+
+.v-gps--offline {
+  background: var(--color-neutral-gray-100);
+  color: #9ca3af;
+}
+
+.v-gps-icon { font-size: 10px; width: 10px; height: 10px; }
 
 /* ── Alert list ─────────────────────────────────────────────────── */
 .tp-alert-list {

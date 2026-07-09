@@ -18,6 +18,52 @@ import { Report } from '../domain/model/report.entity';
 import { AnalyticsApi } from '../infrastructure/analytics-api';
 import { exportFormatExtension, triggerBlobDownload } from '../../shared/infrastructure/file-download';
 
+/** Statuses that mean an alert is no longer demanding attention. */
+const CLOSED_ALERT_STATUSES: readonly string[] = ['resolved', 'false_alarm'];
+
+/**
+ * Buckets the operational alert feed into an hourly series.
+ *
+ * @remarks
+ * Stands in for `GET /companies/{id}/metrics/alerts-trend`, which projects over
+ * `Incident` records the telemetry pipeline never materializes and therefore
+ * returns an empty series. The alerts themselves carry `occurredAt`, so the same
+ * curve is recoverable client-side from data the dashboard already fetches.
+ * `incidents` stays 0 — there is no Incident data to plot, and fabricating a
+ * second series would misrepresent it.
+ */
+function hourlyAlertTrend(alerts: DashboardRecentAlert[]): DashboardTrend[] {
+  if (!alerts.length) return [];
+
+  const countsByHour = new Map<number, number>();
+  for (const alert of alerts) {
+    const occurredAt = new Date(alert.time);
+    if (isNaN(occurredAt.getTime())) continue;
+    const hour = occurredAt.getHours();
+    countsByHour.set(hour, (countsByHour.get(hour) ?? 0) + 1);
+  }
+  if (!countsByHour.size) return [];
+
+  const hours = [...countsByHour.keys()];
+  const first = Math.min(...hours);
+  const last = Math.max(...hours);
+
+  // Emit every hour in range, including the quiet ones, so the x-axis spacing
+  // stays proportional to elapsed time instead of collapsing gaps.
+  const series: DashboardTrend[] = [];
+  for (let hour = first; hour <= last; hour++) {
+    series.push(
+      new DashboardTrend({
+        id: hour,
+        hour: `${String(hour).padStart(2, '0')}:00`,
+        alerts: countsByHour.get(hour) ?? 0,
+        incidents: 0,
+      }),
+    );
+  }
+  return series;
+}
+
 /**
  * Application service (store) for the analytics bounded context.
  *
@@ -30,7 +76,7 @@ export class AnalyticsStore {
 
   private readonly dashboardTrendSignal = signal<DashboardTrend[]>([]);
   private readonly riskDriversSignal = signal<DashboardRiskDriver[]>([]);
-  private readonly recentAlertsSignal = signal<DashboardRecentAlert[]>([]);
+  private readonly operationalAlertsSignal = signal<DashboardRecentAlert[]>([]);
   private readonly performanceMetricsSignal = signal<PerformanceMetric[]>([]);
   private readonly reportsSignal = signal<Report[]>([]);
   private readonly fatigueBarsSignal = signal<AnalyticsFatigueBar[]>([]);
@@ -43,14 +89,44 @@ export class AnalyticsStore {
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
 
+  /**
+   * Critical alerts still awaiting attention, counted from the operational feed.
+   *
+   * @remarks
+   * `GET /companies/{id}/kpis` reports `criticalAlerts: 0` even while `/alerts`
+   * returns critical, unresolved entries — the two endpoints disagree. The feed
+   * is the source the "Live Alert Log" already renders, so it wins here.
+   */
+  readonly criticalAlertsCount = computed(
+    () =>
+      this.operationalAlertsSignal().filter(
+        (alert) =>
+          alert.severity === 'critical' && !CLOSED_ALERT_STATUSES.includes(alert.status),
+      ).length,
+  );
+
   /** Dashboard KPI snapshot, derived from the shared tenant-KPIs cache. */
   readonly dashboardSummary = computed(() => {
     const kpis = this.kpisStore.kpis();
-    return kpis ? DashboardSummary.fromKpis(kpis) : null;
+    if (!kpis) return null;
+    const summary = DashboardSummary.fromKpis(kpis);
+    summary.criticalAlerts = this.criticalAlertsCount();
+    return summary;
   });
-  readonly dashboardTrend = this.dashboardTrendSignal.asReadonly();
+
+  /** Backend hourly series when populated, else one derived from the alert feed. */
+  readonly dashboardTrend = computed(() => {
+    const fromBackend = this.dashboardTrendSignal();
+    return fromBackend.length ? fromBackend : hourlyAlertTrend(this.operationalAlertsSignal());
+  });
+
+  /** True while the trend chart is plotting real `Incident` data from the backend. */
+  readonly hasIncidentSeries = computed(() => this.dashboardTrendSignal().length > 0);
+
   readonly riskDrivers = this.riskDriversSignal.asReadonly();
-  readonly recentAlerts = this.recentAlertsSignal.asReadonly();
+
+  /** Newest five entries of the operational feed, for the "Live Alert Log" table. */
+  readonly recentAlerts = computed(() => this.operationalAlertsSignal().slice(0, 5));
   readonly performanceMetrics = this.performanceMetricsSignal.asReadonly();
   readonly reports = this.reportsSignal.asReadonly();
   readonly fatigueBars = this.fatigueBarsSignal.asReadonly();
@@ -62,7 +138,7 @@ export class AnalyticsStore {
   readonly loading = this.loadingSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
 
-  readonly alertsCount = computed(() => this.recentAlertsSignal().length);
+  readonly alertsCount = computed(() => this.operationalAlertsSignal().length);
   readonly riskDriversCount = computed(() => this.riskDriversSignal().length);
 
   constructor(private analyticsApi: AnalyticsApi) {
@@ -93,9 +169,14 @@ export class AnalyticsStore {
     });
   }
 
+  /**
+   * Loads the whole operational alert feed. The table shows only the newest
+   * five, but the critical-alert counter and the hourly trend aggregate over all
+   * of them.
+   */
   loadRecentAlerts(): void {
-    this.analyticsApi.getDashboardRecentAlerts().pipe(takeUntilDestroyed()).subscribe({
-      next: (alerts) => this.recentAlertsSignal.set(alerts),
+    this.analyticsApi.getOperationalAlerts().pipe(takeUntilDestroyed()).subscribe({
+      next: (alerts) => this.operationalAlertsSignal.set(alerts),
       error: (err) => this.handleFailure(err, 'Failed to load recent alerts'),
     });
   }

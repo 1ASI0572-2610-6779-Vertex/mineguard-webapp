@@ -35,7 +35,9 @@
       <path [attr.d]="alertTrendPath" class="trend-line trend-line--alerts"></path>
 
       <!-- Incidents line -->
-      <path [attr.d]="incidentTrendPath" class="trend-line trend-line--incidents"></path>
+      @if (hasIncidentSeries) {
+        <path [attr.d]="incidentTrendPath" class="trend-line trend-line--incidents"></path>
+      }
     </svg>
 
     <!-- X-axis labels -->
@@ -52,10 +54,12 @@
       <span class="legend-dot legend-dot--alerts"></span>
       <span>{{ 'dashboard.trend.alerts' | translate }}</span>
     </div>
-    <div class="legend-item">
-      <span class="legend-dot legend-dot--incidents"></span>
-      <span>{{ 'dashboard.trend.incidents' | translate }}</span>
-    </div>
+    @if (hasIncidentSeries) {
+      <div class="legend-item">
+        <span class="legend-dot legend-dot--incidents"></span>
+        <span>{{ 'dashboard.trend.incidents' | translate }}</span>
+      </div>
+    }
   </div>
 
 </div>

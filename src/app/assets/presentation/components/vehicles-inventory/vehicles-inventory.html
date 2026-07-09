@@ -62,22 +62,40 @@
         <!-- Status badge -->
         <div class="status-cell">
           @switch (vehicle.status) {
-            @case ('available') {
+            @case ('operational') {
               <span class="badge badge-success">
                 <span class="badge-dot"></span>
-                {{ 'assets.fleet.vehicles.status.available' | translate }}
+                {{ 'assets.fleet.vehicles.status.operational' | translate }}
               </span>
             }
-            @case ('in_use') {
+            @case ('in_transit') {
               <span class="badge badge-info">
                 <mat-icon class="badge-icon">directions_car</mat-icon>
-                {{ 'assets.fleet.vehicles.status.inUse' | translate }}
+                {{ 'assets.fleet.vehicles.status.inTransit' | translate }}
               </span>
             }
             @case ('maintenance') {
               <span class="badge badge-warning">
                 <mat-icon class="badge-icon">build</mat-icon>
                 {{ 'assets.fleet.vehicles.status.maintenance' | translate }}
+              </span>
+            }
+            @case ('alert') {
+              <span class="badge badge-danger">
+                <mat-icon class="badge-icon">crisis_alert</mat-icon>
+                {{ 'assets.fleet.vehicles.status.alert' | translate }}
+              </span>
+            }
+            @case ('restricted_route') {
+              <span class="badge badge-warning">
+                <mat-icon class="badge-icon">do_not_enter</mat-icon>
+                {{ 'assets.fleet.vehicles.status.restrictedRoute' | translate }}
+              </span>
+            }
+            @default {
+              <span class="badge badge-muted">
+                <mat-icon class="badge-icon">power_settings_new</mat-icon>
+                {{ 'assets.fleet.vehicles.status.inactive' | translate }}
               </span>
             }
           }
@@ -101,11 +119,12 @@
         <!-- Actions -->
         <div class="actions-cell">
           @if (!vehicle.hasDevice) {
-            <button mat-stroked-button class="action-btn btn-link-device"
+            <button mat-flat-button class="action-btn btn-link-device"
+              [class.btn-link-device--loading]="linkingVehicleId() === vehicle.id"
               [disabled]="linkingVehicleId() !== null"
               (click)="linkDevice(vehicle)">
               @if (linkingVehicleId() === vehicle.id) {
-                <mat-spinner diameter="16"></mat-spinner>
+                <mat-spinner diameter="15"></mat-spinner>
               } @else {
                 <mat-icon>sensors</mat-icon>
               }
@@ -119,15 +138,15 @@
           </button>
 
           @switch (vehicle.status) {
-            @case ('available') {
-              <button mat-stroked-button class="action-btn btn-warning"
+            @case ('operational') {
+              <button mat-flat-button class="action-btn btn-warning"
                 (click)="sendToMaintenance(vehicle)">
                 <mat-icon>build</mat-icon>
                 {{ 'assets.fleet.vehicles.action.sendToWorkshop' | translate }}
               </button>
             }
             @case ('maintenance') {
-              <button mat-stroked-button class="action-btn btn-success"
+              <button mat-flat-button class="action-btn btn-success"
                 (click)="markOperational(vehicle)">
                 <mat-icon>check_circle</mat-icon>
                 {{ 'assets.fleet.vehicles.action.markOperational' | translate }}

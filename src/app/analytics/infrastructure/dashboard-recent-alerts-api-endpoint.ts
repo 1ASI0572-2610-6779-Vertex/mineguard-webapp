@@ -34,20 +34,35 @@ export class DashboardRecentAlertsApiEndpoint extends BaseApiEndpoint<
     super(http, alertsUrl, new DashboardRecentAlertsAssembler());
   }
 
+  /**
+   * Full operational alert feed, most-recent first.
+   *
+   * @remarks
+   * Unlike {@link getRecent} this omits `limit`: the dashboard derives the
+   * critical-alert count and the hourly trend from the whole feed, so capping it
+   * at five would silently truncate both aggregates.
+   */
+  getOperational(): Observable<DashboardRecentAlert[]> {
+    return this.fetch(new HttpParams().set('view', 'operational').set('sort', '-occurredAt'));
+  }
+
   getRecent(limit = 5): Observable<DashboardRecentAlert[]> {
-    const params = new HttpParams()
-      .set('view', 'operational')
-      .set('sort', '-occurredAt')
-      .set('limit', limit);
+    return this.fetch(
+      new HttpParams().set('view', 'operational').set('sort', '-occurredAt').set('limit', limit),
+    );
+  }
+
+  private fetch(params: HttpParams): Observable<DashboardRecentAlert[]> {
     return this.http.get<AlertResource[]>(alertsUrl, { params }).pipe(
       map((alerts) => alerts.map((a) => new DashboardRecentAlert({
         id: a.id,
         alertCode: a.code,
         severity: a.priority,
         category: a.type,
-        driverName: a.driverName,
-        vehicleCode: a.vehicleCode,
-        vehicleType: a.vehicleClassKey,
+        // Null whenever the alert was raised without an active driving session.
+        driverName: a.driverName ?? '',
+        vehicleCode: a.vehicleCode ?? '',
+        vehicleType: a.vehicleClassKey ?? '',
         route: '',
         time: a.occurredAt,
         status: a.status,

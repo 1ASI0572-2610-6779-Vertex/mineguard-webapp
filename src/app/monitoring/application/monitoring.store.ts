@@ -9,9 +9,6 @@ import { LiveMapVehicle } from '../domain/model/live-map-vehicle.entity';
 import { MonitoringApi } from '../infrastructure/monitoring-api';
 import { CompanyKpisStore } from '../../shared/application/company-kpis.store';
 import { exportFormatExtension, triggerBlobDownload } from '../../shared/infrastructure/file-download';
-import { RouteRepository } from '../../service/domain/route.repository';
-import { RouteOverlay } from '../presentation/components/live-map/live-map';
-import { Route } from '../../service/domain/model/route.entity';
 
 /**
  * Application service for the monitoring bounded context.
@@ -29,7 +26,6 @@ const LIVE_MAP_POLL_INTERVAL_MS = 4000;
 @Injectable({ providedIn: 'root' })
 export class MonitoringStore implements OnDestroy {
   private liveMapPollHandle: ReturnType<typeof setInterval> | null = null;
-  private routeRepo = inject(RouteRepository);
   private readonly kpisStore = inject(CompanyKpisStore);
 
   private readonly auditLogSignal = signal<AuditLogEntry[]>([]);
@@ -37,7 +33,6 @@ export class MonitoringStore implements OnDestroy {
   private readonly liveMapVehiclesSignal = signal<LiveMapVehicle[]>([]);
   private readonly cardiacReadingSignal = signal<CardiacReading | null>(null);
   private readonly errorSignal = signal<string | null>(null);
-  private readonly routesSignal = signal<Route[]>([]);
 
   readonly auditLog = this.auditLogSignal.asReadonly();
   readonly alerts = this.alertsSignal.asReadonly();
@@ -75,22 +70,6 @@ export class MonitoringStore implements OnDestroy {
         this.errorSignal.set('Failed to load audit log');
       },
     });
-  }
-
-  readonly routeOverlays = computed<RouteOverlay[]>(() =>
-    this.routesSignal().map(route => ({
-      id: route.id,
-      name: route.name,
-      status: route.status,   // 'active' | 'planned' — ya viene del dominio
-      coords: route.waypoints
-        .sort((a, b) => a.order - b.order)
-        .map(wp => [wp.latitude, wp.longitude] as [number, number]),
-    }))
-  );
-
-  async loadRoutes(): Promise<void> {
-    const routes = await this.routeRepo.getAll();
-    this.routesSignal.set(routes);
   }
 
   /**
