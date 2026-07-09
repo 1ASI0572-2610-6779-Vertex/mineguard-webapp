@@ -3,8 +3,7 @@
   <!-- Full-bleed map -->
   <div class="map-wrapper">
     <app-live-map
-      [vehicles]="vehicles()"
-      [routeOverlays]="routeOverlays()"
+      [vehicles]="positions()"
       [hoveredVehicleId]="hoveredVehicleId()"
       (vehicleHover)="hoveredVehicleId.set($event)"
     ></app-live-map>
@@ -62,39 +61,51 @@
       </div>
     }
 
-    <!-- Section: Active vehicles -->
+    <!-- Section: Operational fleet, flagged by GPS tracking -->
     <div class="tp-section-label">
       <mat-icon class="tsl-icon">directions_car</mat-icon>
       Unidades en campo
-      <span class="tsl-count">{{ vehicles().length }}</span>
+      <span class="tsl-count">{{ fieldUnits().length }}</span>
     </div>
 
     <ul class="tp-vehicle-list">
-      @for (v of vehicles(); track v.id; let i = $index) {
+      @for (u of fieldUnits(); track u.id; let i = $index) {
         <li
           class="tp-vehicle"
-          [class.tp-vehicle--hovered]="hoveredVehicleId() === v.id"
-          [class.tp-vehicle--selected]="v.activeSessionId != null && selectedSessionId() === v.activeSessionId"
-          [class.tp-vehicle--alert]="v.status === 'alert'"
+          [class.tp-vehicle--hovered]="u.isTracked && hoveredVehicleId() === u.markerId"
+          [class.tp-vehicle--untracked]="!u.isTracked"
           [style.animation-delay]="(i * 40) + 'ms'"
-          (mouseenter)="hoveredVehicleId.set(v.id)"
-          (mouseleave)="hoveredVehicleId.set(null)"
-          (click)="selectVehicle(v.activeSessionId)">
+          (mouseenter)="onUnitHover(u)"
+          (mouseleave)="onUnitHover(null)">
 
           <span class="v-status-dot"
-            [class.v-status-dot--operational]="v.status === 'in_transit'"
-            [class.v-status-dot--maintenance]="v.status === 'maintenance'"
-            [class.v-status-dot--alert]="v.status === 'alert'">
+            [class.v-status-dot--operational]="u.isTracked"
+            [class.v-status-dot--untracked]="!u.isTracked">
           </span>
 
           <div class="v-info">
-            <strong class="v-code">{{ v.code }}</strong>
-            <span class="v-driver">{{ v.driverName }}</span>
+            <strong class="v-code">{{ u.code }}</strong>
+            <span class="v-driver">
+              {{ u.driverName || ('monitoring.liveMap.noDriver' | translate) }}
+            </span>
           </div>
 
           <div class="v-right">
-            <mat-icon class="v-type-icon">{{ vehicleTypeIcon(v.vehicleType) }}</mat-icon>
-            <span class="v-type-label">{{ v.vehicleType }}</span>
+            @if (u.isTracked) {
+              <span class="v-gps v-gps--live">
+                <span class="live-dot"></span>
+                {{ 'monitoring.liveMap.gps.live' | translate }}
+              </span>
+            } @else {
+              <span class="v-gps v-gps--offline">
+                <mat-icon class="v-gps-icon">satellite_alt</mat-icon>
+                {{ 'monitoring.liveMap.gps.noSignal' | translate }}
+              </span>
+            }
+            <span class="v-type-label">
+              <mat-icon class="v-type-icon">{{ vehicleTypeIcon(u.vehicleType) }}</mat-icon>
+              {{ u.vehicleType }}
+            </span>
           </div>
         </li>
       }
@@ -105,7 +116,7 @@
         }
       }
 
-      @if (!isLoading() && !vehicles().length) {
+      @if (!isLoading() && !fieldUnits().length) {
         <li class="tp-empty">
           <mat-icon>directions_car</mat-icon>
           <span>{{ 'monitoring.liveMap.noVehicles' | translate }}</span>

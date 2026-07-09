@@ -88,6 +88,11 @@ export class AnalyticsApi extends BaseApi {
     return this.dashboardRecentAlertsEndpoint.getRecent(limit);
   }
 
+  /** Full operational alert feed — GET /alerts?view=operational&sort=-occurredAt. */
+  getOperationalAlerts(): Observable<DashboardRecentAlert[]> {
+    return this.dashboardRecentAlertsEndpoint.getOperational();
+  }
+
   getPerformanceMetrics(driverId: number): Observable<PerformanceMetric[]> {
     return this.performanceMetricsEndpoint.getByDriverId(driverId);
   }

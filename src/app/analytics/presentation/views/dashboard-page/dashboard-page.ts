@@ -38,6 +38,7 @@ export class DashboardPage {
 
   readonly summary = this.store.dashboardSummary;
   readonly trend = this.store.dashboardTrend;
+  readonly hasIncidentSeries = this.store.hasIncidentSeries;
   readonly riskDrivers          = this.store.riskDrivers;
   readonly performanceMetrics   = this.store.performanceMetrics;
   readonly recentAlerts = this.store.recentAlerts;
@@ -83,7 +84,9 @@ export class DashboardPage {
   }
 
   readonly alertTrendPath = computed(() => this.buildPath(this.trend(), 'alerts'));
-  readonly incidentTrendPath = computed(() => this.buildPath(this.trend(), 'incidents'));
+  readonly incidentTrendPath = computed(() =>
+    this.hasIncidentSeries() ? this.buildPath(this.trend(), 'incidents') : '',
+  );
 
   private buildPath(trend: DashboardTrend[], key: 'alerts' | 'incidents'): string {
     if (!trend.length) return '';
