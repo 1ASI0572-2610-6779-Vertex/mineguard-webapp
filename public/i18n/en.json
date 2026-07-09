@@ -525,8 +525,10 @@
         "subtitle": "{{shown}} of {{total}} alerts"
       },
       "type": {
+        "proximity": "Proximity Warning",
+        "collision": "Proximity Collision",
         "proximity_collision": "Proximity Collision",
-        "restricted_zone_entry": "Restricted Zone",
+        "restricted_zone_entry": "Restricted Zone Entry",
         "high_heart_rate": "High Heart Rate",
         "fatigue_risk": "Fatigue Risk",
         "connection_lost": "Connection Lost"
@@ -933,7 +935,8 @@
       "vehicle": "Vehicle",
       "route": "Route",
       "time": "Event time",
-      "markAttended": "Mark as attended"
+      "markAttended": "Mark as attended",
+      "manageAlert": "Manage Alert"
     }
   },
   "common": {

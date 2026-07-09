@@ -20,6 +20,7 @@ import { AlertDetailDialog } from '../alert-detail-dialog/alert-detail-dialog';
 })
 export class DashboardRecentAlerts {
   @Input({ required: true }) recentAlerts: DashboardRecentAlert[] = [];
+  @Input({ required: true }) operationalAlerts: DashboardRecentAlert[] = [];
 
   private dialog = inject(MatDialog);
 
@@ -31,9 +32,13 @@ export class DashboardRecentAlerts {
     return severity;
   }
 
+  getCategoryKey(category: string): string {
+    return `monitoring.alerts.type.${category}`;
+  }
+
   openAlertDetail(alert: DashboardRecentAlert): void {
     this.dialog.open(AlertDetailDialog, {
-      data: { alert },
+      data: { alert, operationalAlerts: this.operationalAlerts },
       panelClass: 'mg-dialog',
       autoFocus: false,
       restoreFocus: false,

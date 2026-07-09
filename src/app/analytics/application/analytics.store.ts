@@ -203,6 +203,7 @@ export class AnalyticsStore {
 
   /** Newest five entries of the operational feed, for the "Live Alert Log" table. */
   readonly recentAlerts = computed(() => this.operationalAlertsSignal().slice(0, 5));
+  readonly operationalAlerts = this.operationalAlertsSignal.asReadonly();
   readonly performanceMetrics = this.performanceMetricsSignal.asReadonly();
   readonly reports = this.reportsSignal.asReadonly();
   readonly fatigueBars = this.fatigueBarsSignal.asReadonly();
