@@ -46,14 +46,6 @@ const fleetAndDriversPage = () =>
   import('./assets/presentation/views/fleet-and-drivers-page/fleet-and-drivers-page').then(
     (m) => m.FleetAndDriversPage,
   );
-const serviceDesignPage = () =>
-  import('./service/presentation/page/service-design-page/service-design-page.component').then(
-    (m) => m.ServiceDesignPage,
-  );
-const routeFormPage = () =>
-  import('./service/presentation/page/route-form-page/route-form-page.component').then(
-    (m) => m.RouteFormPage,
-  );
 
 // ── Shared views ──────────────────────────────────────────────────────────
 const about = () => import('./shared/presentation/views/about/about').then((m) => m.About);
@@ -135,13 +127,6 @@ export const routes: Routes = [
     loadComponent: fleetAndDriversPage,
     title: `${baseTitle} - Fleet & drivers`,
     canActivate: [iamGuard, roleGuard(['Supervisor'])],
-  },
-  {
-    path: 'route-design',
-    loadComponent: serviceDesignPage,
-    title: `${baseTitle} - Route design`,
-    canActivate: [iamGuard, roleGuard(['Supervisor'])],
-    children: [{ path: 'new', loadComponent: routeFormPage }],
   },
 
   // Shared

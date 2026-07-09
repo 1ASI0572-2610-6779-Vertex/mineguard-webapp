@@ -21,6 +21,13 @@ export class DashboardTrend {
   @Input({ required: true }) alertTrendPath = '';
   @Input({ required: true }) incidentTrendPath = '';
 
+  /**
+   * Whether the incidents series carries real data. False while the backend's
+   * `Incident` projection is empty, in which case the line and its legend entry
+   * are hidden rather than drawn flat at zero.
+   */
+  @Input() hasIncidentSeries = false;
+
   /** Emits when the user changes the period filter. */
   @Output() periodChange = new EventEmitter<TrendPeriod>();
 

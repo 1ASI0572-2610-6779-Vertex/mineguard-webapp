@@ -124,7 +124,7 @@
           </div>
           <h3 class="al-event-title">{{ entry.titleKey | translate }}</h3>
           <p class="al-event-desc">
-            {{ entry.descriptionKey | translate: entry.descriptionParams }}
+            {{ entry.descriptionKey | translate: descriptionParams(entry) }}
           </p>
           <div class="al-actor">
             <mat-icon class="al-actor-icon">person</mat-icon>

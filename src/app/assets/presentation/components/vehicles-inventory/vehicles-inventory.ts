@@ -97,7 +97,7 @@ export class VehiclesInventory {
   }
 
   markOperational(vehicle: Vehicle): void {
-    this.store.updateVehicleStatus(vehicle.id, 'available');
+    this.store.updateVehicleStatus(vehicle.id, 'operational');
   }
 
   /** Opens the "move device" dialog with the no-device vehicles as candidates. */

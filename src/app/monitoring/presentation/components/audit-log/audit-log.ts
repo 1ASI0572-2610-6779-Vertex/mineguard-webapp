@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { AuditCategory } from '../../../domain/model/audit-category';
 import { AuditLogEntry } from '../../../domain/model/audit-log-entry.entity';
@@ -16,6 +16,7 @@ import { AuditLogEntry } from '../../../domain/model/audit-log-entry.entity';
   styleUrl: './audit-log.css',
 })
 export class AuditLog {
+  private readonly translate = inject(TranslateService);
   private readonly entriesSignal = signal<AuditLogEntry[]>([]);
 
   @Input({ required: true }) set entries(value: AuditLogEntry[]) {
@@ -59,6 +60,26 @@ export class AuditLog {
 
   setCategory(cat: AuditCategory | 'all'): void {
     this.categoryFilter.set(cat);
+  }
+
+  /**
+   * Interpolation params for an entry's description, with enum-valued params
+   * localized first.
+   *
+   * @remarks
+   * The backend ships audit entries as i18n keys plus raw structured params, so
+   * `action` arrives as the untranslated domain value (`resolved`,
+   * `false_alarm`). Interpolating it as-is would leak an English token into the
+   * middle of a Spanish sentence. An unmapped action falls back to its raw value.
+   */
+  descriptionParams(entry: AuditLogEntry): Record<string, unknown> {
+    const params = entry.descriptionParams;
+    const action = params['action'];
+    if (typeof action !== 'string') return params;
+
+    const key = `monitoring.audit.alertActions.${action}`;
+    const localized = this.translate.instant(key);
+    return { ...params, action: localized === key ? action : localized };
   }
 
   iconForCategory(cat: AuditCategory): string {

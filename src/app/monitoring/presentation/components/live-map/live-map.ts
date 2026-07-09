@@ -15,18 +15,18 @@ import * as L from 'leaflet';
 import { LiveMapVehicle } from '../../../domain/model/live-map-vehicle.entity';
 import { VehicleOperationalStatus } from '../../../domain/model/vehicle-operational-status';
 
-export interface RouteOverlay {
-  id: string;
-  name: string;
-  coords: [number, number][];
-  status: string;
-}
-
 const VEHICLE_COLORS: Record<VehicleOperationalStatus, string> = {
   in_transit:  '#16a34a',
   maintenance: '#f59e0b',
   alert:       '#dc2626',
 };
+
+/**
+ * Where the map opens before any vehicle has reported a GPS fix.
+ * Once `GET /vehicles/positions` returns markers, `fitBounds` overrides this.
+ */
+const DEFAULT_CENTER: L.LatLngTuple = [-9.54728918743845, -77.05224329616134];
+const DEFAULT_ZOOM = 15;
 
 @Component({
   selector: 'app-live-map',
@@ -38,22 +38,15 @@ const VEHICLE_COLORS: Record<VehicleOperationalStatus, string> = {
 export class LiveMap implements AfterViewInit, OnDestroy {
   @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef<HTMLDivElement>;
 
-  private readonly vehiclesSignal      = signal<LiveMapVehicle[]>([]);
-  private readonly routeOverlaysSignal = signal<RouteOverlay[]>([]);
-  private readonly hoveredIdSignal     = signal<number | null>(null);
+  private readonly vehiclesSignal  = signal<LiveMapVehicle[]>([]);
+  private readonly hoveredIdSignal = signal<number | null>(null);
 
   private map: L.Map | null = null;
-  private readonly markerMap   = new Map<number, L.Marker>();
-  private routeLines: L.Polyline[]  = [];
-  private routePolygons: L.Polygon[] = [];
+  private readonly markerMap = new Map<number, L.Marker>();
   private resizeObserver: ResizeObserver | null = null;
 
   @Input({ required: true }) set vehicles(value: LiveMapVehicle[]) {
     this.vehiclesSignal.set(value);
-  }
-
-  @Input() set routeOverlays(value: RouteOverlay[]) {
-    this.routeOverlaysSignal.set(value ?? []);
   }
 
   @Input() set hoveredVehicleId(id: number | null) {
@@ -81,11 +74,6 @@ export class LiveMap implements AfterViewInit, OnDestroy {
     });
 
     effect(() => {
-      const overlays = this.routeOverlaysSignal();
-      if (this.map) this.renderRouteOverlays(overlays);
-    });
-
-    effect(() => {
       const id = this.hoveredIdSignal();
       this.updateMarkerHighlight(id);
     });
@@ -93,8 +81,8 @@ export class LiveMap implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.map = L.map(this.mapContainer.nativeElement, {
-      center: [-16.409, -71.537],
-      zoom: 14,
+      center: DEFAULT_CENTER,
+      zoom: DEFAULT_ZOOM,
       scrollWheelZoom: true,
       zoomControl: false,
     });
@@ -106,7 +94,6 @@ export class LiveMap implements AfterViewInit, OnDestroy {
       attribution: '&copy; OpenStreetMap contributors',
     }).addTo(this.map);
 
-    this.renderRouteOverlays(this.routeOverlaysSignal());
     this.renderMarkers(this.vehiclesSignal());
 
     setTimeout(() => this.map?.invalidateSize(), 0);
@@ -123,8 +110,6 @@ export class LiveMap implements AfterViewInit, OnDestroy {
       this.map = null;
     }
     this.markerMap.clear();
-    this.routeLines    = [];
-    this.routePolygons = [];
   }
 
   private createVehicleIcon(status: VehicleOperationalStatus): L.DivIcon {
@@ -195,54 +180,4 @@ export class LiveMap implements AfterViewInit, OnDestroy {
     });
   }
 
-  private renderRouteOverlays(overlays: RouteOverlay[]): void {
-    if (!this.map) return;
-
-    this.routeLines.forEach((l) => l.remove());
-    this.routeLines = [];
-    this.routePolygons.forEach((p) => p.remove());
-    this.routePolygons = [];
-
-    overlays.forEach((route) => {
-      if (route.coords.length < 2) return;
-
-      const isActive  = route.status === 'active';
-      const color     = isActive ? '#00c2b2' : '#3b82f6';
-      const dashArray = isActive ? undefined : '8 5';
-
-      if (route.coords.length >= 3) {
-        const polygon = L.polygon(route.coords, {
-          color,
-          weight: 2,
-          fillColor: color,
-          fillOpacity: 0.1,
-          dashArray,
-        }).bindTooltip(route.name, { sticky: true });
-        polygon.addTo(this.map!);
-        this.routePolygons.push(polygon);
-      }
-
-      const line = L.polyline(route.coords, {
-        color,
-        weight: 3,
-        dashArray,
-        opacity: 0.9,
-      }).bindTooltip(route.name, { sticky: true });
-      line.addTo(this.map!);
-      this.routeLines.push(line);
-
-      route.coords.forEach((coord, i) => {
-        const isEnd = i === 0 || i === route.coords.length - 1;
-        L.circleMarker(coord, {
-          radius: isEnd ? 6 : 4,
-          weight: 2,
-          color: '#ffffff',
-          fillColor: color,
-          fillOpacity: 1,
-        })
-          .bindTooltip(`${route.name} – punto ${i + 1}`, { direction: 'top' })
-          .addTo(this.map!);
-      });
-    });
-  }
 }
