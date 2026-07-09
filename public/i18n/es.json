@@ -9,7 +9,6 @@
     "auditAndAssets": "Auditoría y Activos",
     "devices": "Dispositivos",
     "fleetAndDrivers": "Flota y Conductores",
-    "routeDesign": "Diseño de ruta",
     "alerts": "Gestión de Alertas",
     "liveMap": "Mapa en Vivo"
   },
@@ -492,7 +491,15 @@
         },
         "supervisorCreated": {
           "title": "Alta de Nuevo Supervisor",
-          "description": "Se creó el perfil para {{fullName}} ({{corporateId}}) y se enviaron credenciales temporales al correo corporativo."
+          "description": "Se creó el perfil para {{fullName}} (ID {{supervisorId}}) y se enviaron credenciales temporales al correo corporativo."
+        },
+        "driverCreated": {
+          "title": "Alta de Nuevo Conductor",
+          "description": "Se creó el perfil de conductor para {{fullName}} (ID {{driverId}}) y se emitieron sus credenciales de operador."
+        },
+        "alertAction": {
+          "title": "Clasificación de Alerta",
+          "description": "La alerta #{{alertId}} fue marcada como {{action}} por {{performedBy}}."
         }
       },
       "subtitle": "{{count}} evento(s) registrado(s)",
@@ -503,6 +510,11 @@
         "title": "Sin eventos",
         "noMatch": "Ningún evento coincide con los filtros aplicados.",
         "none": "El registro de auditoría está vacío."
+      },
+      "alertActions": {
+        "resolved": "resuelta",
+        "reviewed": "revisada",
+        "false_alarm": "falsa alarma"
       }
     },
     "alerts": {
@@ -608,7 +620,12 @@
         "bpm": "{{rate}} lpm",
         "empty": "Sin lecturas cardíacas disponibles"
       },
-      "noVehicles": "Sin vehículos en campo"
+      "noVehicles": "Sin vehículos en campo",
+      "noDriver": "Sin conductor asignado",
+      "gps": {
+        "live": "EN VIVO",
+        "noSignal": "Sin señal GPS"
+      }
     }
   },
   "assets": {
@@ -648,9 +665,12 @@
           "actions": "Acciones"
         },
         "status": {
-          "available": "Disponible",
-          "inUse": "En Uso",
-          "maintenance": "Mantenimiento"
+          "operational": "Operativo",
+          "inTransit": "En Tránsito",
+          "maintenance": "Mantenimiento",
+          "alert": "Alerta",
+          "inactive": "Inactivo",
+          "restrictedRoute": "Ruta Restringida"
         },
         "action": {
           "edit": "Editar",

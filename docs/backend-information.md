@@ -1,7 +1,7 @@
 # MineGuard Platform — Backend Integration Contract
 
-**Versión del documento:** 2.3
-**Alcance:** Contrato oficial de integración del backend de MineGuard Platform, post-migración a arquitectura RESTful, post-remediación de aislamiento multi-tenant, post-alineación terminológica DDD (Driving Sessions) con exportación de documentos (PDF/Excel), post-pulido de semántica HTTP estricta (PATCH real, paginación obligatoria, retornos exactos, y códigos de estado correctos), post-mejoras finales de calidad (respuestas estructuradas, proyecciones singulares exactas, y prevención de creación de conductores por la vía genérica de sign-up), y post-implementación del ciclo de vida completo de la Driving Session (check-out, concurrencia de conductores, y máquina de estados del vehículo).
+**Versión del documento:** 2.4
+**Alcance:** Contrato oficial de integración del backend de MineGuard Platform, post-migración a arquitectura RESTful, post-remediación de aislamiento multi-tenant, post-alineación terminológica DDD (Driving Sessions) con exportación de documentos (PDF/Excel), post-pulido de semántica HTTP estricta (PATCH real, paginación obligatoria, retornos exactos, y códigos de estado correctos), post-mejoras finales de calidad (respuestas estructuradas, proyecciones singulares exactas, y prevención de creación de conductores por la vía genérica de sign-up), post-implementación del ciclo de vida completo de la Driving Session (check-out, concurrencia de conductores, y máquina de estados del vehículo), y **post-incorporación del ciclo de vida de Devices/Sensores** (aprovisionamiento del device unificado MineGuard 1:1 con el vehículo, secuencia de `deviceId` por empresa, reasignación y retiro, soft-delete de conductores y vehículos, `reportId` en el histórico analítico, y afinado del pipeline de telemetría edge — umbral de proximidad y persistencia de muestras).
 **Audiencia:** Equipos de Frontend (Web), Mobile (Flutter), y Hardware/Firmware (Edge/IoT).
 **Base URL:** `https://<host>/api/v1` (todas las rutas de este documento se listan relativas a este prefijo, salvo que se indique lo contrario).
 **Base de datos:** este documento asume un despliegue con base de datos limpia — no existen rutas heredadas ni consideraciones de compatibilidad hacia atrás.
@@ -15,7 +15,8 @@
    - 1.2 [Assets Core](#12-assets-core)
    - 1.3 [Monitoring](#13-monitoring)
    - 1.4 [Companies & Analytics](#14-companies--analytics)
-   - 1.5 [Platform (Cross-Tenant)](#15-platform-cross-tenant)
+   - 1.5 [Devices & Sensors (Provisioning)](#15-devices--sensors-provisioning)
+   - 1.6 [Platform (Cross-Tenant)](#16-platform-cross-tenant)
 2. [Arquitectura, Seguridad y Estándares](#2-arquitectura-seguridad-y-estándares)
 3. [Manifiesto de Integración Edge / Embedded (IoT)](#3-manifiesto-de-integración-edge--embedded-iot)
 
@@ -83,9 +84,9 @@ Gestión de identidad, sesiones y directorio de supervisores.
 Gestión de la flota (vehículos), directorio de conductores, y **Driving Sessions** (turnos activos). En un contexto minero, un operador no hace un "viaje" — abre una **sesión de conducción**. Esta terminología reemplaza por completo el término "Trip" en la capa de API; el modelo de persistencia subyacente no cambió.
 
 #### `GET /drivers`
-- **Descripción y Reglas de Negocio:** Lista los conductores de la empresa autenticada. Soporta dos modificadores de query ortogonales: `sort=-riskScore` reordena por score de riesgo descendente (derivado de `PerformanceMetric`); `limit=N` acota el tamaño del resultado. **Ordenar nunca muta la proyección:** con o sin `sort`, el `DriverResource` devuelto siempre trae todos sus campos poblados de la misma forma — `sort=-riskScore` únicamente cambia el orden (y, combinado con `limit`, la cantidad) de los elementos, nunca su forma.
+- **Descripción y Reglas de Negocio:** Lista los conductores de la empresa autenticada. Soporta modificadores de query ortogonales: `sort=-riskScore` reordena por score de riesgo descendente (derivado de `PerformanceMetric`); `limit=N` acota el tamaño del resultado. **Ordenar nunca muta la proyección:** con o sin `sort`, el `DriverResource` devuelto siempre trae todos sus campos poblados de la misma forma — `sort=-riskScore` únicamente cambia el orden (y, combinado con `limit`, la cantidad) de los elementos, nunca su forma. **Los conductores desactivados (`shiftStatus=INACTIVE`, ver `DELETE /drivers/{driverId}`) se excluyen por defecto**; pasar `includeInactive=true` los incluye para auditoría.
 - **I/O:**
-  - **Query:** `view` (string, opcional, `directory`), `sort` (string, opcional, `-riskScore`), `limit` (int, opcional).
+  - **Query:** `view` (string, opcional, `directory`), `sort` (string, opcional, `-riskScore`), `limit` (int, opcional), `includeInactive` (bool, opcional, default `false`).
   - **Retorna:** `200 OK` con `List<DriverResource>` completo (`id`, `fullName`, `operatorId`, `license`, `specialty`, `shiftStatus`, `lastAccess`, `riskScore`) en ambos casos.
 
 #### `GET /drivers/{driverId}`
@@ -107,11 +108,17 @@ Gestión de la flota (vehículos), directorio de conductores, y **Driving Sessio
   - **Body (`UpdateDriverResource`, todos opcionales):** `username`, `password` [mín. 6], `email`, `fullName`, `licenseNumber`, `workShift`.
   - **Retorna:** `200 OK` con `DriverResource`. `404` si no existe o no pertenece al tenant.
 
-#### `GET /vehicles`
-- **Descripción y Reglas de Negocio:** Lista los vehículos de la flota de la empresa autenticada. `view=inventory` devuelve el payload administrativo enriquecido; omitir `view` devuelve el payload compacto de selección móvil.
+#### `DELETE /drivers/{driverId}`
+- **Descripción y Reglas de Negocio:** **Desactivación (soft-delete) del conductor** — no es un borrado físico. El conductor se marca `shiftStatus=INACTIVE`, preservando íntegramente su histórico de reportes y Driving Sessions. A partir de ahí queda excluido del directorio por defecto (recuperable en `GET /drivers?includeInactive=true`). Ownership (`companyId` del JWT) validado antes de mutar. Requiere rol `ADMINISTRATOR` o `SUPERVISOR`.
 - **I/O:**
-  - **Query:** `view` (string, opcional, `inventory`).
-  - **Retorna:** `200 OK` con `List<VehicleResource>` (`id`, `code`, `model`, `category`, `status`, `assignedDriverName`, `shiftLabel`).
+  - **Path:** `{driverId}` (Long).
+  - **Retorna:** `204 No Content` (cuerpo vacío). `404` si no existe o no pertenece al tenant. `403` si el rol no es Administrador/Supervisor.
+
+#### `GET /vehicles`
+- **Descripción y Reglas de Negocio:** Lista los vehículos de la flota de la empresa autenticada. `view=inventory` devuelve el payload administrativo enriquecido; omitir `view` devuelve el payload compacto de selección móvil. Cada vehículo incluye el `deviceId` del device MineGuard vinculado (o `null` si no tiene device; un device en estado `retired` no cuenta como vinculado) — alimenta el filtro de inventario "sin device" y el chip de device por fila. **Los vehículos archivados (dados de baja, ver `DELETE /vehicles/{vehicleId}`) se excluyen por defecto**; pasar `includeArchived=true` los incluye para auditoría.
+- **I/O:**
+  - **Query:** `view` (string, opcional, `inventory`), `includeArchived` (bool, opcional, default `false`).
+  - **Retorna:** `200 OK` con `List<VehicleResource>` (`id`, `code`, `model`, `category`, `status`, `assignedDriverName`, `shiftLabel`, `deviceId`).
 
 #### `POST /vehicles`
 - **Descripción y Reglas de Negocio:** Registra un vehículo en la flota. Queda disponible inmediatamente para check-in vía `POST /vehicles/{vehicleId}/driving-sessions`. `status` por defecto es `OPERATIONAL` si se omite.
@@ -125,6 +132,12 @@ Gestión de la flota (vehículos), directorio de conductores, y **Driving Sessio
   - **Path:** `{vehicleId}` (Long).
   - **Body (`UpdateVehicleResource`, todos opcionales):** `code`, `model`, `category`, `status`, `assignedDriverName`, `shiftLabel`.
   - **Retorna:** `200 OK` con `VehicleResource`. `404` si no existe o no pertenece al tenant.
+
+#### `DELETE /vehicles/{vehicleId}`
+- **Descripción y Reglas de Negocio:** **Baja/archivado (soft-delete) del vehículo** — no es un borrado físico. El vehículo se marca como archivado, preservando su histórico de incidentes/telemetría/sesiones. A partir de ahí queda excluido del inventario por defecto (recuperable en `GET /vehicles?includeArchived=true`). **Regla de integridad:** se rechaza con `409 Conflict` mientras el vehículo **aún tenga un device activo vinculado** — el device debe moverse a otro vehículo (`PATCH /sensors/{id}`) o retirarse primero. Ownership validado antes de mutar. Requiere rol `ADMINISTRATOR` o `SUPERVISOR`.
+- **I/O:**
+  - **Path:** `{vehicleId}` (Long).
+  - **Retorna:** `204 No Content` (cuerpo vacío). `404` si no existe o no pertenece al tenant. `409` si el vehículo todavía tiene un device activo vinculado. `403` si el rol no es Administrador/Supervisor.
 
 #### `POST /vehicles/{vehicleId}/driving-sessions`
 - **Descripción y Reglas de Negocio:** Check-in de un conductor en un vehículo — abre una **Driving Session** con estado `IN_PROGRESS`. Reglas de negocio validadas, en orden: (1) el vehículo y el conductor deben existir y pertenecer a la empresa autenticada (`companyId` tomado del JWT, nunca del cliente) — si no, `404`; (2) **el vehículo debe estar en estado `OPERATIONAL`** — un vehículo en `MAINTENANCE` u otro estado no operativo no puede iniciar sesión, conflicto de estado (`409`); (3) **el conductor no debe tener ya otra Driving Session en curso** — un operador no puede conducir dos vehículos a la vez, conflicto de estado (`409`); (4) **el vehículo no debe tener ya otra Driving Session en curso** — hacer check-in dos veces sobre el mismo vehículo es un conflicto de estado (`409`), no un error de validación. Esta sesión es el recurso padre de las Alertas y CardiacReadings generadas durante el turno.
@@ -216,7 +229,7 @@ Registro de empresas (tenants) y todas las proyecciones analíticas computadas d
 - **Descripción y Reglas de Negocio:** Contadores consolidados de flota, catálogo y seguridad para una empresa: conductores/vehículos por estado, supervisores, salud de sensores, alertas críticas y eventos de fatiga. El `{companyId}` de la ruta debe coincidir exactamente con el tenant del JWT — pedir el de otra empresa retorna `404`, nunca datos ajenos.
 - **I/O:**
   - **Path:** `{companyId}` (Long, debe coincidir con el JWT).
-  - **Retorna:** `200 OK` con `CompanyKpisResource` (`companyId`, `driversTotal`, `driversInactive`, `vehiclesTotal`, `vehiclesOperational`, `vehiclesMaintenance`, `vehiclesAlert`, `vehiclesOperationalPercent`, `supervisorsTotal`, `supervisorsLocked`, `activeSensors`, `totalSensors`, `criticalAlerts`, `fatigueEvents`). `404` si `{companyId}` no coincide con el tenant autenticado.
+  - **Retorna:** `200 OK` con `CompanyKpisResource` (`companyId`, `driversTotal`, `driversInactive`, `vehiclesTotal`, `vehiclesOperational`, `vehiclesMaintenance`, `vehiclesAlert`, `vehiclesOperationalPercent`, `supervisorsTotal`, `supervisorsLocked`, `activeSensors`, `totalSensors`, `criticalAlerts`, `fatigueEvents`). **Salud de sensores:** `activeSensors` cuenta solo los devices en estado `active`; `totalSensors` cuenta los devices en servicio **excluyendo los `retired`** — un device retirado reserva su `deviceId` para siempre pero no cuenta como hardware de flota, así que el toolbar refleja la flota real en servicio. `404` si `{companyId}` no coincide con el tenant autenticado.
 
 #### `GET /companies/{companyId}/metrics/alerts-trend`
 - **Descripción y Reglas de Negocio:** Serie temporal de conteo de alertas/incidentes por bucket horario para la empresa dada, usada para identificar patrones (picos de fatiga a fin de turno, incidentes de proximidad en zonas de alto tráfico). Ownership de `{companyId}` validado.
@@ -246,7 +259,7 @@ Registro de empresas (tenants) y todas las proyecciones analíticas computadas d
 - **Descripción y Reglas de Negocio:** Histórico analítico de la empresa dada, un registro por Driving Session/incidente evaluado: conductor, vehículo, duración de sesión, conteo de alertas, score de fatiga y clasificación de riesgo. A diferencia del resto de endpoints de esta sección, el ownership de `{companyId}` se valida **dentro del propio `AnalyticsHistoryRowQueryService`** (contra `SecurityContextFacade`), no solo en el controlador — doble verificación. **Paginación obligatoria:** esta colección crece sin límite a lo largo de la vida del tenant, así que no existe una variante sin paginar — omitir `page`/`size` usa el default `page=0&size=20`, no "traer todo" (evita un `OutOfMemoryError` construyendo o renderizando una respuesta ilimitada).
 - **I/O:**
   - **Path:** `{companyId}` (Long, debe coincidir con el JWT). **Query:** `page` (int, opcional, default `0`), `size` (int, opcional, default `20`) — p. ej. `?page=0&size=20`.
-  - **Retorna:** `200 OK` con una página Spring Data (`Page<AnalyticsHistoryRowResource>`): `content` (el arreglo de registros: `id`, `date`, `time`, `criticality`, `criticalityLabel`, `incidentType`, `involved`, `location`), más los metadatos estándar de paginación (`totalElements`, `totalPages`, `number`, `size`, `first`, `last`, etc.). `404` si `{companyId}` no coincide con el tenant.
+  - **Retorna:** `200 OK` con una página Spring Data (`Page<AnalyticsHistoryRowResource>`): `content` (el arreglo de registros: `id`, `driverId`, `reportId`, `date`, `time`, `criticality`, `criticalityLabel`, `incidentType`, `involved`, `location`), más los metadatos estándar de paginación (`totalElements`, `totalPages`, `number`, `size`, `first`, `last`, etc.). **`reportId` es el ID del reporte generado a partir del incidente de esa fila** (resuelto vía `Report.incidentId → Incident`, tenant-scoped); permite al cliente enlazar directamente cada fila del histórico con `GET /drivers/{driverId}/reports/{reportId}` para abrir/exportar el detalle. Es `null` cuando el incidente aún no tiene reporte asociado. `404` si `{companyId}` no coincide con el tenant.
 
 #### `GET /companies/{companyId}/notices`
 - **Descripción y Reglas de Negocio:** Notificaciones administrativas de la empresa dada (cambios de suscripción, alertas de facturación, eventos de registro). Requiere rol ADMIN. Ownership de `{companyId}` validado.
@@ -288,7 +301,48 @@ Registro de empresas (tenants) y todas las proyecciones analíticas computadas d
 
 ---
 
-### 1.5 Platform (Cross-Tenant)
+### 1.5 Devices & Sensors (Provisioning)
+
+Aprovisionamiento y ciclo de vida del **device MineGuard** montado en cada vehículo. Un device es una **unidad edge unificada** que ya integra todos los sensores físicos (GPS, ritmo cardíaco, proximidad ultrasónica, colisión); por eso se modela como un único `Sensor` **1:1 con el vehículo** — no existe registro por-sensor individual. Este es el registro que el pipeline de telemetría (§3) resuelve en ingesta: `POST /api/v1/telemetry` busca el sensor por `(device_id, companyId)` para descubrir a qué vehículo pertenece la lectura. Hasta que un device esté registrado aquí, la telemetría de ese `device_id` se rechaza con `404`.
+
+**Secuencia de `deviceId` por empresa:** cada empresa lleva su propio contador monotónico de `deviceId` que arranca en 1 (empresa A: 1,2,3…; empresa B: 1,2,3…, sin colisión entre tenants). El id se sirve bajo un lock de escritura pesimista que serializa a supervisores concurrentes — dos altas en paralelo nunca reciben el mismo id. **El contador nunca decrece: un `deviceId` retirado queda reservado para siempre y jamás se recicla** (un `link`/registro que hace rollback simplemente deja un hueco en la secuencia, lo cual es aceptable). El `deviceId` se serializa como string aunque internamente sea un entero.
+
+**Ciclo de vida (`status`):** `active` (en servicio, cuenta para KPIs) → `inactive` (deshabilitado temporalmente) → `retired` (**estado terminal**: reserva el `deviceId` de forma permanente y saca al device de los KPIs `activeSensors`/`totalSensors`).
+
+#### `POST /vehicles/{vehicleId}/sensor`
+- **Descripción y Reglas de Negocio:** **Vincula el device único a un vehículo** — es el flujo de un solo paso que usa el panel web del supervisor justo después de crear el vehículo. **El body va vacío a propósito:** el servidor asigna el siguiente `deviceId` secuencial de la empresa, fija `sensorType` en `"MineGuard Device"` y el `status` inicial en `"active"`. El vehículo debe pertenecer al tenant del JWT. Un vehículo que ya tiene un device es rechazado (`409`). Requiere rol `ADMINISTRATOR` o `SUPERVISOR`.
+- **I/O:**
+  - **Path:** `{vehicleId}` (Long).
+  - **Body:** vacío (ningún campo es aceptado ni requerido).
+  - **Retorna:** `201 Created` con `SensorResource` (`id`, `vehicleId`, `sensorType`, `deviceId`, `status`, `companyId`). `404` si el vehículo no existe o no pertenece al tenant. `409` si el vehículo ya tiene un device vinculado. `403` si el rol no es Administrador/Supervisor.
+
+#### `GET /vehicles/{vehicleId}/sensor`
+- **Descripción y Reglas de Negocio:** Devuelve el device actualmente montado en el vehículo. Alimenta el filtro de inventario "sin device". Requiere rol `ADMINISTRATOR` o `SUPERVISOR`.
+- **I/O:**
+  - **Path:** `{vehicleId}` (Long).
+  - **Retorna:** `200 OK` con `SensorResource`. `404` cuando el vehículo no tiene device (o no pertenece al tenant). `403` si el rol no es Administrador/Supervisor.
+
+#### `GET /sensors`
+- **Descripción y Reglas de Negocio:** Lista todos los sensores/devices de la empresa autenticada (aislado por tenant). Colección de solo lectura para auditoría, **restringida a rol `ADMINISTRATOR`**.
+- **I/O:**
+  - **Retorna:** `200 OK` con `List<SensorResource>`. `403` si el rol no es Administrador.
+
+#### `POST /sensors`
+- **Descripción y Reglas de Negocio:** Registro explícito de un sensor y su montaje en uno de los vehículos de la empresa (variante administrativa de la vinculación 1:1, con `deviceId` provisto por el cliente). El `deviceId` es el identificador que el device físico envía como `device_id` en sus payloads de telemetría — **debe ser único dentro de la empresa**. La empresa dueña es siempre el tenant del JWT y **no puede enviarse en el body** — el DTO está anotado `@JsonIgnoreProperties(ignoreUnknown = false)`, así que cualquier campo no reconocido (incluido `companyId`) se rechaza con `400`.
+- **I/O:**
+  - **Body (`CreateSensorResource`):** `vehicleId` (Long, requerido), `deviceId` (string, requerido), `sensorType` (string, opcional — default `"MineGuard Device"`), `status` (string, opcional — default `"active"`). Ningún otro campo es aceptado.
+  - **Retorna:** `201 Created` con `SensorResource`. `400` si el body es inválido o incluye una propiedad no reconocida. `404` si el vehículo no existe o no pertenece al tenant. `409` si ya existe un sensor con ese `deviceId` en la empresa. `403` si el JWT falta o es inválido.
+
+#### `PATCH /sensors/{id}`
+- **Descripción y Reglas de Negocio:** **Actualización parcial de un device: reasignarlo y/o cambiar su estado.** Enviar `vehicleId` lo **mueve a otro vehículo** conservando su `deviceId` (el entero que indexa la unidad embebida); el vehículo destino debe pertenecer al tenant y **no debe tener ya un device** (`409`). Enviar `status` (`active` | `inactive` | `retired`) cambia su estado de ciclo de vida; `retired` reserva el id de forma permanente y saca al device de los KPIs de sensores. Ambos campos pueden ir juntos; los omitidos se conservan (semántica PATCH real). Requiere rol `ADMINISTRATOR` o `SUPERVISOR`.
+- **I/O:**
+  - **Path:** `{id}` (Long — id numérico del device/sensor).
+  - **Body (`UpdateSensorResource`, ambos opcionales):** `vehicleId` (Long), `status` (string: `active`, `inactive`, `retired`).
+  - **Retorna:** `200 OK` con `SensorResource`. `400` si el `status` tiene un valor inválido. `404` si el device o el vehículo destino no existen en este tenant. `409` si el vehículo destino ya tiene un device. `403` si el rol no es Administrador/Supervisor.
+
+---
+
+### 1.6 Platform (Cross-Tenant)
 
 #### `GET /platform/metrics`
 - **Descripción y Reglas de Negocio:** Único endpoint intencionalmente **cross-tenant** de todo el contrato — no aísla por empresa. Expone contadores globales de plataforma (empresas registradas, suscripciones activas, usuarios totales, alertas globales) y requiere rol `ADMIN`/`GLOBAL_ADMIN`. No confundir con `GET /companies/{companyId}/kpis`, que sí está aislado por tenant. **Retorna el objeto directamente, no una lista** — existe exactamente un resumen de plataforma, así que envolverlo en un arreglo de un solo elemento era una proyección incorrecta que obligaba al cliente a desempaquetarlo innecesariamente.
@@ -329,6 +383,18 @@ El campo `status` de `Vehicle` (`VehicleStatus`) determina si un vehículo puede
 | `RESTRICTED_ROUTE` | Vehículo limitado a rutas restringidas. | No — `409 Conflict`. |
 
 **Regla de negocio:** `POST /vehicles/{vehicleId}/driving-sessions` rechaza el check-in con `409 Conflict` ("Vehicle is not available for operation") si el vehículo no está en `OPERATIONAL`, sin importar cuál de los otros cinco estados tenga.
+
+### Soft-Delete (Desactivación / Archivado)
+
+La plataforma **nunca borra físicamente** un recurso operativo con histórico asociado. `DELETE` sobre un conductor o un vehículo es un soft-delete que preserva reportes, incidentes, telemetría y Driving Sessions para auditoría y cumplimiento:
+
+| Recurso | Endpoint | Marca aplicada | Visibilidad tras el borrado |
+|---|---|---|---|
+| Conductor | `DELETE /drivers/{driverId}` | `shiftStatus = INACTIVE` | Excluido de `GET /drivers` por defecto; visible con `?includeInactive=true`. |
+| Vehículo | `DELETE /vehicles/{vehicleId}` | `archived = true` | Excluido de `GET /vehicles` por defecto; visible con `?includeArchived=true`. |
+| Device / Sensor | `PATCH /sensors/{id}` con `status=retired` | `status = retired` | Reserva el `deviceId` para siempre; excluido de los KPIs `activeSensors`/`totalSensors`. |
+
+Ambos `DELETE` requieren rol `ADMINISTRATOR` o `SUPERVISOR` y retornan `204 No Content`. Archivar un vehículo con un device activo aún vinculado se rechaza con `409` — primero hay que mover el device (`PATCH /sensors/{id}` con `vehicleId`) o retirarlo (`status=retired`).
 
 ### Exportación de Documentos (Content Negotiation)
 
@@ -408,12 +474,13 @@ Content-Type: `application/json`. Todos los campos usan `snake_case` estricto:
 
 Al recibir un payload válido, el backend ejecuta, en orden, las siguientes acciones — todas dentro de una única transacción de ingesta:
 
-1. **Resolución de sensor (scoped por empresa):** busca el sensor por `device_id` **dentro del tenant de la API key**, obteniendo el `vehicleId` al que está montado y la **Driving Session activa** (si existe un check-in en curso para ese vehículo). Si el `device_id` no existe para esa empresa → `404`.
-2. **Persistencia de ritmo cardíaco:** si `bpm > 0`, se persiste como `SensorReading` de tipo `heart_rate`, disponible luego en `GET /driving-sessions/{sessionId}/cardiac-readings`.
-3. **Actualización de posición en vivo:** si `lat` y `lng` están presentes, actualiza el marcador GPS del vehículo, reflejado en `GET /vehicles/positions`.
-4. **Alerta crítica automática de proximidad/colisión:** si `collision == true` **O** `distance_cm ≤ 40`, y existe una **Driving Session activa** para el vehículo, se genera automáticamente una `Alert` de severidad `CRITICAL` vinculada a esa sesión (visible en `GET /alerts`). Si no hay una sesión activa, la alerta **no** se genera — el dispositivo debe asumir que la generación de alertas automáticas requiere que el vehículo tenga un check-in en curso.
+1. **Resolución de sensor (scoped por empresa):** busca el sensor/device por `device_id` **dentro del tenant de la API key** (registrado previamente vía §1.5), obteniendo el `vehicleId` al que está montado y la **Driving Session activa** (si existe un check-in en curso para ese vehículo). Si el `device_id` no existe para esa empresa → `404`.
+2. **Persistencia de ritmo cardíaco (`cardiac`):** si `bpm > 0`, se persiste como `SensorReading` de tipo `heart_rate`, disponible luego en `GET /driving-sessions/{sessionId}/cardiac-readings`.
+3. **Actualización de posición en vivo (`location`):** si `lat` y `lng` están presentes, actualiza el marcador GPS del vehículo, reflejado en `GET /vehicles/positions`.
+4. **Persistencia de muestras de proximidad/colisión (`proximity` / `collision`):** si `distance_cm` está presente, se persiste como `SensorReading` de tipo `distance_cm` (acción `proximity`); si `collision == true`, se persiste como `SensorReading` de tipo `collision` (acción `collision`). Esta persistencia ocurre **siempre que el campo venga en el payload**, independientemente de si se cruza o no el umbral de alerta.
+5. **Alerta crítica automática de proximidad/colisión (`alert`):** si `collision == true` **O** `distance_cm ≤ 20` (umbral de seguridad, en centímetros), se genera automáticamente una `Alert` de severidad `CRITICAL` (visible en `GET /alerts`). **La alerta se genera exista o no una Driving Session activa:** si hay una sesión en curso, la alerta queda vinculada a ella; si no la hay, la alerta se genera igualmente sin vínculo de sesión (su descripción indica "without active trip"). *(Cambio de comportamiento respecto de versiones previas del contrato, donde la alerta requería una sesión activa y el umbral era 40 cm.)*
 
-El campo `processed` de la respuesta confirma exactamente cuáles de estas acciones se ejecutaron en cada llamada.
+El campo `processed` de la respuesta confirma exactamente cuáles de estas acciones se ejecutaron en cada llamada (`cardiac`, `location`, `proximity`, `collision`, `alert`, en cualquier combinación).
 
 ### Respuesta
 
@@ -432,7 +499,7 @@ El campo `processed` de la respuesta confirma exactamente cuáles de estas accio
 
 | Status | Significado | Acción esperada del dispositivo |
 |---|---|---|
-| **201 Created** | Telemetría procesada correctamente. El campo `processed` (arreglo JSON) indica qué acciones se ejecutaron (`cardiac`, `location`, `alert`, en cualquier combinación). | Continuar el ciclo normal de envío. No reintentar. |
+| **201 Created** | Telemetría procesada correctamente. El campo `processed` (arreglo JSON) indica qué acciones se ejecutaron (`cardiac`, `location`, `proximity`, `collision`, `alert`, en cualquier combinación). | Continuar el ciclo normal de envío. No reintentar. |
 | **401 Unauthorized** | El header `X-API-Key` falta o no coincide con ninguna empresa registrada. | **Detener el envío y alertar a operaciones** — clave mal configurada o revocada; reintentar sin corregirla no tendrá efecto. |
 | **404 Not Found** | El `device_id` enviado no está registrado bajo la empresa dueña de la `X-API-Key` usada. | El dispositivo no ha sido dado de alta (o fue dado de alta bajo la empresa equivocada). Requiere aprovisionamiento manual — no reintentar sin intervención. |
 | **400 Bad Request** | El payload JSON es inválido o no cumple el contrato de campos. | Corregir el payload en firmware. |

@@ -47,8 +47,4 @@ export const environment = {
   // Devices (MineGuard edge units) — one device per vehicle, registered by admin.
   // Backend models a device as a "sensor" resource (GET/POST /api/v1/sensors).
   platformProviderSensorsEndpointPath:           '/sensors',
-
-  // Service Design (no v2 API counterpart yet)
-  platformProviderRoutesEndpointPath: '/routes',
-  platformProviderShiftsEndpointPath: '/shifts',
 };

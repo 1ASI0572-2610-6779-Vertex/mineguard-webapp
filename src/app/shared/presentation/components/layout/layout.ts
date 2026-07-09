@@ -85,12 +85,6 @@ export class Layout implements OnInit {
       roles: ['Supervisor'],
     },
     {
-      icon: 'alt_route',
-      path: '/route-design',
-      title: 'option.routeDesign',
-      roles: ['Supervisor'],
-    },
-    {
       icon: 'map',
       path: '/live-map',
       title: 'option.liveMap',
