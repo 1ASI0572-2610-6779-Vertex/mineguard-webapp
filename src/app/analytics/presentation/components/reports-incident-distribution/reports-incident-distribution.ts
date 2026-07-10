@@ -18,8 +18,8 @@ interface DonutSegment {
 
 /** Maps the className coming from the API to a CSS variable colour. */
 const CLASS_COLOR: Record<string, string> = {
-  'color-1': 'var(--color-danger-main)',
-  'color-2': 'var(--color-warning-main)',
+  'color-1': 'var(--color-warning-main)', // naranja
+  'color-2': 'var(--color-danger-main)',  // rojo
   'color-3': 'var(--color-info-main)',
   'color-4': '#6b7280',
   'color-5': 'var(--color-success-main)',

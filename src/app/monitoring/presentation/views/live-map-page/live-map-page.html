@@ -41,7 +41,7 @@
           <span class="fc-label">{{ 'monitoring.liveMap.fleet.maintenance' | translate }}</span>
         </div>
         <div class="fleet-counter fleet-counter--danger">
-          <span class="fc-value">{{ s.alert }}</span>
+          <span class="fc-value">{{ criticalAlerts().length }}</span>
           <span class="fc-label">{{ 'monitoring.liveMap.fleet.alert' | translate }}</span>
         </div>
       </div>
