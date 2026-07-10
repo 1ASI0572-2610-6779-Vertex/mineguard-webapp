@@ -103,6 +103,7 @@ function incidentDistributionFromAlerts(
 const CRITICALITY_BY_PRIORITY: Record<string, { key: string; label: string }> = {
   critical: { key: 'high', label: 'Crítico' },
   high: { key: 'high', label: 'Crítico' },
+  warning: { key: 'medium', label: 'Medio' },
   medium: { key: 'medium', label: 'Medio' },
   low: { key: 'low', label: 'Bajo' },
 };

@@ -1,12 +1,15 @@
 import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-response';
-import { AlertPriority } from '../domain/model/alert-priority';
 
 export interface AlertResource extends BaseResource {
   id: number;
   code: string;
   /** Raw backend discriminator — narrowed to `AlertType` by the assembler. */
   type: string;
-  priority: AlertPriority;
+  /**
+   * Raw lowercase severity (`critical`, `high`, `warning`, `medium`, `low`) —
+   * narrowed to `AlertPriority` by the assembler.
+   */
+  priority: string;
   /** Raw backend status (`active`, …) — narrowed to `AlertStatus` by the assembler. */
   status: string;
   occurredAt: string;
