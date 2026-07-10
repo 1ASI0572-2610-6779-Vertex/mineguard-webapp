@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
 
 import { Alert } from '../domain/model/alert.entity';
-import { AlertPriority } from '../domain/model/alert-priority';
+import { normalizeAlertPriority } from '../domain/model/alert-priority';
 import { AuditLogEntry } from '../domain/model/audit-log-entry.entity';
 import { CardiacReading } from '../domain/model/cardiac-reading.entity';
 import { ClassifyAlertCommand } from '../domain/model/classify-alert.command';
@@ -41,8 +41,8 @@ interface DashboardAlertSnapshot {
   resolutionNotes: string;
 }
 
+/** See `AlertAssembler` — `proximity` stays its own category, `collision` folds in. */
 const DASHBOARD_ALERT_TYPE_ALIASES: Readonly<Record<string, AlertType>> = {
-  proximity: 'proximity_collision',
   collision: 'proximity_collision',
 };
 
@@ -59,13 +59,6 @@ function normalizeDashboardAlertType(raw: string): AlertType {
 function normalizeDashboardAlertStatus(raw: string): AlertStatus {
   const key = (raw ?? '').toLowerCase();
   return DASHBOARD_ALERT_STATUS_ALIASES[key] ?? (key as AlertStatus);
-}
-
-function normalizeDashboardAlertPriority(raw: string): AlertPriority {
-  const key = (raw ?? 'low').toLowerCase();
-  return key === 'critical' || key === 'high' || key === 'medium' || key === 'low'
-    ? key
-    : 'low';
 }
 
 @Injectable({ providedIn: 'root' })
@@ -136,7 +129,7 @@ export class MonitoringStore implements OnDestroy {
       id: alert.id,
       code: alert.alertCode,
       type: normalizeDashboardAlertType(alert.category),
-      priority: normalizeDashboardAlertPriority(alert.severity),
+      priority: normalizeAlertPriority(alert.severity),
       status: normalizeDashboardAlertStatus(alert.status),
       occurredAt: alert.time,
       title: alert.title,
@@ -236,7 +229,8 @@ export class MonitoringStore implements OnDestroy {
 
   /**
    * Loads the latest cardiac reading for a specific Driving Session.
-   * The endpoint returns a single reading (the session's active driver).
+   * The endpoint returns a single reading (the session's active driver), or
+   * `null` when the session has not reported a beat yet.
    */
   loadCardiacReading(sessionId: number): void {
     this.errorSignal.set(null);

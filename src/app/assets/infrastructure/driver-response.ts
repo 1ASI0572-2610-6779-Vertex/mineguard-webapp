@@ -9,8 +9,11 @@ export interface DriverResource extends BaseResource {
   specialty: string;
   shiftStatus: DriverShiftStatus;
   lastAccess: string;
-  /** Risk score derived from PerformanceMetric; drives `GET /drivers?sort=-riskScore`. */
-  riskScore: number;
+  /**
+   * Unbounded cumulative penalty, only computed for `GET /drivers?sort=-riskScore`.
+   * `null` on every other call — see `Driver.riskScore`.
+   */
+  riskScore: number | null;
 }
 
 export interface DriversResponse extends BaseResponse {}

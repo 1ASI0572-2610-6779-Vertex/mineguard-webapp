@@ -22,6 +22,20 @@
   --color-info-main:         #257CF6;
   --color-info-surface:      #E9F2FE;
 
+  /* Alert severity ramp — one hue step per AlertPriority tier, most severe
+     first. The backend grades telemetry alerts across all five, so a badge
+     that only knows `critical` silently falls through to unstyled. */
+  --color-severity-critical-main:    #BA1919;
+  --color-severity-critical-surface: #F6E3E3;
+  --color-severity-high-main:        #9A3412;
+  --color-severity-high-surface:     #FFEDD5;
+  --color-severity-warning-main:     #92400E;
+  --color-severity-warning-surface:  #FFF3D9;
+  --color-severity-medium-main:      #854D0E;
+  --color-severity-medium-surface:   #FEF9C3;
+  --color-severity-low-main:         #6B7280;
+  --color-severity-low-surface:      #F4F4F5;
+
   /* Semantic — Accent (brand blue) */
   --color-accent-main:       #1F41AF;
   --color-accent-surface:    #E8ECF7;

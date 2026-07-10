@@ -1,5 +1,6 @@
 import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { Alert } from '../domain/model/alert.entity';
+import { normalizeAlertPriority } from '../domain/model/alert-priority';
 import { AlertStatus } from '../domain/model/alert-status';
 import { AlertType } from '../domain/model/alert-type';
 import { AlertResource, AlertsResponse } from './alert-response';
@@ -8,15 +9,16 @@ import { AlertResource, AlertsResponse } from './alert-response';
  * Backend alert discriminators that don't match {@link AlertType} verbatim.
  *
  * @remarks
- * Telemetry-raised alerts (`POST /telemetry`) tag the proximity threshold and
- * the impact event with the same action names the ingest response reports
- * (`proximity`, `collision`), while the analytics endpoints use the canonical
- * `proximity_collision`. Both describe the same alert category, so they
- * collapse onto one type here — otherwise the inbox loses its color band and
- * the `monitoring.alerts.type.*` lookup renders the raw key.
+ * `POST /telemetry` reports a confirmed impact under the ingest action name
+ * (`collision`), while the analytics endpoints use the canonical
+ * `proximity_collision`. They describe the same event, so they collapse here.
+ *
+ * `proximity` is deliberately *not* aliased onto `proximity_collision`: it is
+ * its own category (an obstacle detected, no impact) and carries either
+ * `critical` or `medium` severity depending on distance. Folding it into the
+ * collision type would report near-misses as crashes.
  */
 const ALERT_TYPE_ALIASES: Readonly<Record<string, AlertType>> = {
-  proximity: 'proximity_collision',
   collision: 'proximity_collision',
 };
 
@@ -55,7 +57,7 @@ export class AlertAssembler
       id: resource.id,
       code: resource.code,
       type: normalizeAlertType(resource.type),
-      priority: resource.priority,
+      priority: normalizeAlertPriority(resource.priority),
       status: normalizeAlertStatus(resource.status),
       occurredAt: resource.occurredAt,
       title: resource.title,

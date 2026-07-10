@@ -12,7 +12,7 @@ export class Driver implements BaseEntity {
   private _specialty: string;
   private _shiftStatus: DriverShiftStatus;
   private _lastAccess: string;
-  private _riskScore: number;
+  private _riskScore: number | null;
 
   constructor(props: {
     id: number;
@@ -22,7 +22,14 @@ export class Driver implements BaseEntity {
     specialty: string;
     shiftStatus: DriverShiftStatus;
     lastAccess: string;
-    riskScore?: number;
+    /**
+     * Unbounded cumulative penalty (20 points per critical alert), **not** a
+     * 0–100 percentage. The backend only computes it for
+     * `GET /drivers?sort=-riskScore`; every other call leaves it `null`, which
+     * means "not calculated" — never zero risk. For a clamped 0–100 figure use
+     * `safetyScore` from `GET /drivers/{driverId}/scores` instead.
+     */
+    riskScore?: number | null;
   }) {
     this._id = props.id;
     this._fullName = props.fullName;
@@ -31,7 +38,7 @@ export class Driver implements BaseEntity {
     this._specialty = props.specialty;
     this._shiftStatus = props.shiftStatus;
     this._lastAccess = props.lastAccess;
-    this._riskScore = props.riskScore ?? 0;
+    this._riskScore = props.riskScore ?? null;
   }
 
   get id(): number {
@@ -90,11 +97,11 @@ export class Driver implements BaseEntity {
     this._lastAccess = value;
   }
 
-  get riskScore(): number {
+  get riskScore(): number | null {
     return this._riskScore;
   }
 
-  set riskScore(value: number) {
+  set riskScore(value: number | null) {
     this._riskScore = value;
   }
 }
