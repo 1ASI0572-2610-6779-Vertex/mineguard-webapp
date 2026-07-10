@@ -21,6 +21,9 @@ import { exportFormatExtension, triggerBlobDownload } from '../../shared/infrast
 /** Statuses that mean an alert is no longer demanding attention. */
 const CLOSED_ALERT_STATUSES: readonly string[] = ['resolved', 'false_alarm'];
 
+/** Alert categories `/metrics/fatigue` documents as its source, per driving session. */
+const FATIGUE_ALERT_CATEGORIES: readonly string[] = ['fatigue_risk', 'high_heart_rate'];
+
 /**
  * Buckets the operational alert feed into an hourly series.
  *
@@ -97,6 +100,38 @@ function incidentDistributionFromAlerts(
     percent: Math.round((count / alerts.length) * 100),
     className: DISTRIBUTION_CLASSES[index % DISTRIBUTION_CLASSES.length],
   }));
+}
+
+/**
+ * Groups the operational alert feed by driver into fatigue event bars.
+ *
+ * @remarks
+ * Stands in for `GET /companies/{id}/metrics/fatigue`, which returns one row
+ * per driver but with `fatigueEvents: 0` for all of them — same aggregation
+ * gap `criticalAlertsCount` covers for the KPI snapshot. Counts
+ * `fatigue_risk`/`high_heart_rate` alerts per driver, matching what the
+ * backend endpoint documents as its own source.
+ */
+function fatigueBarsFromAlerts(alerts: DashboardRecentAlert[]): AnalyticsFatigueBar[] {
+  const byDriver = new Map<string, number>();
+  for (const alert of alerts) {
+    if (!FATIGUE_ALERT_CATEGORIES.includes(alert.category)) continue;
+    byDriver.set(alert.driverName, (byDriver.get(alert.driverName) ?? 0) + 1);
+  }
+  if (!byDriver.size) return [];
+
+  const ranked = [...byDriver.entries()].sort((a, b) => b[1] - a[1]);
+  const max = ranked[0][1];
+  return ranked.map(
+    ([driverName, fatigueEvents], index) =>
+      new AnalyticsFatigueBar({
+        id: index + 1,
+        driverId: index + 1,
+        driverName,
+        fatigueEvents,
+        width: Math.round((fatigueEvents / max) * 100),
+      }),
+  );
 }
 
 /** Table criticality buckets, keyed off the alert priority. */
@@ -182,12 +217,29 @@ export class AnalyticsStore {
       ).length,
   );
 
+  /**
+   * Fatigue-related events counted from the operational feed.
+   *
+   * @remarks
+   * `GET /companies/{id}/kpis` reports `fatigueEvents: 0` even while `/alerts`
+   * carries `fatigue_risk`/`high_heart_rate` entries — same aggregation gap
+   * `criticalAlertsCount` covers above. Counts both categories, matching what
+   * `/metrics/fatigue` documents as its own source.
+   */
+  readonly fatigueEventsCount = computed(
+    () =>
+      this.operationalAlertsSignal().filter((alert) =>
+        FATIGUE_ALERT_CATEGORIES.includes(alert.category),
+      ).length,
+  );
+
   /** Dashboard KPI snapshot, derived from the shared tenant-KPIs cache. */
   readonly dashboardSummary = computed(() => {
     const kpis = this.kpisStore.kpis();
     if (!kpis) return null;
     const summary = DashboardSummary.fromKpis(kpis);
     summary.criticalAlerts = this.criticalAlertsCount();
+    summary.fatigueEvents = this.fatigueEventsCount();
     return summary;
   });
 
@@ -207,7 +259,14 @@ export class AnalyticsStore {
   readonly operationalAlerts = this.operationalAlertsSignal.asReadonly();
   readonly performanceMetrics = this.performanceMetricsSignal.asReadonly();
   readonly reports = this.reportsSignal.asReadonly();
-  readonly fatigueBars = this.fatigueBarsSignal.asReadonly();
+
+  /** Backend fatigue bars when they carry events, else ones derived from the alert feed. */
+  readonly fatigueBars = computed(() => {
+    const fromBackend = this.fatigueBarsSignal();
+    return fromBackend.some((bar) => bar.fatigueEvents > 0)
+      ? fromBackend
+      : fatigueBarsFromAlerts(this.operationalAlertsSignal());
+  });
 
   /** Backend breakdown when populated, else one grouped from the alert feed. */
   readonly incidentDistribution = computed(() => {
