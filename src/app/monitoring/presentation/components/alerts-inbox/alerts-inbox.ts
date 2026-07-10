@@ -3,9 +3,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { Alert } from '../../../domain/model/alert.entity';
+import { alertPriorityIcon, alertPriorityRank } from '../../../domain/model/alert-priority';
+import { alertTypeIcon } from '../../../domain/model/alert-type';
 
 type StatusFilter = 'all' | 'open' | 'reviewed' | 'resolved';
-type PriorityFilter = 'all' | 'critical' | 'high';
+type PriorityFilter = 'all' | 'critical' | 'high' | 'medium';
 type SortMode = 'date-desc' | 'date-asc' | 'priority';
 
 @Component({
@@ -40,6 +42,7 @@ export class AlertsInbox {
     { key: 'all',      label: 'monitoring.alerts.filter.all' },
     { key: 'critical', label: 'monitoring.alerts.filter.critical' },
     { key: 'high',     label: 'monitoring.alerts.filter.high' },
+    { key: 'medium',   label: 'monitoring.alerts.filter.medium' },
   ];
 
   readonly statusCounts = computed(() => {
@@ -51,6 +54,7 @@ export class AlertsInbox {
       resolved: all.filter((a) => a.status === 'resolved').length,
       critical: all.filter((a) => a.priority === 'critical').length,
       high:     all.filter((a) => a.priority === 'high').length,
+      medium:   all.filter((a) => a.priority === 'medium').length,
     };
   });
 
@@ -65,8 +69,8 @@ export class AlertsInbox {
 
     return [...list].sort((a, b) => {
       if (sort === 'priority') {
-        const pa = a.priority === 'critical' ? 0 : 1;
-        const pb = b.priority === 'critical' ? 0 : 1;
+        const pa = alertPriorityRank(a.priority);
+        const pb = alertPriorityRank(b.priority);
         return pa - pb || new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime();
       }
       const ta = new Date(a.occurredAt).getTime();
@@ -80,11 +84,11 @@ export class AlertsInbox {
   }
 
   typeIcon(type: string): string {
-    if (type === 'fatigue_risk') return 'bedtime';
-    if (type === 'high_heart_rate') return 'favorite';
-    if (type === 'restricted_zone_entry') return 'do_not_enter';
-    if (type === 'connection_lost') return 'signal_wifi_off';
-    return 'car_crash'; // proximity_collision
+    return alertTypeIcon(type);
+  }
+
+  priorityIcon(priority: string): string {
+    return alertPriorityIcon(priority);
   }
 
   elapsedFor(isoTimestamp: string): { value: number; unit: 'minutes' | 'hours' | 'days' } {

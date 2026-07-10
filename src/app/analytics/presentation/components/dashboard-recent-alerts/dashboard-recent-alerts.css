@@ -167,9 +167,11 @@ td {
 
 .badge-icon { font-size: 13px; width: 13px; height: 13px; }
 
-.severity-badge--high   { background: var(--color-danger-surface);  color: var(--color-danger-main); }
-.severity-badge--medium { background: var(--color-warning-surface); color: #92400e; }
-.severity-badge--low    { background: var(--color-success-surface); color: #15803d; }
+.severity-badge--critical { background: var(--color-severity-critical-surface); color: var(--color-severity-critical-main); }
+.severity-badge--high     { background: var(--color-severity-high-surface);     color: var(--color-severity-high-main); }
+.severity-badge--warning  { background: var(--color-severity-warning-surface);  color: var(--color-severity-warning-main); }
+.severity-badge--medium   { background: var(--color-severity-medium-surface);   color: var(--color-severity-medium-main); }
+.severity-badge--low      { background: var(--color-success-surface);           color: #15803d; }
 
 /* ── Action column ──────────────────────────────────────────────── */
 td.col-action { text-align: right; }

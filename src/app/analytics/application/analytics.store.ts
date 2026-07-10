@@ -103,6 +103,7 @@ function incidentDistributionFromAlerts(
 const CRITICALITY_BY_PRIORITY: Record<string, { key: string; label: string }> = {
   critical: { key: 'high', label: 'Crítico' },
   high: { key: 'high', label: 'Crítico' },
+  warning: { key: 'medium', label: 'Medio' },
   medium: { key: 'medium', label: 'Medio' },
   low: { key: 'low', label: 'Bajo' },
 };
@@ -177,8 +178,7 @@ export class AnalyticsStore {
   readonly criticalAlertsCount = computed(
     () =>
       this.operationalAlertsSignal().filter(
-        (alert) =>
-          alert.severity === 'critical' && !CLOSED_ALERT_STATUSES.includes(alert.status),
+        (alert) => alert.severity === 'critical' && !CLOSED_ALERT_STATUSES.includes(alert.status),
       ).length,
   );
 
@@ -204,6 +204,7 @@ export class AnalyticsStore {
 
   /** Newest five entries of the operational feed, for the "Live Alert Log" table. */
   readonly recentAlerts = computed(() => this.operationalAlertsSignal().slice(0, 5));
+  readonly operationalAlerts = this.operationalAlertsSignal.asReadonly();
   readonly performanceMetrics = this.performanceMetricsSignal.asReadonly();
   readonly reports = this.reportsSignal.asReadonly();
   readonly fatigueBars = this.fatigueBarsSignal.asReadonly();
@@ -245,17 +246,26 @@ export class AnalyticsStore {
   }
 
   loadDashboardTrend(): void {
-    this.analyticsApi.getDashboardTrend().pipe(takeUntilDestroyed()).subscribe({
-      next: (trend) => this.dashboardTrendSignal.set(trend),
-      error: (err) => this.handleFailure(err, 'Failed to load dashboard trend'),
-    });
+    this.analyticsApi
+      .getDashboardTrend()
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (trend) => this.dashboardTrendSignal.set(trend),
+        error: (err) => this.handleFailure(err, 'Failed to load dashboard trend'),
+      });
   }
 
   loadRiskDrivers(): void {
-    this.analyticsApi.getDashboardRiskDrivers().pipe(takeUntilDestroyed()).subscribe({
-      next: (drivers) => this.riskDriversSignal.set(drivers),
-      error: (err) => this.handleFailure(err, 'Failed to load risk drivers'),
-    });
+    this.analyticsApi
+      .getDashboardRiskDrivers()
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (drivers) => {
+          this.riskDriversSignal.set(drivers);
+          this.recalculateRiskScores();
+        },
+        error: (err) => this.handleFailure(err, 'Failed to load risk drivers'),
+      });
   }
 
   /**
@@ -264,10 +274,16 @@ export class AnalyticsStore {
    * of them.
    */
   loadRecentAlerts(): void {
-    this.analyticsApi.getOperationalAlerts().pipe(takeUntilDestroyed()).subscribe({
-      next: (alerts) => this.operationalAlertsSignal.set(alerts),
-      error: (err) => this.handleFailure(err, 'Failed to load recent alerts'),
-    });
+    this.analyticsApi
+      .getOperationalAlerts()
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (alerts) => {
+          this.operationalAlertsSignal.set(alerts);
+          this.recalculateRiskScores();
+        },
+        error: (err) => this.handleFailure(err, 'Failed to load recent alerts'),
+      });
   }
 
   loadPerformanceMetrics(driverId: number): void {
@@ -356,11 +372,53 @@ export class AnalyticsStore {
   private handleFailure(error: unknown, fallback: string): void {
     this.loadingSignal.set(false);
     if (error instanceof Error) {
-      this.errorSignal.set(error.message.includes('Resource not found')
-        ? `${fallback}: Not found`
-        : error.message);
+      this.errorSignal.set(
+        error.message.includes('Resource not found') ? `${fallback}: Not found` : error.message,
+      );
     } else {
       this.errorSignal.set(fallback);
     }
+  }
+
+  private recalculateRiskScores(): void {
+    const alerts = this.operationalAlertsSignal();
+
+    const updatedDrivers = this.riskDriversSignal().map((driver) => {
+      let score = 0;
+
+      alerts
+        .filter((alert) => alert.driverName === driver.driverName)
+        .forEach((alert) => {
+          switch (alert.severity.toLowerCase()) {
+            case 'critical':
+              score += 20;
+              break;
+
+            case 'high':
+              score += 15;
+              break;
+
+            case 'warning':
+              score += 10;
+              break;
+
+            case 'medium':
+              score += 5;
+              break;
+
+            case 'low':
+              score += 2;
+              break;
+          }
+        });
+
+      driver.riskScore = score;
+
+      return driver;
+    });
+
+    updatedDrivers.sort((a, b) => b.riskScore - a.riskScore);
+
+    this.riskDriversSignal.set(updatedDrivers);
   }
 }

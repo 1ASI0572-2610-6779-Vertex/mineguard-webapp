@@ -5,7 +5,9 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { Alert } from '../../../domain/model/alert.entity';
+import { alertPriorityIcon } from '../../../domain/model/alert-priority';
 import { AlertStatus } from '../../../domain/model/alert-status';
+import { alertTypeIcon } from '../../../domain/model/alert-type';
 
 @Component({
   selector: 'app-alert-detail',
@@ -36,9 +38,27 @@ export class AlertDetail {
     return !!alert && alert.status === 'open';
   });
 
+  /**
+   * Alerts only carry vehicle/driver attribution when a driving session was
+   * `IN_PROGRESS` at the time. `emergency_sos` is raised regardless, so it can
+   * arrive unattributed — say so instead of rendering an empty vehicle card.
+   */
+  readonly hasVehicleAttribution = computed(() => {
+    const alert = this.alertSignal();
+    return !!alert && (!!alert.vehicleCode || !!alert.driverName);
+  });
+
   /** The backend sends occurredAt as a pre-formatted string — render it directly. */
   readonly formattedTime = computed(() => this.alertSignal()?.occurredAt ?? '');
   readonly formattedDate = computed(() => '');
+
+  typeIcon(type: string): string {
+    return alertTypeIcon(type);
+  }
+
+  priorityIcon(priority: string): string {
+    return alertPriorityIcon(priority);
+  }
 
   onNotesChange(value: string): void {
     this.notes.set(value);

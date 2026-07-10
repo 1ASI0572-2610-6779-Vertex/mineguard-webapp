@@ -2,12 +2,14 @@ import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { DashboardRecentAlert } from '../../../domain/model/dashboard-recent-alert.entity';
 
 export interface AlertDetailDialogData {
   alert: DashboardRecentAlert;
+  operationalAlerts: DashboardRecentAlert[];
 }
 
 /**
@@ -24,6 +26,7 @@ export interface AlertDetailDialogData {
 export class AlertDetailDialog {
   protected dialogRef = inject(MatDialogRef<AlertDetailDialog>);
   protected data: AlertDetailDialogData = inject(MAT_DIALOG_DATA);
+  private router = inject(Router);
 
   get alert(): DashboardRecentAlert {
     return this.data.alert;
@@ -37,7 +40,22 @@ export class AlertDetailDialog {
     return severity;
   }
 
+  getCategoryKey(category: string): string {
+    return `monitoring.alerts.type.${category}`;
+  }
+
   close(): void {
     this.dialogRef.close();
+  }
+
+  manageAlert(): void {
+    this.dialogRef.close();
+    this.router.navigate(['/alerts'], {
+      state: {
+        selectedAlertId: this.alert.id,
+        selectedAlertCode: this.alert.alertCode,
+        dashboardAlerts: this.data.operationalAlerts,
+      },
+    });
   }
 }

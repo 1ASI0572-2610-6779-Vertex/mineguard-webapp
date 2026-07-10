@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
@@ -28,12 +28,19 @@ export class CardiacReadingsApiEndpoint extends BaseApiEndpoint<
    * @remarks
    * Returns the resource **directly, not wrapped in an array** — a Driving
    * Session has exactly one active driver, so cardiac readings are a singleton.
+   *
+   * A session that has not reported any beat yet answers `404`. That is an
+   * empty result, not a failure, so it resolves to `null` instead of reaching
+   * `handleError` and surfacing an error banner over a healthy session.
    */
-  getBySessionId(sessionId: number): Observable<CardiacReading> {
+  getBySessionId(sessionId: number): Observable<CardiacReading | null> {
     const url = `${this.endpointUrl}/${sessionId}/cardiac-readings`;
     return this.http.get<CardiacReadingResource>(url).pipe(
       map((resource) => this.assembler.toEntityFromResource(resource)),
-      catchError(this.handleError(`Failed to fetch cardiac reading for session ${sessionId}`)),
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 404) return of(null);
+        return this.handleError(`Failed to fetch cardiac reading for session ${sessionId}`)(error);
+      }),
     );
   }
 }

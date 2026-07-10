@@ -23,9 +23,34 @@ export class DashboardRiskDrivers {
 
   private router = inject(Router);
 
-  /** Risk bar width as percentage of max score (100). */
+  /**
+   * Bar width relative to the highest-scoring driver on screen.
+   *
+   * @remarks
+   * `riskScore` is an unbounded cumulative penalty (20 points per critical
+   * alert), not a percentage — it routinely exceeds 100 on a bad shift. Scaling
+   * against a fixed 100 ceiling pinned the whole ranking at full width and
+   * erased the very comparison the widget exists to make, so the leader defines
+   * the scale and everyone else reads as a fraction of them.
+   */
   barWidth(score: number): string {
-    return `${Math.min(score, 100)}%`;
+    const leader = Math.max(...this.riskDrivers.map((d) => d.riskScore), 0);
+    if (leader <= 0) return '0%';
+    return `${(score / leader) * 100}%`;
+  }
+
+  /**
+   * Severity tint by share of the leader's score, not by absolute points: 70
+   * points means something different in a fleet topping out at 80 than in one
+   * topping out at 400.
+   */
+  severityOf(score: number): 'high' | 'medium' | 'low' {
+    const leader = Math.max(...this.riskDrivers.map((d) => d.riskScore), 0);
+    if (leader <= 0) return 'low';
+    const share = score / leader;
+    if (share >= 0.7) return 'high';
+    if (share >= 0.4) return 'medium';
+    return 'low';
   }
 
   selectDriver(driver: DashboardRiskDriver): void {

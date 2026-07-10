@@ -1,12 +1,20 @@
 import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { MonitoringStore } from '../../../application/monitoring.store';
+import { Alert } from '../../../domain/model/alert.entity';
 import { AlertStatus } from '../../../domain/model/alert-status';
 import { ClassifyAlertCommand } from '../../../domain/model/classify-alert.command';
 import { AlertDetail } from '../../components/alert-detail/alert-detail';
 import { AlertsInbox } from '../../components/alerts-inbox/alerts-inbox';
+
+interface DashboardAlertNavigationState {
+  selectedAlertId?: number;
+  selectedAlertCode?: string;
+  dashboardAlerts?: unknown;
+}
 
 @Component({
   selector: 'app-alerts-page',
@@ -17,6 +25,9 @@ import { AlertsInbox } from '../../components/alerts-inbox/alerts-inbox';
 })
 export class AlertsPage implements OnInit {
   private store = inject(MonitoringStore);
+  private router = inject(Router);
+  private requestedAlertId: number | null = null;
+  private requestedAlertCode: string | null = null;
 
   readonly alerts = this.store.alerts;
   readonly selectedAlertId = signal<number | null>(null);
@@ -39,6 +50,13 @@ export class AlertsPage implements OnInit {
         return;
       }
       const currentId = this.selectedAlertId();
+      const requested = this.findRequestedAlertId(list);
+      if (requested !== null) {
+        this.selectedAlertId.set(requested);
+        this.requestedAlertId = null;
+        this.requestedAlertCode = null;
+        return;
+      }
       if (currentId === null || !list.some((alert) => alert.id === currentId)) {
         this.selectedAlertId.set(list[0].id);
       }
@@ -46,6 +64,15 @@ export class AlertsPage implements OnInit {
   }
 
   ngOnInit(): void {
+    const state = this.navigationState();
+    this.requestedAlertId = typeof state.selectedAlertId === 'number' ? state.selectedAlertId : null;
+    this.requestedAlertCode = typeof state.selectedAlertCode === 'string' ? state.selectedAlertCode : null;
+
+    if (Array.isArray(state.dashboardAlerts)) {
+      this.store.seedAlertsFromDashboard(state.dashboardAlerts as Parameters<MonitoringStore['seedAlertsFromDashboard']>[0]);
+      return;
+    }
+
     this.store.loadAlerts();
   }
 
@@ -59,5 +86,19 @@ export class AlertsPage implements OnInit {
     this.store.classifyAlert(
       new ClassifyAlertCommand({ alertId: id, status: payload.status, notes: payload.notes }),
     );
+  }
+
+  private navigationState(): DashboardAlertNavigationState {
+    return (this.router.getCurrentNavigation()?.extras.state ?? history.state ?? {}) as DashboardAlertNavigationState;
+  }
+
+  private findRequestedAlertId(list: Alert[]): number | null {
+    if (this.requestedAlertId !== null && list.some((alert) => alert.id === this.requestedAlertId)) {
+      return this.requestedAlertId;
+    }
+    if (this.requestedAlertCode !== null) {
+      return list.find((alert) => alert.code === this.requestedAlertCode)?.id ?? null;
+    }
+    return null;
   }
 }

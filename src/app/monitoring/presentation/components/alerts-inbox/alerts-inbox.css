@@ -138,9 +138,15 @@
 }
 
 .filter-pill--warning.filter-pill--active {
-  background: var(--color-warning-surface);
-  border-color: var(--color-warning-main);
-  color: #92400e;
+  background: var(--color-severity-high-surface);
+  border-color: var(--color-severity-high-main);
+  color: var(--color-severity-high-main);
+}
+
+.filter-pill--medium.filter-pill--active {
+  background: var(--color-severity-medium-surface);
+  border-color: var(--color-severity-medium-main);
+  color: var(--color-severity-medium-main);
 }
 
 .pill-icon { font-size: 13px; width: 13px; height: 13px; }
@@ -229,9 +235,11 @@
 
 .type-icon { font-size: 12px; width: 12px; height: 12px; }
 
-.type-collision  { background: var(--color-danger-surface);  color: var(--color-danger-main); }
-.type-imminent   { background: #fecaca; color: #991b1b; }
-.type-fatigue    { background: var(--color-warning-surface); color: #b45309; }
+.type-label--critical { background: var(--color-severity-critical-surface); color: var(--color-severity-critical-main); }
+.type-label--high     { background: var(--color-severity-high-surface);     color: var(--color-severity-high-main); }
+.type-label--warning  { background: var(--color-severity-warning-surface);  color: var(--color-severity-warning-main); }
+.type-label--medium   { background: var(--color-severity-medium-surface);   color: var(--color-severity-medium-main); }
+.type-label--low      { background: var(--color-severity-low-surface);      color: var(--color-severity-low-main); }
 
 .elapsed {
   font-size: 11px;
@@ -292,8 +300,11 @@
 
 .priority-icon { font-size: 11px; width: 11px; height: 11px; }
 
-.priority-badge--critical { background: var(--color-danger-surface);  color: var(--color-danger-main); }
-.priority-badge--warning  { background: var(--color-warning-surface); color: #92400e; }
+.priority-badge--critical { background: var(--color-severity-critical-surface); color: var(--color-severity-critical-main); }
+.priority-badge--high     { background: var(--color-severity-high-surface);     color: var(--color-severity-high-main); }
+.priority-badge--warning  { background: var(--color-severity-warning-surface);  color: var(--color-severity-warning-main); }
+.priority-badge--medium   { background: var(--color-severity-medium-surface);   color: var(--color-severity-medium-main); }
+.priority-badge--low      { background: var(--color-severity-low-surface);      color: var(--color-severity-low-main); }
 
 /* ── Empty state ────────────────────────────────────────────────── */
 .empty-state {
@@ -320,4 +331,10 @@
   color: #9ca3af;
   max-width: 220px;
   line-height: 1.5;
+}
+
+
+.alert-list-container{
+  max-height:500px;
+  overflow-y:auto;
 }

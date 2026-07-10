@@ -525,24 +525,32 @@
         "subtitle": "{{shown}} of {{total}} alerts"
       },
       "type": {
+        "proximity": "Proximity Warning",
+        "collision": "Proximity Collision",
         "proximity_collision": "Proximity Collision",
-        "restricted_zone_entry": "Restricted Zone",
+        "restricted_zone_entry": "Restricted Zone Entry",
         "high_heart_rate": "High Heart Rate",
         "fatigue_risk": "Fatigue Risk",
-        "connection_lost": "Connection Lost"
+        "connection_lost": "Connection Lost",
+        "cardiac_arrest": "Possible Cardiac Arrest",
+        "emergency_sos": "SOS Emergency"
       },
       "typeFull": {
         "proximity_collision": "Proximity Collision Alert",
         "restricted_zone_entry": "Restricted Zone Entry Alert",
         "high_heart_rate": "High Heart Rate Alert",
         "fatigue_risk": "Fatigue Risk Alert",
-        "connection_lost": "Connection Lost Alert"
+        "connection_lost": "Connection Lost Alert",
+        "proximity": "Proximity Alert",
+        "cardiac_arrest": "Possible Cardiac Arrest Alert",
+        "emergency_sos": "SOS Emergency Alert"
       },
       "priorityLabel": {
         "low": "Low Priority",
         "medium": "Medium Priority",
         "high": "High Priority",
-        "critical": "Critical Priority"
+        "critical": "Critical Priority",
+        "warning": "Warning Priority"
       },
       "status": {
         "open": "Open",
@@ -579,7 +587,8 @@
         "reviewed": "Reviewed",
         "resolved": "Resolved",
         "critical": "Critical",
-        "high": "High"
+        "high": "High",
+        "medium": "Medium"
       },
       "sort": {
         "newest": "Newest",
@@ -591,6 +600,10 @@
       "snack": {
         "falseAlarm": "Alert marked as false alarm",
         "resolved": "Alert marked as resolved"
+      },
+      "noSession": {
+        "title": "No active shift",
+        "description": "This alert was raised without a driving session in progress, so it has no vehicle or driver assigned."
       }
     },
     "liveMap": {
@@ -909,9 +922,11 @@
       "resolved": "Resolved"
     },
     "severity": {
-      "high": "Critical",
+      "high": "High",
       "medium": "Medium",
-      "low": "Low"
+      "low": "Low",
+      "critical": "Critical",
+      "warning": "Warning"
     },
     "context": {
       "onShift": "Supervisor on shift",
@@ -933,7 +948,8 @@
       "vehicle": "Vehicle",
       "route": "Route",
       "time": "Event time",
-      "markAttended": "Mark as attended"
+      "markAttended": "Mark as attended",
+      "manageAlert": "Manage Alert"
     }
   },
   "common": {

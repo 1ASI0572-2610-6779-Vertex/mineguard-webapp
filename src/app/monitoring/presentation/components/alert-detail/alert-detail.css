@@ -29,8 +29,12 @@
   transition: border-color 0.2s ease;
 }
 
-.detail-header--critical { border-left-color: var(--color-danger-main); }
-.detail-header--warning  { border-left-color: var(--color-warning-main); }
+.detail-header--critical { border-left-color: var(--color-severity-critical-main); }
+
+.detail-header--high     { border-left-color: var(--color-severity-high-main); }
+.detail-header--warning  { border-left-color: var(--color-severity-warning-main); }
+.detail-header--medium   { border-left-color: var(--color-severity-medium-main); }
+.detail-header--low      { border-left-color: var(--color-severity-low-main); }
 
 .title-block { display: flex; flex-direction: column; gap: 8px; }
 
@@ -63,8 +67,11 @@
 
 .priority-icon { font-size: 12px; width: 12px; height: 12px; }
 
-.priority-badge--critical { background: var(--color-danger-surface);  color: var(--color-danger-main); }
-.priority-badge--warning  { background: var(--color-warning-surface); color: #92400e; }
+.priority-badge--critical { background: var(--color-severity-critical-surface); color: var(--color-severity-critical-main); }
+.priority-badge--high     { background: var(--color-severity-high-surface);     color: var(--color-severity-high-main); }
+.priority-badge--warning  { background: var(--color-severity-warning-surface);  color: var(--color-severity-warning-main); }
+.priority-badge--medium   { background: var(--color-severity-medium-surface);   color: var(--color-severity-medium-main); }
+.priority-badge--low      { background: var(--color-severity-low-surface);      color: var(--color-severity-low-main); }
 
 .status-chip {
   display: inline-flex;
@@ -154,6 +161,13 @@
 }
 
 .vehicle-icon mat-icon { font-size: 22px; width: 22px; height: 22px; }
+
+.vehicle-icon--muted {
+  background: var(--color-neutral-gray-100);
+  color: #6b7280;
+}
+
+.vehicle-row--unattributed .vehicle-info strong { color: #4b5563; }
 
 .vehicle-info {
   display: flex;

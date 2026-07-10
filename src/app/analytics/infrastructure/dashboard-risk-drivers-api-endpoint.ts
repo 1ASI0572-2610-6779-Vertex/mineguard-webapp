@@ -42,6 +42,9 @@ export class DashboardRiskDriversApiEndpoint extends BaseApiEndpoint<
         driverId: d.id,
         driverName: d.fullName,
         vehicleType: d.specialty,
+        // `sort=-riskScore` is exactly the request that makes the backend
+        // compute the score, so it is never null here. A driver with no alerts
+        // legitimately scores 0.
         riskScore: d.riskScore ?? 0,
       }))),
       catchError(this.handleError('Failed to fetch risk drivers')),

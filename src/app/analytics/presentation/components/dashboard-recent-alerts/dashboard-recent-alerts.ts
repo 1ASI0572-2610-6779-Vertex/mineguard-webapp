@@ -4,6 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 
+import {
+  AlertPriority,
+  alertPriorityIcon,
+  normalizeAlertPriority,
+} from '../../../../monitoring/domain/model/alert-priority';
 import { DashboardRecentAlert } from '../../../domain/model/dashboard-recent-alert.entity';
 import { AlertDetailDialog } from '../alert-detail-dialog/alert-detail-dialog';
 
@@ -20,20 +25,35 @@ import { AlertDetailDialog } from '../alert-detail-dialog/alert-detail-dialog';
 })
 export class DashboardRecentAlerts {
   @Input({ required: true }) recentAlerts: DashboardRecentAlert[] = [];
+  @Input({ required: true }) operationalAlerts: DashboardRecentAlert[] = [];
 
   private dialog = inject(MatDialog);
 
+  /**
+   * The backend grades telemetry alerts across all five tiers, so the raw
+   * string is narrowed once here and reused for the label, the icon and the
+   * badge tint — a bare `severity === 'high'` check drops `critical`,
+   * `warning` and `medium` onto the low-severity styling.
+   */
+  severityOf(alert: DashboardRecentAlert): AlertPriority {
+    return normalizeAlertPriority(alert.severity);
+  }
+
   getSeverityKey(severity: string): string {
-    const v = severity?.toLowerCase();
-    if (v === 'high')   return 'dashboard.severity.high';
-    if (v === 'medium') return 'dashboard.severity.medium';
-    if (v === 'low')    return 'dashboard.severity.low';
-    return severity;
+    return `dashboard.severity.${normalizeAlertPriority(severity)}`;
+  }
+
+  severityIcon(severity: string): string {
+    return alertPriorityIcon(normalizeAlertPriority(severity));
+  }
+
+  getCategoryKey(category: string): string {
+    return `monitoring.alerts.type.${category}`;
   }
 
   openAlertDetail(alert: DashboardRecentAlert): void {
     this.dialog.open(AlertDetailDialog, {
-      data: { alert },
+      data: { alert, operationalAlerts: this.operationalAlerts },
       panelClass: 'mg-dialog',
       autoFocus: false,
       restoreFocus: false,

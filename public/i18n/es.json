@@ -525,24 +525,32 @@
         "subtitle": "{{shown}} de {{total}} alertas"
       },
       "type": {
+        "proximity": "Advertencia de Proximidad",
+        "collision": "Colisión por Proximidad",
         "proximity_collision": "Colisión por Proximidad",
-        "restricted_zone_entry": "Zona Restringida",
+        "restricted_zone_entry": "Ingreso a Zona Restringida",
         "high_heart_rate": "Frecuencia Cardiaca Alta",
         "fatigue_risk": "Riesgo de Fatiga",
-        "connection_lost": "Conexión Perdida"
+        "connection_lost": "Conexión Perdida",
+        "cardiac_arrest": "Posible Paro Cardiaco",
+        "emergency_sos": "Emergencia SOS"
       },
       "typeFull": {
         "proximity_collision": "Alerta de Colisión por Proximidad",
         "restricted_zone_entry": "Alerta de Ingreso a Zona Restringida",
         "high_heart_rate": "Alerta de Frecuencia Cardiaca Alta",
         "fatigue_risk": "Alerta de Riesgo de Fatiga",
-        "connection_lost": "Alerta de Conexión Perdida"
+        "connection_lost": "Alerta de Conexión Perdida",
+        "proximity": "Alerta de Proximidad",
+        "cardiac_arrest": "Alerta de Posible Paro Cardiaco",
+        "emergency_sos": "Alerta de Emergencia SOS"
       },
       "priorityLabel": {
         "low": "Prioridad Baja",
         "medium": "Prioridad Media",
         "high": "Prioridad Alta",
-        "critical": "Prioridad Crítica"
+        "critical": "Prioridad Crítica",
+        "warning": "Prioridad de Advertencia"
       },
       "status": {
         "open": "Abierta",
@@ -579,7 +587,8 @@
         "reviewed": "Revisadas",
         "resolved": "Resueltas",
         "critical": "Crítico",
-        "high": "Alta"
+        "high": "Alta",
+        "medium": "Media"
       },
       "sort": {
         "newest": "Más recientes",
@@ -591,6 +600,10 @@
       "snack": {
         "falseAlarm": "Alerta marcada como falsa alarma",
         "resolved": "Alerta marcada como resuelta"
+      },
+      "noSession": {
+        "title": "Sin turno activo",
+        "description": "Esta alerta se generó sin una sesión de conducción en curso, así que no tiene vehículo ni conductor asignado."
       }
     },
     "liveMap": {
@@ -909,9 +922,11 @@
       "resolved": "Resuelto"
     },
     "severity": {
-      "high": "Crítica",
+      "high": "Alta",
       "medium": "Media",
-      "low": "Baja"
+      "low": "Baja",
+      "critical": "Crítica",
+      "warning": "Advertencia"
     },
     "context": {
       "onShift": "Supervisor en turno",
@@ -933,7 +948,8 @@
       "vehicle": "Vehículo",
       "route": "Ruta",
       "time": "Hora del evento",
-      "markAttended": "Marcar como atendida"
+      "markAttended": "Marcar como atendida",
+      "manageAlert": "Gestionar Alerta"
     }
   },
   "common": {

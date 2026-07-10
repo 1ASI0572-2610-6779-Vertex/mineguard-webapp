@@ -38,21 +38,15 @@
 
             <!-- Severity badge -->
             <td>
-              <span
-                class="severity-badge"
-                [class.severity-badge--high]="alert.severity === 'high'"
-                [class.severity-badge--medium]="alert.severity === 'medium'"
-                [class.severity-badge--low]="alert.severity === 'low'">
-                <mat-icon class="badge-icon">
-                  {{ alert.severity === 'high' ? 'crisis_alert' : alert.severity === 'medium' ? 'warning' : 'info' }}
-                </mat-icon>
+              <span [class]="'severity-badge severity-badge--' + severityOf(alert)">
+                <mat-icon class="badge-icon">{{ severityIcon(alert.severity) }}</mat-icon>
                 {{ getSeverityKey(alert.severity) | translate }}
               </span>
             </td>
 
             <!-- Category -->
             <td>
-              <span class="category-text">{{ alert.category }}</span>
+              <span class="category-text">{{ getCategoryKey(alert.category) | translate }}</span>
             </td>
 
             <!-- Driver + vehicle -->
