@@ -43,11 +43,10 @@
         [class.filter-pill--active]="priorityFilter() === pill.key"
         [class.filter-pill--critical]="pill.key === 'critical' && priorityFilter() === 'critical'"
         [class.filter-pill--warning]="pill.key === 'high' && priorityFilter() === 'high'"
+        [class.filter-pill--medium]="pill.key === 'medium' && priorityFilter() === 'medium'"
         (click)="priorityFilter.set(pill.key)">
-        @if (pill.key === 'critical') {
-          <mat-icon class="pill-icon">crisis_alert</mat-icon>
-        } @else if (pill.key === 'high') {
-          <mat-icon class="pill-icon">trending_up</mat-icon>
+        @if (pill.key !== 'all') {
+          <mat-icon class="pill-icon">{{ priorityIcon(pill.key) }}</mat-icon>
         }
         {{ pill.label | translate }}
         @if (pill.key !== 'all') {
@@ -73,10 +72,9 @@
 
         <!-- Top row: type label + elapsed -->
         <div class="alert-row-top">
-          <span class="type-label"
-            [class.type-collision]="alert.type === 'proximity_collision'"
-            [class.type-imminent]="alert.type === 'restricted_zone_entry'"
-            [class.type-fatigue]="alert.type === 'fatigue_risk'">
+          <!-- Tint comes from priority, not type: a `proximity` alert is red
+               under 10 cm and amber between 10 and 20 cm. -->
+          <span [class]="'type-label type-label--' + alert.priority">
             <mat-icon class="type-icon">{{ typeIcon(alert.type) }}</mat-icon>
             {{ 'monitoring.alerts.type.' + alert.type | translate }}
           </span>
@@ -91,12 +89,8 @@
         <!-- Bottom row: code + priority badge -->
         <div class="alert-row-bottom">
           <span class="alert-code">{{ alert.code }}</span>
-          <span class="priority-badge"
-            [class.priority-badge--critical]="alert.priority === 'critical'"
-            [class.priority-badge--warning]="alert.priority === 'high'">
-            <mat-icon class="priority-icon">
-              {{ alert.priority === 'critical' ? 'crisis_alert' : 'trending_up' }}
-            </mat-icon>
+          <span [class]="'priority-badge priority-badge--' + alert.priority">
+            <mat-icon class="priority-icon">{{ priorityIcon(alert.priority) }}</mat-icon>
             {{ 'monitoring.alerts.priorityLabel.' + alert.priority | translate }}
           </span>
         </div>

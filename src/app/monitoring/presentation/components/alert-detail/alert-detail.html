@@ -2,18 +2,12 @@
   <section class="alert-detail">
 
     <!-- Header -->
-    <header class="detail-header"
-      [class.detail-header--critical]="alert.priority === 'critical'"
-      [class.detail-header--warning]="alert.priority === 'high'">
+    <header [class]="'detail-header detail-header--' + alert.priority">
       <div class="title-block">
         <div class="code-row">
           <h2 class="code">{{ alert.code }}</h2>
-          <span class="priority-badge"
-            [class.priority-badge--critical]="alert.priority === 'critical'"
-            [class.priority-badge--warning]="alert.priority === 'high'">
-            <mat-icon class="priority-icon">
-              {{ alert.priority === 'critical' ? 'crisis_alert' : 'trending_up' }}
-            </mat-icon>
+          <span [class]="'priority-badge priority-badge--' + alert.priority">
+            <mat-icon class="priority-icon">{{ priorityIcon(alert.priority) }}</mat-icon>
             {{ 'monitoring.alerts.priorityLabel.' + alert.priority | translate }}
           </span>
           <span class="status-chip"
@@ -24,9 +18,7 @@
           </span>
         </div>
         <p class="type-subtitle">
-          <mat-icon class="type-icon">
-            {{ alert.type === 'fatigue_risk' ? 'bedtime' : alert.type === 'high_heart_rate' ? 'favorite' : 'car_crash' }}
-          </mat-icon>
+          <mat-icon class="type-icon">{{ typeIcon(alert.type) }}</mat-icon>
           {{ 'monitoring.alerts.typeFull.' + alert.type | translate }}
         </p>
       </div>
@@ -43,23 +35,36 @@
         <mat-icon class="label-icon">local_shipping</mat-icon>
         Vehículo involucrado
       </span>
-      <div class="vehicle-row">
-        <div class="vehicle-icon">
-          <mat-icon>local_shipping</mat-icon>
+      @if (hasVehicleAttribution()) {
+        <div class="vehicle-row">
+          <div class="vehicle-icon">
+            <mat-icon>local_shipping</mat-icon>
+          </div>
+          <div class="vehicle-info">
+            <strong>{{ alert.vehicleCode }}</strong>
+            <span>{{ alert.vehicleClassKey | translate }}</span>
+            <span class="driver-line">
+              <mat-icon class="driver-icon">person</mat-icon>
+              {{ 'monitoring.alerts.driverLabel' | translate }}: {{ alert.driverName }}
+            </span>
+          </div>
         </div>
-        <div class="vehicle-info">
-          <strong>{{ alert.vehicleCode }}</strong>
-          <span>{{ alert.vehicleClassKey | translate }}</span>
-          <span class="driver-line">
-            <mat-icon class="driver-icon">person</mat-icon>
-            {{ 'monitoring.alerts.driverLabel' | translate }}: {{ alert.driverName }}
-          </span>
+      } @else {
+        <div class="vehicle-row vehicle-row--unattributed">
+          <div class="vehicle-icon vehicle-icon--muted">
+            <mat-icon>no_accounts</mat-icon>
+          </div>
+          <div class="vehicle-info">
+            <strong>{{ 'monitoring.alerts.noSession.title' | translate }}</strong>
+            <span>{{ 'monitoring.alerts.noSession.description' | translate }}</span>
+          </div>
         </div>
-      </div>
+      }
     </section>
 
-    <!-- Response action block (open alerts only) -->
-    @if (alert.status === 'open') {
+    <!-- Response action block (open, attributed alerts only — there is nobody
+         to call when the alert was raised outside a driving session) -->
+    @if (alert.status === 'open' && hasVehicleAttribution()) {
       <section class="response-block">
         <div class="response-header">
           <mat-icon class="response-icon">video_camera_front</mat-icon>

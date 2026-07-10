@@ -25,23 +25,16 @@
         <div class="driver-info">
           <div class="driver-name-row">
             <strong class="driver-name">{{ driver.driverName }}</strong>
-            <span
-              class="score-badge"
-              [class.score-badge--high]="driver.riskScore >= 70"
-              [class.score-badge--medium]="driver.riskScore >= 50 && driver.riskScore < 70"
-              [class.score-badge--low]="driver.riskScore < 50">
+            <span [class]="'score-badge score-badge--' + severityOf(driver.riskScore)">
               {{ driver.riskScore | number: '1.0-0' }} {{ 'dashboard.riskDrivers.points' | translate }}
             </span>
           </div>
           <span class="vehicle-type">{{ driver.vehicleType }}</span>
-          <!-- Risk progress bar -->
+          <!-- Accumulated penalty points, scaled against the leader — not a 0–100 gauge. -->
           <div class="risk-bar-track">
             <div
-              class="risk-bar-fill"
-              [style.width]="barWidth(driver.riskScore)"
-              [class.risk-bar-fill--high]="driver.riskScore >= 70"
-              [class.risk-bar-fill--medium]="driver.riskScore >= 50 && driver.riskScore < 70"
-              [class.risk-bar-fill--low]="driver.riskScore < 50">
+              [class]="'risk-bar-fill risk-bar-fill--' + severityOf(driver.riskScore)"
+              [style.width]="barWidth(driver.riskScore)">
             </div>
           </div>
         </div>

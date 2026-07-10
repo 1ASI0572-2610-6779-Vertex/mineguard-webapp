@@ -60,9 +60,10 @@ export class MonitoringApi extends BaseApi {
   /**
    * GET /driving-sessions/{sessionId}/cardiac-readings — latest heart-rate
    * reading for the session's active driver. A session has exactly one active
-   * driver, so the resource is a singleton (not an array).
+   * driver, so the resource is a singleton (not an array). Resolves to `null`
+   * when the session has no readings yet (the endpoint answers `404`).
    */
-  getCardiacReading(sessionId: number): Observable<CardiacReading> {
+  getCardiacReading(sessionId: number): Observable<CardiacReading | null> {
     return this.cardiacReadingsEndpoint.getBySessionId(sessionId);
   }
 }
